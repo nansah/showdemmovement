@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShowDem Movement Foundation</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--coral:#FF6B4A;--gold:#FFC857;--teal:#2EC4B6;--navy:#12355B;--cream:#FFF8F0;--white:#ffffff}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Montserrat',sans-serif;background:var(--cream);color:var(--navy);overflow-x:hidden}
+
+#hero-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:70px;background:rgba(255,248,240,0);transition:background .4s,box-shadow .4s}
+nav.scrolled{background:rgba(255,248,240,0.96);box-shadow:0 2px 24px rgba(18,53,91,.1);backdrop-filter:blur(12px)}
+.nav-logo{font-size:1.4rem;font-weight:900;text-decoration:none;color:var(--navy)}
+.nav-logo span{color:var(--coral)}.nav-logo em{color:var(--teal);font-style:normal}
+.nav-links{display:flex;gap:2rem;list-style:none;align-items:center}
+.nav-links a{color:var(--navy);text-decoration:none;font-size:.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;transition:color .2s;opacity:.7}
+.nav-links a:hover{color:var(--coral);opacity:1}
+.nav-cta{background:var(--coral);color:var(--white)!important;padding:.5rem 1.3rem;border-radius:50px;opacity:1!important}
+.nav-cta:hover{background:var(--navy)!important;color:var(--white)!important}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.hamburger span{display:block;width:24px;height:2px;background:var(--navy);border-radius:2px}
+.mobile-nav{display:none;position:fixed;top:70px;left:0;right:0;background:rgba(255,248,240,.98);z-index:99;padding:1.5rem 5%;flex-direction:column;gap:1rem;border-top:2px solid var(--coral);box-shadow:0 8px 30px rgba(18,53,91,.12)}
+.mobile-nav a{color:var(--navy);text-decoration:none;font-size:.9rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:.6rem 0;border-bottom:1px solid rgba(18,53,91,.08)}
+.mobile-nav a.mob-cta{color:var(--coral)!important}
+
+/* HERO */
+.hero{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;padding:0 5%;pointer-events:none}
+.hero-inner{max-width:650px;pointer-events:auto}
+.hero-eyebrow{font-size:.7rem;font-weight:800;letter-spacing:4px;text-transform:uppercase;color:var(--teal);margin-bottom:1.2rem;display:block;opacity:0;animation:fadeUp .8s .3s forwards}
+.hero-headline{font-size:clamp(3rem,7vw,6.5rem);font-weight:900;line-height:.95;margin-bottom:1.5rem;opacity:0;animation:fadeUp .8s .5s forwards;color:var(--navy)}
+.hero-headline .c{color:var(--coral)}.hero-headline .t{color:var(--teal)}.hero-headline .g{color:var(--gold)}
+.hero-sub{font-size:1rem;font-weight:600;color:rgba(18,53,91,.65);line-height:1.8;max-width:480px;margin-bottom:2.5rem;opacity:0;animation:fadeUp .8s .7s forwards}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;opacity:0;animation:fadeUp .8s .9s forwards}
+.hero-scroll{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.4rem;opacity:0;animation:fadeUp .8s 1.3s forwards;pointer-events:auto}
+.hero-scroll span{font-size:.62rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:rgba(18,53,91,.45)}
+.scroll-dot{width:6px;height:6px;border-radius:50%;background:var(--coral);animation:bounce 1.4s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+
+/* BUTTONS */
+.btn{display:inline-block;padding:.9rem 2.2rem;border-radius:50px;font-weight:800;font-size:.78rem;letter-spacing:2px;text-transform:uppercase;text-decoration:none;transition:transform .2s,box-shadow .2s;cursor:pointer;border:none;font-family:'Montserrat',sans-serif}
+.btn:hover{transform:translateY(-3px)}
+.btn-coral{background:var(--coral);color:var(--white);box-shadow:0 6px 24px rgba(255,107,74,.35)}
+.btn-coral:hover{box-shadow:0 12px 36px rgba(255,107,74,.5)}
+.btn-navy{background:var(--navy);color:var(--white)}
+.btn-navy:hover{box-shadow:0 12px 36px rgba(18,53,91,.35)}
+.btn-gold{background:var(--gold);color:var(--navy)}
+.btn-gold:hover{box-shadow:0 12px 36px rgba(255,200,87,.45)}
+.btn-teal{background:var(--teal);color:var(--white)}
+.btn-teal:hover{box-shadow:0 12px 36px rgba(46,196,182,.45)}
+.btn-outline{background:transparent;color:var(--navy);border:2.5px solid rgba(18,53,91,.25)}
+.btn-outline:hover{border-color:var(--coral);color:var(--coral)}
+
+section{position:relative;z-index:1}
+.section-label{font-size:.65rem;font-weight:800;letter-spacing:4px;text-transform:uppercase;color:var(--teal);margin-bottom:.75rem;display:block}
+.section-title{font-size:clamp(2rem,4vw,3rem);font-weight:900;line-height:1.05;margin-bottom:1.2rem;color:var(--navy)}
+
+/* RIBBON */
+.ribbon{background:var(--coral);padding:.85rem 0;overflow:hidden;white-space:nowrap;position:relative;z-index:2}
+.ribbon-track{display:inline-block;animation:marquee 22s linear infinite}
+.ribbon span{font-size:.72rem;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--white);padding:0 2rem}
+.ribbon span::before{content:'✦';margin-right:.6rem;color:var(--gold)}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s,transform .8s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* MISSION */
+.mission{background:var(--white);padding:100px 5%}
+.mission-header{text-align:center;max-width:600px;margin:0 auto 4rem}
+.mission-header p{color:rgba(18,53,91,.6);font-size:1rem;line-height:1.8}
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;max-width:1000px;margin:0 auto}
+.pillar{background:var(--cream);border-radius:24px;padding:2.5rem 2rem;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s}
+.pillar:hover{transform:translateY(-8px);box-shadow:0 20px 60px rgba(18,53,91,.1)}
+.pillar::before{content:'';position:absolute;top:0;left:0;right:0;height:5px}
+.pillar:nth-child(1)::before{background:var(--coral)}
+.pillar:nth-child(2)::before{background:var(--gold)}
+.pillar:nth-child(3)::before{background:var(--teal)}
+.pillar-icon{font-size:3rem;margin-bottom:1.2rem;display:block}
+.pillar h3{font-size:.78rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:.75rem}
+.pillar:nth-child(1) h3{color:var(--coral)}
+.pillar:nth-child(2) h3{color:var(--gold)}
+.pillar:nth-child(3) h3{color:var(--teal)}
+.pillar p{font-size:.88rem;line-height:1.75;color:rgba(18,53,91,.6)}
+.mission-cta{text-align:center;margin-top:3.5rem}
+
+/* EVENT */
+.event-section{padding:100px 5%;background:var(--navy)}
+.event-inner{max-width:1100px;margin:0 auto}
+.event-layout{display:grid;grid-template-columns:1fr 300px;gap:4rem;align-items:center;margin-top:3rem}
+.event-chips{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:2rem}
+.chip{padding:.4rem 1.1rem;border-radius:50px;font-size:.68rem;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+.chip-gold{background:rgba(255,200,87,.18);color:var(--gold);border:1px solid rgba(255,200,87,.35)}
+.chip-teal{background:rgba(46,196,182,.15);color:var(--teal);border:1px solid rgba(46,196,182,.3)}
+.chip-coral{background:rgba(255,107,74,.15);color:var(--coral);border:1px solid rgba(255,107,74,.3)}
+.event-desc{font-size:.95rem;line-height:1.8;color:rgba(255,248,240,.65);margin-bottom:2rem}
+.event-btns{display:flex;gap:1rem;flex-wrap:wrap}
+.date-card{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:24px;padding:2.5rem 2rem;text-align:center}
+.date-month{font-size:.7rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:.4rem}
+.date-day{font-size:5rem;font-weight:900;color:var(--white);line-height:1;display:block}
+.date-dow{font-size:.75rem;font-weight:700;color:rgba(255,248,240,.45);display:block;margin-bottom:1.5rem}
+.date-loc{font-size:.75rem;color:rgba(255,248,240,.4);line-height:1.6;border-top:1px solid rgba(255,255,255,.08);padding-top:1.2rem;margin-top:.5rem}
+
+/* DD SPLIT */
+.dd-section{padding:100px 5%;background:var(--cream)}
+.dd-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center}
+.dd-text p{font-size:.95rem;line-height:1.85;color:rgba(18,53,91,.6);margin-bottom:1rem}
+.feat-list{display:flex;flex-direction:column;gap:1rem}
+.feat{display:flex;gap:1rem;align-items:flex-start;background:var(--white);border-radius:16px;padding:1.4rem;transition:transform .2s,box-shadow .2s}
+.feat:hover{transform:translateX(6px);box-shadow:0 8px 30px rgba(18,53,91,.08)}
+.feat-icon{font-size:1.8rem;flex-shrink:0}
+.feat h4{font-size:.75rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);margin-bottom:.25rem}
+.feat p{font-size:.82rem;color:rgba(18,53,91,.55);margin:0;line-height:1.5}
+
+/* IMPACT */
+.impact{background:var(--gold);padding:80px 5%}
+.impact-inner{max-width:900px;margin:0 auto;text-align:center}
+.impact-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;margin-top:3rem}
+.impact-num{font-size:3.5rem;font-weight:900;color:var(--navy);display:block;line-height:1}
+.impact-desc{font-size:.7rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(18,53,91,.55);margin-top:.4rem;display:block}
+
+/* FOUNDER */
+.founder{padding:100px 5%;background:var(--white)}
+.founder-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 380px;gap:5rem;align-items:center}
+.founder-text p{font-size:.95rem;line-height:1.85;color:rgba(18,53,91,.6);margin-bottom:1rem}
+.founder-text strong{color:var(--coral)}
+.founder-card{background:var(--cream);border-radius:24px;padding:2.5rem;text-align:center;box-shadow:0 8px 40px rgba(18,53,91,.08)}
+.founder-avatar{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--coral),var(--teal));margin:0 auto 1.5rem;display:flex;align-items:center;justify-content:center;font-size:2.8rem}
+.founder-card h3{font-size:1.15rem;font-weight:900;color:var(--navy);margin-bottom:.25rem}
+.founder-title{font-size:.68rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--teal);display:block;margin-bottom:1.2rem}
+.founder-card p{font-size:.85rem;line-height:1.7;color:rgba(18,53,91,.6)}
+.founder-quote{margin-top:1.5rem;padding:1.2rem 1.4rem;background:rgba(255,107,74,.07);border-left:3px solid var(--coral);border-radius:0 14px 14px 0;font-style:italic;font-size:.88rem;color:var(--navy);font-weight:600;text-align:left;line-height:1.5}
+
+/* INVOLVE */
+.involve{padding:100px 5%;background:var(--cream)}
+.involve-inner{max-width:1100px;margin:0 auto;text-align:center}
+.involve-inner>p{font-size:.95rem;color:rgba(18,53,91,.55);max-width:460px;margin:0 auto 3.5rem;line-height:1.7}
+.inv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-bottom:3rem}
+.inv-card{border-radius:20px;padding:2.2rem 1.8rem;text-align:left;cursor:pointer;transition:transform .25s,box-shadow .25s;text-decoration:none;display:block}
+.inv-card:hover{transform:translateY(-7px);box-shadow:0 24px 60px rgba(18,53,91,.12)}
+.inv-card.ic1{background:var(--coral)}
+.inv-card.ic2{background:var(--teal)}
+.inv-card.ic3{background:var(--navy)}
+.inv-card .ic-icon{font-size:2.5rem;display:block;margin-bottom:1rem}
+.inv-card h3{font-size:.8rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:.5rem;color:var(--white)}
+.inv-card p{font-size:.83rem;line-height:1.6;color:rgba(255,255,255,.75)}
+
+/* DONATE */
+.donate-cta{background:var(--coral);padding:90px 5%}
+.donate-inner{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:4rem;align-items:center}
+.donate-inner h2{font-size:clamp(2rem,3.5vw,3rem);font-weight:900;color:var(--white);margin-bottom:.75rem;line-height:1.05}
+.donate-inner p{color:rgba(255,255,255,.85);font-size:.95rem;line-height:1.8}
+.donate-aside{text-align:center;flex-shrink:0}
+.heart-anim{font-size:5rem;display:block;animation:heartbeat 1.6s ease-in-out infinite}
+@keyframes heartbeat{0%,100%{transform:scale(1)}25%{transform:scale(1.12)}50%{transform:scale(1)}75%{transform:scale(1.06)}}
+
+/* FOOTER */
+footer{background:var(--navy);padding:70px 5% 35px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.footer-logo{font-size:1.5rem;font-weight:900;color:var(--white);display:block;margin-bottom:1rem;text-decoration:none}
+.footer-logo span{color:var(--coral)}.footer-logo em{color:var(--teal);font-style:normal}
+.footer-brand p{font-size:.82rem;color:rgba(255,248,240,.45);line-height:1.7;max-width:240px}
+.footer-social{display:flex;gap:.75rem;margin-top:1.5rem}
+.social-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.9rem;text-decoration:none;transition:background .2s}
+.social-btn:hover{background:var(--teal)}
+.footer-col h4{font-size:.65rem;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem}
+.footer-col ul{list-style:none}.footer-col li{margin-bottom:.65rem}
+.footer-col a{color:rgba(255,248,240,.4);text-decoration:none;font-size:.82rem;transition:color .2s}
+.footer-col a:hover{color:var(--teal)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.footer-bottom p{font-size:.75rem;color:rgba(255,248,240,.28)}
+.footer-tagline{font-size:.75rem;font-weight:700;color:var(--gold);font-style:italic}
+
+@media(max-width:960px){
+  .pillars,.inv-grid{grid-template-columns:1fr 1fr}
+  .event-layout,.dd-inner,.founder-inner{grid-template-columns:1fr;gap:3rem}
+  .donate-inner{grid-template-columns:1fr}
+  .impact-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:640px){
+  .nav-links{display:none}.hamburger{display:flex}
+  .pillars,.inv-grid{grid-template-columns:1fr}
+  .hero-btns{flex-direction:column;width:fit-content}
+  .footer-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<canvas id="hero-canvas"></canvas>
+
+<nav id="main-nav">
+  <a class="nav-logo" href="index.html"><span>SHOW</span><em>DEM</em></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="events.html">Events</a></li>
+    <li><a href="involve.html">Get Involved</a></li>
+    <li><a href="donate.html">Donate</a></li>
+    <li><a href="contact.html" class="nav-cta">Connect</a></li>
+  </ul>
+  <button class="hamburger" onclick="toggleMobile()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-nav" id="mobile-nav">
+  <a href="index.html">Home</a><a href="about.html">About</a><a href="events.html">Events</a>
+  <a href="involve.html">Get Involved</a><a href="donate.html">Donate</a>
+  <a href="contact.html" class="mob-cta">Connect →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <span class="hero-eyebrow">ShowDem Movement Foundation</span>
+    <h1 class="hero-headline">
+      Jump.<br>
+      <span class="c">Love.</span>
+      <span class="t"> Shine.</span><br>
+      <span class="g">Rise.</span>
+    </h1>
+    <p class="hero-sub">A Double Dutch nonprofit spreading love, educating youth, and celebrating talent — one community at a time.</p>
+    <div class="hero-btns">
+      <a href="events.html" class="btn btn-coral">See Events</a>
+      <a href="involve.html" class="btn btn-outline">Get Involved</a>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-dot"></div>
+  </div>
+</section>
+
+<!-- RIBBON -->
+<div class="ribbon">
+  <div class="ribbon-track">
+    <span>Love</span><span>Education</span><span>Talent</span><span>Community</span>
+    <span>Double Dutch</span><span>Giving Back</span><span>Empower</span><span>Elevate</span>
+    <span>Love</span><span>Education</span><span>Talent</span><span>Community</span>
+    <span>Double Dutch</span><span>Giving Back</span><span>Empower</span><span>Elevate</span>
+  </div>
+</div>
+
+<!-- MISSION -->
+<section class="mission reveal">
+  <div class="mission-header">
+    <span class="section-label">Why We Exist</span>
+    <h2 class="section-title">Purpose in Every Jump</h2>
+    <p>We uplift communities through love, education, and the celebration of talent — one rope turn at a time.</p>
+  </div>
+  <div class="pillars">
+    <div class="pillar">
+      <span class="pillar-icon">❤️</span>
+      <h3>Love</h3>
+      <p>We show up for youth, families, and communities with warmth, care, and genuine commitment to their growth.</p>
+    </div>
+    <div class="pillar">
+      <span class="pillar-icon">📚</span>
+      <h3>Education</h3>
+      <p>Double dutch is a gateway to learning. We weave life skills and enrichment into everything we do on and off the rope.</p>
+    </div>
+    <div class="pillar">
+      <span class="pillar-icon">⭐</span>
+      <h3>Talent</h3>
+      <p>Every person has a gift worth celebrating. ShowDem creates stages and spaces for youth to showcase who they are.</p>
+    </div>
+  </div>
+  <div class="mission-cta">
+    <a href="about.html" class="btn btn-navy">Our Full Story →</a>
+  </div>
+</section>
+
+<!-- EVENT -->
+<section class="event-section reveal">
+  <div class="event-inner">
+    <span class="section-label" style="color:var(--gold)">Upcoming Event</span>
+    <div class="event-layout">
+      <div>
+        <h2 class="section-title" style="color:var(--white)">The ShowDem <span style="color:var(--coral)">Jump Off ⚡</span></h2>
+        <div class="event-chips">
+          <span class="chip chip-gold">📅 Saturday, July 18</span>
+          <span class="chip chip-teal">🕕 6:00 – 9:00 PM</span>
+          <span class="chip chip-coral">📍 125th St, Harlem</span>
+        </div>
+        <p class="event-desc">Represent your borough or city — come solo or with a partner! Battle, jump and vibe, or come to watch and connect. All skill levels welcome.</p>
+        <div class="event-btns">
+          <a href="contact.html?form=jumpoff" class="btn btn-coral">Register Now</a>
+          <a href="events.html" class="btn btn-outline" style="color:rgba(255,248,240,.8);border-color:rgba(255,248,240,.3)">Full Details</a>
+        </div>
+      </div>
+      <div class="date-card">
+        <span class="date-month">July 2025</span>
+        <span class="date-day">18</span>
+        <span class="date-dow">Saturday</span>
+        <a href="contact.html?form=jumpoff" class="btn btn-coral" style="display:block;text-align:center;border-radius:12px;font-size:.75rem;padding:.75rem">Register →</a>
+        <p class="date-loc">Adam Clayton Powell Jr.<br>State Office Building<br>125th St, Harlem NYC</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DD SPLIT -->
+<section class="dd-section reveal">
+  <div class="dd-inner">
+    <div class="dd-text">
+      <span class="section-label">The Heartbeat</span>
+      <h2 class="section-title">Double Dutch Is More Than a Game</h2>
+      <p>Two ropes turning in sync. Feet flying. A crowd counting along. Double dutch is rhythm, trust, and community in motion — bringing people together for generations.</p>
+      <p>At ShowDem, we honor that legacy while making it new — creating space for every skill level, every age, every community.</p>
+      <a href="contact.html?form=session" class="btn btn-teal" style="margin-top:1rem;display:inline-block">Join a Public Session →</a>
+    </div>
+    <div class="feat-list">
+      <div class="feat">
+        <span class="feat-icon">🏆</span>
+        <div><h4>Competitive & Recreational</h4><p>Training for competition while keeping joy front and center for all skill levels.</p></div>
+      </div>
+      <div class="feat">
+        <span class="feat-icon">🌍</span>
+        <div><h4>Rooted in Culture</h4><p>Double dutch has deep roots in Black and urban communities — we celebrate and preserve that legacy.</p></div>
+      </div>
+      <div class="feat">
+        <span class="feat-icon">💪</span>
+        <div><h4>Physical & Mental Wellness</h4><p>Jumping is exercise, coordination, and stress relief — a full-body, full-mind experience.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section class="impact reveal">
+  <div class="impact-inner">
+    <span class="section-label" style="color:var(--navy)">Our Impact</span>
+    <h2 class="section-title">Love Measured in Action</h2>
+    <div class="impact-grid">
+      <div><span class="impact-num">500+</span><span class="impact-desc">Youth Reached</span></div>
+      <div><span class="impact-num">10+</span><span class="impact-desc">Communities</span></div>
+      <div><span class="impact-num">25+</span><span class="impact-desc">Programs & Events</span></div>
+      <div><span class="impact-num">100%</span><span class="impact-desc">Fueled by Love</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDER -->
+<section class="founder reveal">
+  <div class="founder-inner">
+    <div class="founder-text">
+      <span class="section-label">Our Story</span>
+      <h2 class="section-title">Built on Love,<br>Powered by Community</h2>
+      <p>ShowDem was born from a simple belief: <strong>every child deserves to be seen, celebrated, and supported.</strong></p>
+      <p>Founded by Martha Igbinosa, ShowDem channels the energy of double dutch into programs that uplift young people and strengthen the communities around them.</p>
+      <p>We believe talent is everywhere. What it needs is a stage, a coach, and a crowd that believes in it.</p>
+      <a href="about.html" class="btn btn-coral" style="margin-top:.5rem;display:inline-block">Read Our Story →</a>
+    </div>
+    <div class="founder-card">
+      <div class="founder-avatar">👑</div>
+      <h3>Martha Igbinosa</h3>
+      <span class="founder-title">Founder & Executive Director</span>
+      <p>With a heart full of purpose, Martha built ShowDem to be a movement — not just an organization.</p>
+      <div class="founder-quote">"Love in our hearts. Purpose in our actions. Impact in our communities."</div>
+    </div>
+  </div>
+</section>
+
+<!-- INVOLVE -->
+<section class="involve reveal">
+  <div class="involve-inner">
+    <span class="section-label">Join Us</span>
+    <h2 class="section-title">There's a Place for You Here</h2>
+    <p>Whether you jump, cheer, volunteer, or give — ShowDem is better with you in it.</p>
+    <div class="inv-grid">
+      <a href="contact.html?form=session" class="inv-card ic1">
+        <span class="ic-icon">🪢</span>
+        <h3>Join a Session</h3>
+        <p>Complete the one-time check-in and jump with us at any public session.</p>
+      </a>
+      <a href="contact.html?form=volunteer" class="inv-card ic2">
+        <span class="ic-icon">🙋</span>
+        <h3>Volunteer</h3>
+        <p>Coach, mentor, or support — our volunteers make everything happen.</p>
+      </a>
+      <a href="contact.html?form=partner" class="inv-card ic3">
+        <span class="ic-icon">🏢</span>
+        <h3>Partner With Us</h3>
+        <p>Schools, orgs, and businesses — let's build something powerful together.</p>
+      </a>
+    </div>
+    <a href="involve.html" class="btn btn-navy">Explore All Ways to Help →</a>
+  </div>
+</section>
+
+<!-- DONATE CTA -->
+<section class="donate-cta reveal">
+  <div class="donate-inner">
+    <div>
+      <span class="section-label" style="color:var(--gold)">Give</span>
+      <h2>Your Gift Moves Mountains</h2>
+      <p>Every dollar goes directly into programs, events, and the hands-on work of uplifting youth. No gift is too small.</p>
+      <a href="donate.html" class="btn btn-gold" style="margin-top:1.5rem;display:inline-block">Donate Now →</a>
+    </div>
+    <div class="donate-aside">
+      <span class="heart-anim">❤️</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a class="footer-logo" href="index.html"><span>SHOW</span><em>DEM</em></a>
+      <p>Spreading love, empowering communities, and celebrating talent through the art of double dutch and beyond.</p>
+      <div class="footer-social">
+        <a class="social-btn" href="#">📸</a>
+        <a class="social-btn" href="#">📘</a>
+        <a class="social-btn" href="#">🎵</a>
+        <a class="social-btn" href="#">▶️</a>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Organization</h4><ul>
+      <li><a href="about.html">Our Story</a></li>
+      <li><a href="about.html#mission">Mission & Vision</a></li>
+      <li><a href="about.html#martha">Meet Martha</a></li>
+      <li><a href="about.html#values">Our Values</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Get Involved</h4><ul>
+      <li><a href="events.html">Events</a></li>
+      <li><a href="involve.html">Volunteer</a></li>
+      <li><a href="contact.html?form=partner">Partner With Us</a></li>
+      <li><a href="donate.html">Donate</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Contact</h4><ul>
+      <li><a href="mailto:hello@showdemmovement.org">hello@showdemmovement.org</a></li>
+      <li><a href="contact.html">Connect With Us</a></li>
+      <li><a href="contact.html?form=partner">Media Inquiries</a></li>
+      <li><a href="contact.html?form=partner">Book ShowDem</a></li>
+    </ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 ShowDem Movement Foundation. All rights reserved. 501(c)(3) nonprofit.</p>
+    <p class="footer-tagline">Love in our hearts. Purpose in our actions. Impact in our communities.</p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+function toggleMobile(){
+  const m=document.getElementById('mobile-nav');
+  m.style.display=m.style.display==='flex'?'none':'flex';
+}
+window.addEventListener('scroll',()=>{
+  document.getElementById('main-nav').classList.toggle('scrolled',window.scrollY>50);
+});
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+// ── THREE.JS BRIGHT JOYFUL SCENE ──
+const canvas=document.getElementById('hero-canvas');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+renderer.setSize(window.innerWidth,window.innerHeight);
+renderer.setClearColor(0xFFF8F0,1); // cream background
+
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(55,window.innerWidth/window.innerHeight,0.1,100);
+camera.position.set(0,1.5,9);
+camera.lookAt(0,1,0);
+
+// Bright warm lighting
+const ambient=new THREE.AmbientLight(0xffffff,1.2);
+scene.add(ambient);
+const sunLight=new THREE.DirectionalLight(0xFFF8DC,2.5);
+sunLight.position.set(5,10,5);
+scene.add(sunLight);
+const fillLight=new THREE.DirectionalLight(0xE0F7F4,1.2);
+fillLight.position.set(-5,3,3);
+scene.add(fillLight);
+const rimLight=new THREE.PointLight(0xFF6B4A,2,18);
+rimLight.position.set(0,6,-3);
+scene.add(rimLight);
+
+// ── GROUND ──
+const groundGeo=new THREE.PlaneGeometry(30,30);
+const groundMat=new THREE.MeshLambertMaterial({color:0xFFF0E8});
+const ground=new THREE.Mesh(groundGeo,groundMat);
+ground.rotation.x=-Math.PI/2;
+ground.position.y=-2.2;
+scene.add(ground);
+
+// Ground circles decoration
+[0xFF6B4A,0xFFC857,0x2EC4B6,0xFF6B4A,0xFFC857].forEach((col,i)=>{
+  const r=0.6+Math.random()*.4;
+  const g2=new THREE.CircleGeometry(r,32);
+  const m2=new THREE.MeshLambertMaterial({color:col,opacity:.18,transparent:true});
+  const mesh=new THREE.Mesh(g2,m2);
+  mesh.rotation.x=-Math.PI/2;
+  mesh.position.set((i-2)*2.8,-2.18,Math.sin(i)*1.5);
+  scene.add(mesh);
+});
+
+// ── PERSON BUILDER (bright solid colors) ──
+function makePerson(bodyColor, skinColor){
+  const g=new THREE.Group();
+  const mat=c=>new THREE.MeshLambertMaterial({color:c});
+
+  // head
+  const head=new THREE.Mesh(new THREE.SphereGeometry(.22,16,12),mat(skinColor));
+  head.position.y=1.08;
+  g.add(head);
+
+  // hair bun
+  const hair=new THREE.Mesh(new THREE.SphereGeometry(.14,12,8),mat(0x2C1A0E));
+  hair.position.set(0,1.32,.02);
+  hair.scale.set(1,.7,1);
+  g.add(hair);
+
+  // torso
+  const torso=new THREE.Mesh(new THREE.CylinderGeometry(.2,.18,.55,10),mat(bodyColor));
+  torso.position.y=.52;
+  g.add(torso);
+
+  // skirt / shorts flare
+  const skirt=new THREE.Mesh(new THREE.CylinderGeometry(.28,.32,.22,10),mat(bodyColor));
+  skirt.position.y=.14;
+  g.add(skirt);
+
+  // legs
+  const legMat=mat(skinColor);
+  const legGeo=new THREE.CylinderGeometry(.075,.065,.48,8);
+  const legL=new THREE.Mesh(legGeo,legMat);
+  legL.position.set(-.12,-.28,0);
+  g.add(legL);
+  const legR=new THREE.Mesh(legGeo,legMat);
+  legR.position.set(.12,-.28,0);
+  g.add(legR);
+
+  // shoes
+  [[-.12,-.56],[.12,-.56]].forEach(([x,y])=>{
+    const shoe=new THREE.Mesh(new THREE.BoxGeometry(.14,.08,.2),mat(0x12355B));
+    shoe.position.set(x,y,.04);
+    g.add(shoe);
+  });
+
+  // arms
+  const armGeo=new THREE.CylinderGeometry(.065,.055,.42,8);
+  const armL=new THREE.Mesh(armGeo,mat(bodyColor));
+  armL.position.set(-.3,.52,0);
+  armL.rotation.z=.6;
+  g.add(armL);
+  const armR=new THREE.Mesh(armGeo,mat(bodyColor));
+  armR.position.set(.3,.52,0);
+  armR.rotation.z=-.6;
+  g.add(armR);
+
+  // hands
+  [[-.52,.22],[.52,.22]].forEach(([x,y])=>{
+    const hand=new THREE.Mesh(new THREE.SphereGeometry(.07,8,6),mat(skinColor));
+    hand.position.set(x,y,0);
+    g.add(hand);
+  });
+
+  return g;
+}
+
+// Jumper — teal outfit
+const jumper=makePerson(0x2EC4B6,0x8B5E3C);
+jumper.position.set(0,-1.6,0);
+scene.add(jumper);
+
+// Turner left — coral outfit
+const turnerL=makePerson(0xFF6B4A,0x5C3317);
+turnerL.position.set(-2.6,-2.2,0);
+turnerL.rotation.y=.4;
+scene.add(turnerL);
+
+// Turner right — gold outfit
+const turnerR=makePerson(0xFFC857,0x7A4020);
+turnerR.position.set(2.6,-2.2,0);
+turnerR.rotation.y=-.4;
+scene.add(turnerR);
+
+// ── ROPES ──
+function buildRope(col){
+  const mat=new THREE.MeshLambertMaterial({color:col});
+  const segments=[];
+  const N=20;
+  for(let i=0;i<N;i++){
+    const seg=new THREE.Mesh(new THREE.CylinderGeometry(.025,.025,.26,6),mat);
+    scene.add(seg);
+    segments.push(seg);
+  }
+  return segments;
+}
+
+const rope1segs=buildRope(0xFF6B4A);
+const rope2segs=buildRope(0xFFC857);
+
+function positionRope(segs,time,phaseOffset,amplitude){
+  const N=segs.length;
+  const span=5.0;
+  for(let i=0;i<N;i++){
+    const t=i/(N-1);
+    const x=-span/2+t*span;
+    const arc=Math.sin(t*Math.PI)*amplitude;
+    const y=Math.sin(time*3.8+phaseOffset)*arc-2.1;
+    const z=Math.cos(time*3.8+phaseOffset)*arc*.3;
+
+    const t2=(i+1)/(N-1);
+    const x2=-span/2+t2*span;
+    const arc2=Math.sin(t2*Math.PI)*amplitude;
+    const y2=Math.sin(time*3.8+phaseOffset)*arc2-2.1;
+
+    segs[i].position.set((x+x2)/2,y,z);
+    const angle=Math.atan2(y2-y,x2-x);
+    segs[i].rotation.z=angle-Math.PI/2;
+    const dist=Math.sqrt((x2-x)**2+(y2-y)**2);
+    segs[i].scale.y=dist/.26;
+  }
+}
+
+// ── FLOATING CONFETTI / STARS ──
+const confetti=[];
+const confettiColors=[0xFF6B4A,0xFFC857,0x2EC4B6,0xFF6B4A,0xFFC857,0x2EC4B6,0xFFFFFF];
+for(let i=0;i<35;i++){
+  const col=confettiColors[i%confettiColors.length];
+  const geo=Math.random()>.5
+    ? new THREE.BoxGeometry(.12,.12,.04)
+    : new THREE.SphereGeometry(.07,6,4);
+  const mesh=new THREE.Mesh(geo,new THREE.MeshLambertMaterial({color:col}));
+  mesh.position.set(
+    (Math.random()-.5)*14,
+    (Math.random()-.5)*8+2,
+    (Math.random()-.5)*6-2
+  );
+  mesh.userData={
+    vx:(Math.random()-.5)*.008,
+    vy:-Math.random()*.006-.002,
+    vr:Math.random()*.04-.02,
+    amp:Math.random()*.4+.2,
+    freq:Math.random()*.8+.4,
+    phase:Math.random()*Math.PI*2,
+    startY:mesh.position.y
+  };
+  scene.add(mesh);
+  confetti.push(mesh);
+}
+
+// ── BACKGROUND STARS / DOTS ──
+const dotGeo=new THREE.BufferGeometry();
+const dotPos=new Float32Array(120*3);
+const dotCol=new Float32Array(120*3);
+const pc=[[1,.42,.29],[1,.78,.34],[.18,.77,.71]];
+for(let i=0;i<120;i++){
+  dotPos[i*3]=(Math.random()-.5)*22;
+  dotPos[i*3+1]=(Math.random()-.5)*14;
+  dotPos[i*3+2]=(Math.random()-.5)*10-3;
+  const c=pc[i%3];
+  dotCol[i*3]=c[0];dotCol[i*3+1]=c[1];dotCol[i*3+2]=c[2];
+}
+dotGeo.setAttribute('position',new THREE.BufferAttribute(dotPos,3));
+dotGeo.setAttribute('color',new THREE.BufferAttribute(dotCol,3));
+const dots=new THREE.Points(dotGeo,new THREE.PointsMaterial({size:.08,vertexColors:true,opacity:.55,transparent:true}));
+scene.add(dots);
+
+// ── MOUSE ──
+let mx=0,my=0;
+document.addEventListener('mousemove',e=>{
+  mx=(e.clientX/window.innerWidth-.5)*2;
+  my=-(e.clientY/window.innerHeight-.5)*2;
+});
+
+window.addEventListener('resize',()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
+});
+
+const clock=new THREE.Clock();
+
+function animate(){
+  requestAnimationFrame(animate);
+  const t=clock.getElapsedTime();
+
+  // Camera parallax
+  camera.position.x+=(mx*.5-camera.position.x)*.04;
+  camera.position.y+=(1.5+my*.35-camera.position.y)*.04;
+  camera.lookAt(0,1,0);
+
+  // ── JUMPER ──
+  const jumpCycle=Math.sin(t*3.8);
+  const airTime=Math.max(0,jumpCycle);
+  jumper.position.y=-1.6+airTime*1.4;
+
+  // Legs spread when in air
+  if(jumper.children[4]){ // legL
+    const spread=airTime*.35;
+    jumper.children[4].position.set(-.12-spread,-.28,0);
+    jumper.children[4].rotation.z=-spread*.8;
+  }
+  if(jumper.children[5]){ // legR
+    const spread=airTime*.35;
+    jumper.children[5].position.set(.12+spread,-.28,0);
+    jumper.children[5].rotation.z=spread*.8;
+  }
+  // Arms up when jumping
+  if(jumper.children[8]){ jumper.children[8].rotation.z=.6-airTime*.9; }
+  if(jumper.children[9]){ jumper.children[9].rotation.z=-.6+airTime*.9; }
+  jumper.rotation.y=Math.sin(t*.4)*.06;
+
+  // ── TURNERS ──
+  // Turner left — arm winds rope
+  turnerL.rotation.z=Math.sin(t*3.8)*.06;
+  if(turnerL.children[8]){ turnerL.children[8].rotation.z=.6+Math.sin(t*3.8+.5)*.5; }
+  if(turnerL.children[9]){ turnerL.children[9].rotation.z=-.6+Math.sin(t*3.8)*.3; }
+
+  turnerR.rotation.z=-Math.sin(t*3.8)*.06;
+  if(turnerR.children[8]){ turnerR.children[8].rotation.z=.6+Math.sin(t*3.8+Math.PI+.5)*.5; }
+  if(turnerR.children[9]){ turnerR.children[9].rotation.z=-.6+Math.sin(t*3.8+Math.PI)*.3; }
+
+  // ── ROPES ──
+  positionRope(rope1segs,t,0,1.1);
+  positionRope(rope2segs,t,Math.PI,1.1);
+
+  // ── CONFETTI ──
+  confetti.forEach(c=>{
+    c.position.x+=c.userData.vx+Math.sin(t*c.userData.freq+c.userData.phase)*.005;
+    c.position.y+=c.userData.vy;
+    c.rotation.x+=c.userData.vr;
+    c.rotation.z+=c.userData.vr*.7;
+    if(c.position.y<-6){ c.position.y=7; c.position.x=(Math.random()-.5)*14; }
+  });
+
+  dots.rotation.y=t*.008;
+
+  renderer.render(scene,camera);
+}
+animate();
+</script>
+</body>
+</html>
