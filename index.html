@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ShowDem Movement Foundation – Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--coral:#FF6B4A;--gold:#FFC857;--teal:#2EC4B6;--navy:#12355B;--cream:#FFF8F0;--white:#ffffff}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Montserrat',sans-serif;background:var(--white);color:var(--navy);overflow-x:hidden}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:68px}
+.nav-logo{font-size:1.3rem;font-weight:900;text-decoration:none;color:var(--white)}
+.nav-logo span{color:var(--coral)}
+.nav-logo em{color:var(--teal);font-style:normal}
+.nav-links{display:flex;gap:1.8rem;list-style:none;align-items:center}
+.nav-links a{color:rgba(255,248,240,0.8);text-decoration:none;font-size:0.78rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;transition:color .2s}
+.nav-links a:hover{color:var(--gold)}
+.nav-cta{background:var(--coral);color:var(--white)!important;padding:.5rem 1.2rem;border-radius:50px;transition:background .2s!important}
+.nav-cta:hover{background:var(--gold)!important;color:var(--navy)!important}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.hamburger span{display:block;width:24px;height:2px;background:var(--white);border-radius:2px;transition:.3s}
+.mobile-nav{display:none;position:fixed;top:68px;left:0;right:0;background:var(--navy);z-index:99;padding:1.5rem 5%;flex-direction:column;gap:1rem;border-top:1px solid rgba(255,255,255,.1)}
+.mobile-nav a{color:rgba(255,248,240,.8);text-decoration:none;font-size:.9rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.mobile-nav a.mob-cta{color:var(--coral)!important}
+
+/* BUTTONS */
+.btn{display:inline-block;padding:.85rem 2rem;border-radius:50px;font-weight:800;font-size:.82rem;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;transition:transform .2s,box-shadow .2s;cursor:pointer;border:none;font-family:'Montserrat',sans-serif}
+.btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.btn-coral{background:var(--coral);color:var(--white)}
+.btn-teal{background:var(--teal);color:var(--white)}
+.btn-gold{background:var(--gold);color:var(--navy)}
+.btn-navy{background:var(--navy);color:var(--white)}
+.btn-outline{background:transparent;color:var(--white);border:2.5px solid rgba(255,255,255,.5)}
+.btn-outline:hover{border-color:var(--teal);color:var(--teal)}
+
+/* SECTION HELPERS */
+.section-label{font-size:.7rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:.6rem;display:block}
+.section-title{font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:900;line-height:1.1;margin-bottom:1.2rem}
+
+/* HERO */
+.hero{min-height:100vh;background:var(--navy);display:flex;align-items:center;padding:100px 5% 70px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;width:600px;height:600px;border-radius:50%;border:2px solid rgba(46,196,182,.06);top:50%;right:-150px;transform:translateY(-50%)}
+.hero::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;border:2px solid rgba(255,200,87,.06);bottom:-80px;left:-80px}
+.hero-inner{max-width:700px;position:relative;z-index:2}
+.hero-eyebrow{font-size:.72rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem;display:block}
+.hero-headline{font-size:clamp(3rem,6vw,5.5rem);font-weight:900;line-height:1.0;color:var(--white);margin-bottom:1.5rem}
+.hero-headline .c{color:var(--coral)}
+.hero-headline .t{color:var(--teal)}
+.hero-headline .g{color:var(--gold)}
+.hero-sub{font-size:1.05rem;font-weight:500;color:rgba(255,248,240,.75);line-height:1.8;max-width:520px;margin-bottom:2.5rem}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap}
+
+/* RIBBON */
+.ribbon{background:var(--coral);padding:.8rem 0;overflow:hidden;white-space:nowrap}
+.ribbon-track{display:inline-block;animation:marquee 22s linear infinite}
+.ribbon span{font-size:.75rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--white);padding:0 2rem}
+.ribbon span::before{content:'✦';margin-right:.5rem;color:var(--gold)}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* MISSION */
+.mission{background:var(--cream);padding:90px 5%;text-align:center}
+.mission-pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;max-width:960px;margin:3rem auto 0}
+.pillar{background:var(--white);border-radius:20px;padding:2.5rem 2rem;position:relative;overflow:hidden;transition:transform .25s}
+.pillar:hover{transform:translateY(-6px)}
+.pillar::before{content:'';position:absolute;top:0;left:0;right:0;height:5px}
+.pillar:nth-child(1)::before{background:var(--coral)}
+.pillar:nth-child(2)::before{background:var(--gold)}
+.pillar:nth-child(3)::before{background:var(--teal)}
+.pillar-icon{font-size:2.5rem;margin-bottom:1rem;display:block}
+.pillar h3{font-size:.9rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:.75rem}
+.pillar:nth-child(1) h3{color:var(--coral)}
+.pillar:nth-child(2) h3{color:var(--gold)}
+.pillar:nth-child(3) h3{color:var(--teal)}
+.pillar p{font-size:.88rem;line-height:1.7;color:#555}
+
+/* EVENT TEASER */
+.event-teaser{background:var(--navy);padding:90px 5%}
+.event-teaser-inner{max-width:1000px;margin:0 auto}
+.event-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:3rem;display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:center}
+.event-card-label{font-size:.68rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:.75rem;display:block}
+.event-card h2{font-size:clamp(1.8rem,3vw,2.6rem);font-weight:900;color:var(--white);margin-bottom:1rem;line-height:1.1}
+.event-card p{color:rgba(255,248,240,.7);font-size:.92rem;line-height:1.7;margin-bottom:1.5rem}
+.event-chips{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:2rem}
+.chip{padding:.4rem 1rem;border-radius:50px;font-size:.7rem;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+.chip-gold{background:rgba(255,200,87,.15);color:var(--gold);border:1px solid rgba(255,200,87,.3)}
+.chip-teal{background:rgba(46,196,182,.15);color:var(--teal);border:1px solid rgba(46,196,182,.3)}
+.chip-coral{background:rgba(255,107,74,.15);color:var(--coral);border:1px solid rgba(255,107,74,.3)}
+.event-aside{text-align:center;flex-shrink:0}
+.event-date-box{background:var(--coral);border-radius:20px;padding:1.5rem 2rem;margin-bottom:1rem}
+.event-date-box .month{font-size:.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.8);display:block}
+.event-date-box .day{font-size:3.5rem;font-weight:900;color:var(--white);line-height:1;display:block}
+.event-date-box .dow{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.7);display:block;margin-top:.2rem}
+.event-aside p{color:rgba(255,248,240,.55);font-size:.78rem;line-height:1.5}
+
+/* DOUBLE DUTCH SPLIT */
+.dd-split{background:var(--white);padding:90px 5%;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;max-width:1200px;margin:0 auto}
+.dd-split-text .section-label{}
+.dd-split-text p{font-size:.95rem;color:#555;line-height:1.8;margin-bottom:1rem}
+.feature-stack{display:flex;flex-direction:column;gap:1.2rem}
+.feature-item{border-radius:16px;padding:1.5rem;display:flex;align-items:center;gap:1rem}
+.feature-item.f1{background:rgba(255,107,74,.07);border-left:4px solid var(--coral)}
+.feature-item.f2{background:rgba(255,200,87,.07);border-left:4px solid var(--gold)}
+.feature-item.f3{background:rgba(46,196,182,.07);border-left:4px solid var(--teal)}
+.feature-icon{font-size:1.8rem;flex-shrink:0}
+.feature-item h4{font-size:.82rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--navy);margin-bottom:.2rem}
+.feature-item p{font-size:.82rem;color:#777;margin:0;line-height:1.5}
+
+/* IMPACT BAR */
+.impact{background:var(--gold);padding:70px 5%;text-align:center}
+.impact-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;max-width:900px;margin:2.5rem auto 0}
+.impact-num{font-size:3rem;font-weight:900;color:var(--navy);display:block;line-height:1}
+.impact-desc{font-size:.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(18,53,91,.6);margin-top:.4rem}
+
+/* FOUNDER PREVIEW */
+.founder-strip{background:var(--cream);padding:90px 5%;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;max-width:1200px;margin:0 auto}
+.founder-strip .section-title{color:var(--navy)}
+.founder-strip p{font-size:.95rem;color:#555;line-height:1.8;margin-bottom:1rem}
+.founder-strip strong{color:var(--coral)}
+.founder-card{background:var(--white);border-radius:24px;padding:2.5rem;box-shadow:0 8px 40px rgba(18,53,91,.08);text-align:center}
+.founder-avatar{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--coral),var(--teal));margin:0 auto 1.2rem;display:flex;align-items:center;justify-content:center;font-size:2.2rem}
+.founder-card h3{font-size:1.1rem;font-weight:900;color:var(--navy);margin-bottom:.2rem}
+.founder-title-tag{font-size:.68rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--teal);display:block;margin-bottom:1rem}
+.founder-card p{font-size:.85rem;line-height:1.7;color:#666}
+.founder-quote{margin-top:1.2rem;padding:1rem 1.2rem;background:var(--cream);border-left:3px solid var(--coral);border-radius:0 12px 12px 0;font-style:italic;font-size:.85rem;color:var(--navy);font-weight:600;text-align:left}
+
+/* INVOLVE TEASE */
+.involve-tease{background:var(--white);padding:90px 5%;text-align:center}
+.involve-tease .section-title{color:var(--navy)}
+.involve-tease>p{font-size:.95rem;color:#777;max-width:500px;margin:0 auto 3rem;line-height:1.7}
+.involve-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;max-width:960px;margin:0 auto 2.5rem}
+.inv-card{border-radius:20px;padding:2.2rem 1.8rem;text-align:center;cursor:pointer;transition:transform .2s,box-shadow .2s;text-decoration:none;display:block}
+.inv-card:hover{transform:translateY(-5px);box-shadow:0 20px 50px rgba(0,0,0,.1)}
+.inv-card.ic1{background:var(--coral)}
+.inv-card.ic2{background:var(--teal)}
+.inv-card.ic3{background:var(--navy)}
+.inv-card.ic4{background:var(--gold)}
+.inv-card .ic-icon{font-size:2.5rem;display:block;margin-bottom:1rem}
+.inv-card h3{font-size:.85rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:.5rem;color:var(--white)}
+.inv-card.ic4 h3{color:var(--navy)}
+.inv-card p{font-size:.82rem;line-height:1.6;color:rgba(255,255,255,.8)}
+.inv-card.ic4 p{color:rgba(18,53,91,.7)}
+
+/* DONATE CTA */
+.donate-cta{background:var(--coral);padding:80px 5%;display:grid;grid-template-columns:1fr auto;gap:3rem;align-items:center;max-width:1200px;margin:0 auto}
+.donate-cta .section-label{color:var(--gold)}
+.donate-cta h2{font-size:clamp(2rem,3.5vw,3rem);font-weight:900;color:var(--white);margin-bottom:1rem;line-height:1.1}
+.donate-cta p{color:rgba(255,255,255,.85);font-size:.95rem;line-height:1.8}
+.donate-cta-aside{flex-shrink:0;text-align:center}
+
+/* FOOTER */
+footer{background:var(--navy);padding:60px 5% 30px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.footer-logo{font-size:1.4rem;font-weight:900;color:var(--white);display:block;margin-bottom:1rem;text-decoration:none}
+.footer-logo span{color:var(--coral)}
+.footer-logo em{color:var(--teal);font-style:normal}
+.footer-brand p{font-size:.83rem;color:rgba(255,248,240,.5);line-height:1.7;max-width:240px}
+.footer-social{display:flex;gap:.75rem;margin-top:1.5rem}
+.social-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:var(--white);font-size:.9rem;text-decoration:none;transition:background .2s}
+.social-btn:hover{background:var(--teal)}
+.footer-col h4{font-size:.68rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem}
+.footer-col ul{list-style:none}
+.footer-col li{margin-bottom:.6rem}
+.footer-col a{color:rgba(255,248,240,.55);text-decoration:none;font-size:.83rem;transition:color .2s}
+.footer-col a:hover{color:var(--teal)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.footer-bottom p{font-size:.78rem;color:rgba(255,248,240,.35)}
+.footer-tagline{font-size:.78rem;font-weight:700;color:var(--gold);font-style:italic}
+
+/* RESPONSIVE */
+@media(max-width:960px){
+  .mission-pillars,.involve-grid{grid-template-columns:1fr 1fr}
+  .event-card{grid-template-columns:1fr}
+  .event-aside{display:flex;gap:1rem;align-items:center;text-align:left}
+  .event-date-box{margin-bottom:0}
+  .dd-split,.founder-strip{grid-template-columns:1fr;gap:3rem;max-width:100%}
+  .donate-cta{grid-template-columns:1fr}
+  .impact-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:640px){
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .mission-pillars,.involve-grid{grid-template-columns:1fr}
+  .impact-grid{grid-template-columns:1fr 1fr}
+  .footer-grid{grid-template-columns:1fr}
+  .hero-btns{flex-direction:column;width:fit-content}
+  .btn{text-align:center}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="showdem.html"><span>SHOW</span><em>DEM</em></a>
+  <ul class="nav-links">
+    <li><a href="showdem.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="events.html">Events</a></li>
+    <li><a href="involve.html">Get Involved</a></li>
+    <li><a href="donate.html">Donate</a></li>
+    <li><a href="contact.html" class="nav-cta">Connect</a></li>
+  </ul>
+  <button class="hamburger" onclick="toggleMobile()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-nav" id="mobile-nav">
+  <a href="showdem.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="events.html">Events</a>
+  <a href="involve.html">Get Involved</a>
+  <a href="donate.html">Donate</a>
+  <a href="contact.html" class="mob-cta">Connect →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <span class="hero-eyebrow">ShowDem Movement Foundation</span>
+    <h1 class="hero-headline">
+      Jump In.<br>
+      <span class="c">Love.</span>
+      <span class="t"> Shine.</span><br>
+      <span class="g">Give Back.</span>
+    </h1>
+    <p class="hero-sub">A Double Dutch nonprofit spreading love, educating youth, and celebrating talent — one community at a time.</p>
+    <div class="hero-btns">
+      <a href="events.html" class="btn btn-coral">See Upcoming Events</a>
+      <a href="involve.html" class="btn btn-outline">Get Involved</a>
+    </div>
+  </div>
+</section>
+
+<!-- RIBBON -->
+<div class="ribbon">
+  <div class="ribbon-track">
+    <span>Love</span><span>Education</span><span>Talent</span><span>Community</span>
+    <span>Double Dutch</span><span>Giving Back</span><span>Empower</span><span>Elevate</span>
+    <span>Love</span><span>Education</span><span>Talent</span><span>Community</span>
+    <span>Double Dutch</span><span>Giving Back</span><span>Empower</span><span>Elevate</span>
+  </div>
+</div>
+
+<!-- MISSION -->
+<section class="mission" id="mission">
+  <span class="section-label">Why We Exist</span>
+  <h2 class="section-title">Purpose in Every Jump</h2>
+  <p style="font-size:1rem;color:#777;max-width:540px;margin:0 auto;line-height:1.8;">We uplift communities through love, education, and the celebration of talent — one rope turn at a time.</p>
+  <div class="mission-pillars">
+    <div class="pillar">
+      <span class="pillar-icon">❤️</span>
+      <h3>Love</h3>
+      <p>We show up for youth, families, and communities with warmth, care, and genuine commitment to their growth and wellbeing.</p>
+    </div>
+    <div class="pillar">
+      <span class="pillar-icon">📚</span>
+      <h3>Education</h3>
+      <p>Double dutch is a gateway to learning. We weave academic enrichment and life skills into everything we do on and off the rope.</p>
+    </div>
+    <div class="pillar">
+      <span class="pillar-icon">⭐</span>
+      <h3>Talent</h3>
+      <p>Every person has a gift worth celebrating. ShowDem creates stages and spaces for youth to showcase who they are.</p>
+    </div>
+  </div>
+  <div style="margin-top:3rem">
+    <a href="about.html" class="btn btn-navy">Our Full Story →</a>
+  </div>
+</section>
+
+<!-- EVENT TEASER -->
+<section class="event-teaser">
+  <div class="event-teaser-inner">
+    <span class="section-label" style="color:var(--gold);">Upcoming Event</span>
+    <h2 class="section-title" style="color:var(--white);margin-bottom:2rem;">Don't Miss the Jump Off</h2>
+    <div class="event-card">
+      <div>
+        <span class="event-card-label">ShowDem Movement Presents</span>
+        <h2>The ShowDem Jump Off ⚡</h2>
+        <p>Represent your borough or city — come solo or with a partner! We'll be jumping, showing off moves, and having a community celebration. Battle, vibe, or just come to watch. All are welcome.</p>
+        <div class="event-chips">
+          <span class="chip chip-gold">📅 Saturday, July 18</span>
+          <span class="chip chip-teal">🕕 6:00 – 9:00 PM</span>
+          <span class="chip chip-coral">📍 125th St, Harlem</span>
+        </div>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap">
+          <a href="events.html" class="btn btn-coral">Event Details</a>
+          <a href="contact.html?form=jumpoff" class="btn btn-outline">Register Now →</a>
+        </div>
+      </div>
+      <div class="event-aside">
+        <div class="event-date-box">
+          <span class="month">July</span>
+          <span class="day">18</span>
+          <span class="dow">Saturday</span>
+        </div>
+        <p>Adam Clayton Powell Jr.<br>State Office Building<br>125th Street, Harlem</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DOUBLE DUTCH SPLIT -->
+<section style="background:var(--white);padding:90px 5%">
+  <div class="dd-split" style="padding:0">
+    <div class="dd-split-text">
+      <span class="section-label">The Heartbeat</span>
+      <h2 class="section-title">Double Dutch Is More Than a Game</h2>
+      <p>Two ropes turning in sync. Feet flying. A crowd counting along. Double dutch is rhythm, trust, and community in motion — and it's been bringing people together for generations.</p>
+      <p>At ShowDem, we honor that legacy while making it new — creating space for every skill level, every age, and every community.</p>
+      <a href="contact.html?form=session" class="btn btn-teal" style="margin-top:.5rem">Join a Public Session →</a>
+    </div>
+    <div class="feature-stack">
+      <div class="feature-item f1">
+        <span class="feature-icon">🏆</span>
+        <div><h4>Competitive & Recreational</h4><p>Training for competition while keeping joy front and center for all skill levels.</p></div>
+      </div>
+      <div class="feature-item f2">
+        <span class="feature-icon">🌍</span>
+        <div><h4>Rooted in Culture</h4><p>Double dutch has deep roots in Black and urban communities — we celebrate and preserve that legacy.</p></div>
+      </div>
+      <div class="feature-item f3">
+        <span class="feature-icon">💪</span>
+        <div><h4>Physical & Mental Wellness</h4><p>Jumping is exercise, coordination, and stress relief — a full-body, full-mind experience.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section class="impact">
+  <span class="section-label" style="color:var(--navy)">Our Impact</span>
+  <h2 class="section-title" style="color:var(--navy)">Love Measured in Action</h2>
+  <div class="impact-grid">
+    <div><span class="impact-num">500+</span><span class="impact-desc">Youth Reached</span></div>
+    <div><span class="impact-num">10+</span><span class="impact-desc">Communities Served</span></div>
+    <div><span class="impact-num">25+</span><span class="impact-desc">Programs & Events</span></div>
+    <div><span class="impact-num">100%</span><span class="impact-desc">Fueled by Love</span></div>
+  </div>
+</section>
+
+<!-- FOUNDER PREVIEW -->
+<section style="background:var(--cream);padding:90px 5%">
+  <div class="founder-strip" style="padding:0">
+    <div>
+      <span class="section-label">Our Story</span>
+      <h2 class="section-title">Built on Love, Powered by Community</h2>
+      <p>ShowDem Movement Foundation was born from a simple belief: <strong>every child deserves to be seen, celebrated, and supported.</strong></p>
+      <p>Founded by Martha Igbinosa, ShowDem channels the energy of double dutch into programs that uplift young people and strengthen the communities around them.</p>
+      <p>We believe talent is everywhere. What it needs is a stage, a coach, and a crowd that believes in it.</p>
+      <a href="about.html" class="btn btn-coral" style="margin-top:.5rem">Read Our Story →</a>
+    </div>
+    <div class="founder-card">
+      <div class="founder-avatar">👑</div>
+      <h3>Martha Igbinosa</h3>
+      <span class="founder-title-tag">Founder & Executive Director</span>
+      <p>With a heart full of purpose and a vision for empowered communities, Martha built ShowDem to be a movement — not just an organization.</p>
+      <div class="founder-quote">"Love in our hearts. Purpose in our actions. Impact in our communities."</div>
+    </div>
+  </div>
+</section>
+
+<!-- GET INVOLVED TEASE -->
+<section class="involve-tease">
+  <span class="section-label">Join Us</span>
+  <h2 class="section-title">There's a Place for You Here</h2>
+  <p>Whether you jump, cheer, volunteer, or give — ShowDem is better with you in it.</p>
+  <div class="involve-grid">
+    <a href="contact.html?form=session" class="inv-card ic1">
+      <span class="ic-icon">🪢</span>
+      <h3>Join a Session</h3>
+      <p>Complete the one-time check-in and jump with us at any public session.</p>
+    </a>
+    <a href="contact.html?form=volunteer" class="inv-card ic2">
+      <span class="ic-icon">🙋</span>
+      <h3>Volunteer</h3>
+      <p>Coach, mentor, or support — our volunteers make everything happen.</p>
+    </a>
+    <a href="contact.html?form=partner" class="inv-card ic3">
+      <span class="ic-icon">🏢</span>
+      <h3>Partner With Us</h3>
+      <p>Schools, orgs, and businesses — let's build something powerful together.</p>
+    </a>
+  </div>
+  <a href="involve.html" class="btn btn-navy">Explore All Ways to Help →</a>
+</section>
+
+<!-- DONATE CTA -->
+<section style="background:var(--coral);padding:80px 5%">
+  <div class="donate-cta" style="padding:0">
+    <div>
+      <span class="section-label">Give</span>
+      <h2 class="section-title" style="color:var(--white)">Your Gift Moves Mountains</h2>
+      <p style="color:rgba(255,255,255,.85);font-size:.95rem;line-height:1.8;max-width:480px">Every dollar goes directly into programs, events, and the hands-on work of uplifting youth. No gift is too small. All love counts.</p>
+    </div>
+    <div class="donate-cta-aside">
+      <span style="font-size:4rem;display:block;margin-bottom:1rem;animation:heartbeat 1.5s ease-in-out infinite">❤️</span>
+      <a href="donate.html" class="btn btn-gold" style="font-size:.9rem">Donate Now</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a class="footer-logo" href="showdem.html"><span>SHOW</span><em>DEM</em></a>
+      <p>Spreading love, empowering communities, and celebrating talent through the art of double dutch and beyond.</p>
+      <div class="footer-social">
+        <a class="social-btn" href="#" aria-label="Instagram">📸</a>
+        <a class="social-btn" href="#" aria-label="Facebook">📘</a>
+        <a class="social-btn" href="#" aria-label="TikTok">🎵</a>
+        <a class="social-btn" href="#" aria-label="YouTube">▶️</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Organization</h4>
+      <ul>
+        <li><a href="about.html">Our Story</a></li>
+        <li><a href="about.html#mission">Mission & Vision</a></li>
+        <li><a href="about.html#martha">Meet Martha</a></li>
+        <li><a href="about.html#values">Our Values</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Get Involved</h4>
+      <ul>
+        <li><a href="events.html">Events</a></li>
+        <li><a href="involve.html">Volunteer</a></li>
+        <li><a href="contact.html?form=partner">Partner With Us</a></li>
+        <li><a href="donate.html">Donate</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="mailto:hello@showdemmovement.org">hello@showdemmovement.org</a></li>
+        <li><a href="contact.html">Connect With Us</a></li>
+        <li><a href="contact.html?form=partner">Media Inquiries</a></li>
+        <li><a href="contact.html?form=partner">Book ShowDem</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 ShowDem Movement Foundation. All rights reserved. 501(c)(3) nonprofit.</p>
+    <p class="footer-tagline">Love in our hearts. Purpose in our actions. Impact in our communities.</p>
+  </div>
+</footer>
+
+<script>
+function toggleMobile(){
+  const m=document.getElementById('mobile-nav');
+  m.style.display=m.style.display==='flex'?'none':'flex';
+}
+@keyframes heartbeat{0%,100%{transform:scale(1)}25%{transform:scale(1.12)}50%{transform:scale(1)}75%{transform:scale(1.06)}}
+</script>
+</body>
+</html>

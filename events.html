@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Events – ShowDem Movement Foundation</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--coral:#FF6B4A;--gold:#FFC857;--teal:#2EC4B6;--navy:#12355B;--cream:#FFF8F0;--white:#ffffff}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:'Montserrat',sans-serif;background:var(--white);color:var(--navy);overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:68px}
+.nav-logo{font-size:1.3rem;font-weight:900;text-decoration:none;color:var(--white)}.nav-logo span{color:var(--coral)}.nav-logo em{color:var(--teal);font-style:normal}
+.nav-links{display:flex;gap:1.8rem;list-style:none;align-items:center}
+.nav-links a{color:rgba(255,248,240,.8);text-decoration:none;font-size:.78rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--gold)}
+.nav-cta{background:var(--coral);color:var(--white)!important;padding:.5rem 1.2rem;border-radius:50px}
+.nav-cta:hover{background:var(--gold)!important;color:var(--navy)!important}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.hamburger span{display:block;width:24px;height:2px;background:var(--white);border-radius:2px}
+.mobile-nav{display:none;position:fixed;top:68px;left:0;right:0;background:var(--navy);z-index:99;padding:1.5rem 5%;flex-direction:column;gap:1rem;border-top:1px solid rgba(255,255,255,.1)}
+.mobile-nav a{color:rgba(255,248,240,.8);text-decoration:none;font-size:.9rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.mobile-nav a.mob-cta{color:var(--coral)!important}
+.btn{display:inline-block;padding:.85rem 2rem;border-radius:50px;font-weight:800;font-size:.82rem;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;transition:transform .2s,box-shadow .2s;cursor:pointer;border:none;font-family:'Montserrat',sans-serif}
+.btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.btn-coral{background:var(--coral);color:var(--white)}.btn-teal{background:var(--teal);color:var(--white)}.btn-gold{background:var(--gold);color:var(--navy)}.btn-navy{background:var(--navy);color:var(--white)}.btn-white{background:var(--white);color:var(--navy)}.btn-outline-white{background:transparent;color:var(--white);border:2.5px solid rgba(255,255,255,.5)}.btn-outline-white:hover{border-color:var(--white);background:rgba(255,255,255,.1)}
+.section-label{font-size:.7rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:.6rem;display:block}
+.section-title{font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:900;line-height:1.1;margin-bottom:1.2rem}
+.chip{padding:.4rem 1rem;border-radius:50px;font-size:.7rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;display:inline-block}
+.chip-gold{background:rgba(255,200,87,.15);color:var(--gold);border:1px solid rgba(255,200,87,.3)}
+.chip-teal{background:rgba(46,196,182,.15);color:var(--teal);border:1px solid rgba(46,196,182,.3)}
+.chip-coral{background:rgba(255,107,74,.15);color:var(--coral);border:1px solid rgba(255,107,74,.3)}
+
+/* PAGE HERO */
+.page-hero{background:var(--navy);padding:140px 5% 90px;position:relative;overflow:hidden}
+.page-hero::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;border:2px solid rgba(255,200,87,.06);top:50%;right:-100px;transform:translateY(-50%)}
+.page-hero-inner{max-width:700px;position:relative;z-index:1}
+.page-hero .section-label{color:var(--gold)}
+.page-hero h1{font-size:clamp(2.5rem,5vw,4rem);font-weight:900;color:var(--white);line-height:1.05;margin-bottom:1.2rem}
+.page-hero h1 em{color:var(--coral);font-style:normal}
+.page-hero p{font-size:1rem;color:rgba(255,248,240,.7);max-width:520px;line-height:1.8;margin-bottom:2rem}
+
+/* FEATURED EVENT */
+.featured{background:var(--cream);padding:90px 5%}
+.featured-inner{max-width:1100px;margin:0 auto}
+.featured-badge{display:inline-flex;align-items:center;gap:.5rem;background:var(--coral);color:var(--white);padding:.35rem 1rem;border-radius:50px;font-size:.68rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:1.5rem}
+.event-main{display:grid;grid-template-columns:1fr 340px;gap:3rem;align-items:start}
+.event-detail h2{font-size:clamp(2rem,3.5vw,3rem);font-weight:900;color:var(--navy);margin-bottom:.75rem;line-height:1.1}
+.event-detail h2 em{color:var(--coral);font-style:normal}
+.event-detail .tagline{font-size:1.05rem;color:#555;line-height:1.7;margin-bottom:1.5rem}
+.event-meta{display:flex;flex-direction:column;gap:.75rem;margin-bottom:2rem;padding:1.5rem;background:var(--white);border-radius:16px;border:1px solid #eee}
+.meta-row{display:flex;align-items:center;gap:.75rem;font-size:.88rem;color:#555}
+.meta-row strong{color:var(--navy);font-weight:800;min-width:60px}
+.meta-icon{font-size:1.1rem;flex-shrink:0}
+.event-desc p{font-size:.92rem;line-height:1.8;color:#555;margin-bottom:1rem}
+.event-sidebar{position:sticky;top:90px}
+.reg-box{background:var(--navy);border-radius:24px;padding:2rem;color:var(--white)}
+.reg-box h3{font-size:1.1rem;font-weight:900;margin-bottom:.4rem}
+.reg-box .reg-sub{font-size:.75rem;color:rgba(255,248,240,.6);margin-bottom:1.5rem;line-height:1.5;display:block}
+.reg-date{background:var(--coral);border-radius:16px;padding:1.2rem;text-align:center;margin-bottom:1.5rem}
+.reg-date .rd-month{font-size:.65rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.8);display:block}
+.reg-date .rd-day{font-size:3rem;font-weight:900;color:var(--white);display:block;line-height:1}
+.reg-date .rd-dow{font-size:.7rem;font-weight:700;color:rgba(255,255,255,.75);display:block;margin-top:.2rem}
+.reg-box .reg-btn{display:block;width:100%;padding:1rem;text-align:center;background:var(--coral);color:var(--white);font-weight:800;font-size:.85rem;letter-spacing:1.5px;text-transform:uppercase;border-radius:12px;text-decoration:none;transition:background .2s,transform .2s;margin-bottom:.75rem}
+.reg-box .reg-btn:hover{background:var(--gold);color:var(--navy);transform:translateY(-2px)}
+.reg-box .reg-session{display:block;width:100%;padding:.8rem;text-align:center;background:rgba(255,255,255,.08);color:rgba(255,248,240,.8);font-weight:700;font-size:.78rem;letter-spacing:1px;text-transform:uppercase;border-radius:12px;text-decoration:none;transition:background .2s;border:1px solid rgba(255,255,255,.15)}
+.reg-box .reg-session:hover{background:rgba(255,255,255,.15)}
+.reg-box hr{border:none;border-top:1px solid rgba(255,255,255,.1);margin:1.2rem 0}
+.reg-box .reg-note{font-size:.72rem;color:rgba(255,248,240,.5);line-height:1.5;text-align:center}
+
+/* WHAT TO EXPECT */
+.expect{padding:90px 5%;background:var(--white)}
+.expect-inner{max-width:1000px;margin:0 auto}
+.expect-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem}
+.expect-card{border-radius:20px;padding:2rem;text-align:center}
+.expect-card.ec1{background:rgba(255,107,74,.07)}
+.expect-card.ec2{background:rgba(255,200,87,.1)}
+.expect-card.ec3{background:rgba(46,196,182,.08)}
+.expect-card .ec-icon{font-size:2.5rem;display:block;margin-bottom:1rem}
+.expect-card h3{font-size:.82rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:.6rem}
+.expect-card.ec1 h3{color:var(--coral)}
+.expect-card.ec2 h3{color:var(--gold)}
+.expect-card.ec3 h3{color:var(--teal)}
+.expect-card p{font-size:.85rem;line-height:1.7;color:#666}
+
+/* FAQ */
+.faq{background:var(--cream);padding:90px 5%}
+.faq-inner{max-width:780px;margin:0 auto}
+.faq-item{background:var(--white);border-radius:16px;margin-bottom:1rem;overflow:hidden}
+.faq-q{width:100%;padding:1.2rem 1.5rem;display:flex;justify-content:space-between;align-items:center;background:none;border:none;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:.9rem;font-weight:700;color:var(--navy);text-align:left;transition:background .2s}
+.faq-q:hover{background:rgba(18,53,91,.03)}
+.faq-q.open{color:var(--coral)}
+.faq-arrow{font-size:1rem;transition:transform .3s;flex-shrink:0;margin-left:1rem}
+.faq-q.open .faq-arrow{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease}
+.faq-a.open{max-height:200px}
+.faq-a-inner{padding:0 1.5rem 1.2rem;font-size:.88rem;line-height:1.75;color:#666}
+
+/* PUBLIC SESSIONS */
+.pub-sessions{padding:90px 5%;background:var(--navy)}
+.pub-inner{max-width:900px;margin:0 auto;text-align:center}
+.pub-inner .section-label{color:var(--gold)}
+.pub-inner .section-title{color:var(--white);margin-bottom:.8rem}
+.pub-inner>p{color:rgba(255,248,240,.7);font-size:.95rem;line-height:1.8;max-width:560px;margin:0 auto 2.5rem}
+.session-notice{background:rgba(255,200,87,.1);border:1px solid rgba(255,200,87,.25);border-radius:20px;padding:2rem;text-align:left;margin-bottom:2rem}
+.session-notice h4{font-size:.72rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem}
+.session-notice p{font-size:.88rem;line-height:1.7;color:rgba(255,248,240,.75)}
+
+/* FOOTER */
+footer{background:var(--navy);padding:60px 5% 30px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.footer-logo{font-size:1.4rem;font-weight:900;color:var(--white);display:block;margin-bottom:1rem;text-decoration:none}
+.footer-logo span{color:var(--coral)}.footer-logo em{color:var(--teal);font-style:normal}
+.footer-brand p{font-size:.83rem;color:rgba(255,248,240,.5);line-height:1.7;max-width:240px}
+.footer-social{display:flex;gap:.75rem;margin-top:1.5rem}
+.social-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:var(--white);font-size:.9rem;text-decoration:none;transition:background .2s}
+.social-btn:hover{background:var(--teal)}
+.footer-col h4{font-size:.68rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem}
+.footer-col ul{list-style:none}.footer-col li{margin-bottom:.6rem}
+.footer-col a{color:rgba(255,248,240,.55);text-decoration:none;font-size:.83rem;transition:color .2s}
+.footer-col a:hover{color:var(--teal)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.footer-bottom p{font-size:.78rem;color:rgba(255,248,240,.35)}.footer-tagline{font-size:.78rem;font-weight:700;color:var(--gold);font-style:italic}
+
+@media(max-width:900px){
+  .event-main{grid-template-columns:1fr}
+  .event-sidebar{position:static}
+  .expect-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:640px){
+  .nav-links{display:none}.hamburger{display:flex}
+  .footer-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="showdem.html"><span>SHOW</span><em>DEM</em></a>
+  <ul class="nav-links">
+    <li><a href="showdem.html">Home</a></li><li><a href="about.html">About</a></li>
+    <li><a href="events.html" class="active">Events</a></li>
+    <li><a href="involve.html">Get Involved</a></li><li><a href="donate.html">Donate</a></li>
+    <li><a href="contact.html" class="nav-cta">Connect</a></li>
+  </ul>
+  <button class="hamburger" onclick="toggleMobile()" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-nav" id="mobile-nav">
+  <a href="showdem.html">Home</a><a href="about.html">About</a><a href="events.html">Events</a>
+  <a href="involve.html">Get Involved</a><a href="donate.html">Donate</a>
+  <a href="contact.html" class="mob-cta">Connect →</a>
+</div>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <span class="section-label">ShowDem Events</span>
+    <h1>Where the <em>Community</em> Comes to Jump</h1>
+    <p>From community jump sessions to epic showcases, ShowDem events are where the magic happens. Find your next event and register below.</p>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap">
+      <a href="#jumpoff" class="btn btn-coral">Jump Off — July 18 →</a>
+      <a href="#sessions" class="btn btn-outline-white">Public Sessions</a>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURED EVENT -->
+<section class="featured" id="jumpoff">
+  <div class="featured-inner">
+    <div class="featured-badge">⚡ Featured Event</div>
+    <div class="event-main">
+      <div class="event-detail">
+        <h2>The ShowDem<br><em>Jump Off</em></h2>
+        <p class="tagline">Represent your borough or city — come solo or with a partner! We'll be jumping, showing off moves, and having a full-on community celebration.</p>
+        <div class="event-meta">
+          <div class="meta-row"><span class="meta-icon">📅</span><strong>Date</strong> Saturday, July 18th, 2025</div>
+          <div class="meta-row"><span class="meta-icon">🕕</span><strong>Time</strong> 6:00 PM – 9:00 PM</div>
+          <div class="meta-row"><span class="meta-icon">📍</span><strong>Where</strong> Adam Clayton Powell Jr. State Office Building — 125th Street, Harlem, NYC</div>
+          <div class="meta-row"><span class="meta-icon">💰</span><strong>Cost</strong> Free to attend</div>
+        </div>
+        <div class="event-desc">
+          <p>Whether you're representing your borough in the battle, coming to jump and vibe with the community, or simply showing up to watch and socialize — the ShowDem Jump Off is for you. Come connect through Double Dutch, meet new people, and be part of the ShowDem energy.</p>
+          <p>Participants can register to jump solo or as a duo. All skill levels are welcome — from first-timers to seasoned double dutch veterans. The vibe is electric, the community is warm, and the ropes are ready.</p>
+        </div>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.5rem">
+          <a href="contact.html?form=jumpoff" class="btn btn-coral">Register for the Jump Off</a>
+          <a href="contact.html?form=session" class="btn btn-navy">Join as a Public Session →</a>
+        </div>
+      </div>
+      <div class="event-sidebar">
+        <div class="reg-box">
+          <h3>Register Now</h3>
+          <span class="reg-sub">Secure your spot for the Jump Off. Free to participate — just sign up!</span>
+          <div class="reg-date">
+            <span class="rd-month">July 2025</span>
+            <span class="rd-day">18</span>
+            <span class="rd-dow">Saturday</span>
+          </div>
+          <a href="contact.html?form=jumpoff" class="reg-btn">Register for the Jump Off ⚡</a>
+          <a href="contact.html?form=session" class="reg-session">Just Want to Attend? →</a>
+          <hr>
+          <p class="reg-note">Partners must each submit their own registration. If you don't have a partner yet, you can still sign up solo!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT TO EXPECT -->
+<section class="expect">
+  <div class="expect-inner">
+    <span class="section-label">At the Event</span>
+    <h2 class="section-title">What to Expect</h2>
+    <div class="expect-grid">
+      <div class="expect-card ec1">
+        <span class="ec-icon">⚔️</span>
+        <h3>The Battle</h3>
+        <p>Rep your borough or city in the Jump Off battle. Show your best moves and compete with heart — all skill levels welcome on the floor.</p>
+      </div>
+      <div class="expect-card ec2">
+        <span class="ec-icon">🕺</span>
+        <h3>Jump & Vibe</h3>
+        <p>Not here to battle? No problem. Jump for fun, connect with other rope lovers, and soak in the ShowDem energy.</p>
+      </div>
+      <div class="expect-card ec3">
+        <span class="ec-icon">👏</span>
+        <h3>Watch & Celebrate</h3>
+        <p>Come to cheer, socialize, and be part of the crowd. ShowDem events are community celebrations — spectators included.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="faq-inner">
+    <span class="section-label">Questions</span>
+    <h2 class="section-title">Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Do I need experience to participate? <span class="faq-arrow">▾</span></button>
+      <div class="faq-a"><div class="faq-a-inner">Not at all! ShowDem events welcome all skill levels — from total beginners to experienced double dutch athletes. If you want to jump and vibe, you're in the right place.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Can I come if I don't want to jump? <span class="faq-arrow">▾</span></button>
+      <div class="faq-a"><div class="faq-a-inner">Absolutely. Watching, cheering, socializing, and soaking in the community energy is 100% valid. Just mark "I just want to watch and socialize" when registering.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Does my partner need to register separately? <span class="faq-arrow">▾</span></button>
+      <div class="faq-a"><div class="faq-a-inner">Yes — if you're registering as a duo, both you and your partner must each submit their own registration form. You can still sign up solo and find a partner on the day!</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Is there an age limit? <span class="faq-arrow">▾</span></button>
+      <div class="faq-a"><div class="faq-a-inner">ShowDem events are open to all ages. We love seeing youth and adults jump side by side. Minors attending with a guardian are welcome.</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">What should I wear? <span class="faq-arrow">▾</span></button>
+      <div class="faq-a"><div class="faq-a-inner">Comfortable athletic wear and sneakers. If you plan to jump, make sure you can move freely. Come ready to have fun!</div></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" onclick="toggleFaq(this)">Will there be photos and video taken? <span class="faq-arrow">▾</span></button>
+      <div class="faq-a"><div class="faq-a-inner">Yes! ShowDem captures the energy of every event for social media and promotional use. You'll be asked for media consent in your registration form. If you prefer not to be filmed, please let us know at check-in.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PUBLIC SESSIONS -->
+<section class="pub-sessions" id="sessions">
+  <div class="pub-inner">
+    <span class="section-label">Ongoing</span>
+    <h2 class="section-title">Public Sessions</h2>
+    <p>Beyond ticketed events, ShowDem hosts regular community jump sessions open to all. Complete the one-time check-in form and you're cleared for every future session — no re-registration needed.</p>
+    <div class="session-notice">
+      <h4>💫 One-Time Check-In</h4>
+      <p>Our public session form is a one-time participation agreement. Complete it once and you're eligible for all future ShowDem public sessions, community jump sessions, and classes. Our goal is to maintain a safe, respectful, and joyful environment for all ages while protecting the integrity of the ShowDem brand and community.</p>
+    </div>
+    <a href="contact.html?form=session" class="btn btn-gold">Complete Your Check-In →</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a class="footer-logo" href="showdem.html"><span>SHOW</span><em>DEM</em></a>
+      <p>Spreading love, empowering communities, and celebrating talent through the art of double dutch and beyond.</p>
+      <div class="footer-social">
+        <a class="social-btn" href="#" aria-label="Instagram">📸</a><a class="social-btn" href="#" aria-label="Facebook">📘</a>
+        <a class="social-btn" href="#" aria-label="TikTok">🎵</a><a class="social-btn" href="#" aria-label="YouTube">▶️</a>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Organization</h4><ul>
+      <li><a href="about.html">Our Story</a></li><li><a href="about.html#mission">Mission & Vision</a></li>
+      <li><a href="about.html#martha">Meet Martha</a></li><li><a href="about.html#values">Our Values</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Get Involved</h4><ul>
+      <li><a href="events.html">Events</a></li><li><a href="involve.html">Volunteer</a></li>
+      <li><a href="contact.html?form=partner">Partner With Us</a></li><li><a href="donate.html">Donate</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Contact</h4><ul>
+      <li><a href="mailto:hello@showdemmovement.org">hello@showdemmovement.org</a></li>
+      <li><a href="contact.html">Connect With Us</a></li>
+      <li><a href="contact.html?form=partner">Media Inquiries</a></li>
+    </ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 ShowDem Movement Foundation. All rights reserved. 501(c)(3) nonprofit.</p>
+    <p class="footer-tagline">Love in our hearts. Purpose in our actions. Impact in our communities.</p>
+  </div>
+</footer>
+<script>
+function toggleMobile(){const m=document.getElementById('mobile-nav');m.style.display=m.style.display==='flex'?'none':'flex'}
+function toggleFaq(btn){
+  const a=btn.nextElementSibling;
+  const open=btn.classList.contains('open');
+  document.querySelectorAll('.faq-q').forEach(b=>{b.classList.remove('open');b.nextElementSibling.classList.remove('open')});
+  if(!open){btn.classList.add('open');a.classList.add('open')}
+}
+</script>
+</body>
+</html>

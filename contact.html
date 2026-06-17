@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connect – ShowDem Movement Foundation</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --coral: #FF6B4A;
+    --gold:  #FFC857;
+    --teal:  #2EC4B6;
+    --navy:  #12355B;
+    --cream: #FFF8F0;
+    --white: #ffffff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Montserrat', sans-serif; background: var(--cream); color: var(--navy); min-height: 100vh; }
+
+  /* ── NAV ── */
+  nav {
+    background: var(--navy);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 5%; height: 68px; position: sticky; top: 0; z-index: 50;
+  }
+  .nav-logo { font-size: 1.3rem; font-weight: 900; text-decoration: none; color: var(--white); }
+  .nav-logo span { color: var(--coral); }
+  .nav-logo em   { color: var(--teal); font-style: normal; }
+  .back-link {
+    color: rgba(255,248,240,0.65); font-size: 0.8rem; font-weight: 700;
+    text-decoration: none; letter-spacing: 1px; text-transform: uppercase;
+    display: flex; align-items: center; gap: 0.4rem;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--teal); }
+
+  /* ── PAGE LAYOUT ── */
+  .page-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 60px 5% 100px;
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  /* ── LEFT SIDEBAR ── */
+  .sidebar { position: sticky; top: 88px; }
+
+  .sidebar-header { margin-bottom: 2rem; }
+  .sidebar-header p {
+    font-size: 0.7rem; font-weight: 800; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--teal); margin-bottom: 0.5rem;
+  }
+  .sidebar-header h1 { font-size: 1.8rem; font-weight: 900; line-height: 1.15; color: var(--navy); }
+
+  .interest-label {
+    font-size: 0.7rem; font-weight: 800; letter-spacing: 2px;
+    text-transform: uppercase; color: #aaa; margin-bottom: 1rem;
+  }
+
+  .interest-btn {
+    display: flex; align-items: center; gap: 1rem;
+    width: 100%; padding: 1rem 1.2rem;
+    background: var(--white); border: 2.5px solid #e8e8e8;
+    border-radius: 14px; cursor: pointer; margin-bottom: 0.75rem;
+    text-align: left; transition: border-color 0.2s, background 0.2s, transform 0.15s;
+    font-family: 'Montserrat', sans-serif;
+  }
+  .interest-btn:hover { border-color: var(--teal); transform: translateX(3px); }
+  .interest-btn.active { border-color: var(--navy); background: var(--navy); }
+
+  .interest-icon { font-size: 1.4rem; flex-shrink: 0; }
+  .interest-text-wrap {}
+  .interest-title {
+    font-size: 0.85rem; font-weight: 800; color: var(--navy);
+    display: block; transition: color 0.2s;
+  }
+  .interest-btn.active .interest-title { color: var(--white); }
+  .interest-sub {
+    font-size: 0.72rem; color: #999; font-weight: 600;
+    display: block; margin-top: 2px; transition: color 0.2s;
+  }
+  .interest-btn.active .interest-sub { color: rgba(255,248,240,0.55); }
+
+  .interest-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    margin-left: auto; flex-shrink: 0;
+    background: transparent; transition: background 0.2s;
+  }
+  .interest-btn.active .interest-dot { background: var(--teal); }
+
+  /* ── RIGHT: FORM PANEL ── */
+  .form-panel {
+    background: var(--white);
+    border-radius: 24px;
+    box-shadow: 0 8px 50px rgba(18,53,91,0.1);
+    overflow: hidden;
+  }
+
+  .form-banner {
+    padding: 2rem 2.5rem;
+    display: flex; align-items: center; gap: 1.2rem;
+  }
+  .form-banner .banner-icon { font-size: 2.2rem; flex-shrink: 0; }
+  .form-banner h2 { font-size: 1.3rem; font-weight: 900; color: var(--white); margin-bottom: 0.2rem; }
+  .form-banner p  { font-size: 0.8rem; color: rgba(255,255,255,0.75); line-height: 1.5; }
+
+  .banner-jumpoff  { background: var(--coral); }
+  .banner-session  { background: var(--teal); }
+  .banner-volunteer{ background: var(--navy); }
+  .banner-partner  { background: var(--gold); }
+  .banner-partner h2, .banner-partner p { color: var(--navy) !important; }
+  .banner-partner p { color: rgba(18,53,91,0.65) !important; }
+
+  .form-body { padding: 2.5rem; }
+
+  /* ── NOTICE BOX ── */
+  .notice {
+    border-radius: 12px; padding: 1rem 1.2rem;
+    margin-bottom: 2rem; font-size: 0.82rem; line-height: 1.6;
+  }
+  .notice-gold  { background: rgba(255,200,87,0.12); border-left: 3px solid var(--gold); color: #6b5000; }
+  .notice-teal  { background: rgba(46,196,182,0.1);  border-left: 3px solid var(--teal); color: #0f4f4a; }
+  .notice strong { font-weight: 800; }
+
+  /* ── FORM FIELDS ── */
+  .field-group { margin-bottom: 1.6rem; }
+  .field-label {
+    display: block; font-size: 0.8rem; font-weight: 800;
+    color: var(--navy); margin-bottom: 0.55rem; letter-spacing: 0.2px;
+  }
+  .req { color: var(--coral); }
+  .opt { color: #bbb; font-weight: 600; font-size: 0.72rem; }
+  .field-input {
+    width: 100%; padding: 0.85rem 1rem;
+    border: 2px solid #e8e8e8; border-radius: 12px;
+    font-family: 'Montserrat', sans-serif; font-size: 0.88rem;
+    color: var(--navy); background: var(--white);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none; -webkit-appearance: none;
+  }
+  .field-input:focus {
+    outline: none; border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(46,196,182,0.15);
+  }
+  .field-input.error { border-color: var(--coral); }
+
+  select.field-input {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2312355B' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 1rem center;
+    padding-right: 2.5rem; cursor: pointer;
+  }
+
+  .radio-group { display: flex; flex-direction: column; gap: 0.55rem; }
+  .radio-option {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.75rem 1rem; border: 2px solid #eee;
+    border-radius: 12px; cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    font-size: 0.85rem; font-weight: 600; color: var(--navy);
+  }
+  .radio-option:hover { border-color: var(--teal); background: rgba(46,196,182,0.04); }
+  .radio-option input[type="radio"] { accent-color: var(--teal); width: 16px; height: 16px; flex-shrink: 0; }
+  .radio-option:has(input:checked) { border-color: var(--teal); background: rgba(46,196,182,0.08); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  .field-hint { font-size: 0.72rem; color: #aaa; margin-top: 0.4rem; line-height: 1.5; }
+
+  .submit-btn {
+    width: 100%; padding: 1rem; font-size: 0.92rem; font-weight: 800;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    border: none; border-radius: 14px; cursor: pointer;
+    margin-top: 0.5rem; transition: transform 0.2s, box-shadow 0.2s;
+    font-family: 'Montserrat', sans-serif;
+  }
+  .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+  .submit-coral  { background: var(--coral); color: var(--white); }
+  .submit-teal   { background: var(--teal);  color: var(--white); }
+  .submit-navy   { background: var(--navy);  color: var(--white); }
+  .submit-gold   { background: var(--gold);  color: var(--navy); }
+
+  /* ── SUCCESS STATE ── */
+  .success-state {
+    display: none; text-align: center; padding: 3rem 2rem;
+  }
+  .success-emoji { font-size: 4rem; display: block; margin-bottom: 1.2rem; }
+  .success-state h3 { font-size: 1.6rem; font-weight: 900; color: var(--navy); margin-bottom: 0.75rem; }
+  .success-state p  { color: #666; line-height: 1.7; max-width: 360px; margin: 0 auto; font-size: 0.92rem; }
+  .success-detail {
+    margin-top: 1.8rem; padding: 1.2rem 1.5rem;
+    background: var(--cream); border-radius: 14px;
+    font-size: 0.82rem; color: #666; line-height: 1.6;
+  }
+  .success-detail strong { color: var(--navy); display: block; margin-bottom: 0.2rem; font-size: 0.85rem; }
+  .back-home {
+    display: inline-block; margin-top: 2rem;
+    font-size: 0.8rem; font-weight: 800; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--teal); text-decoration: none;
+  }
+  .back-home:hover { text-decoration: underline; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 860px) {
+    .page-wrap { grid-template-columns: 1fr; gap: 2rem; }
+    .sidebar { position: static; }
+    .two-col { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 500px) {
+    .form-body { padding: 1.5rem; }
+    .form-banner { padding: 1.5rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="showdem.html"><span>SHOW</span><em>DEM</em></a>
+  <a class="back-link" href="showdem.html">← Back to Home</a>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <p>ShowDem Movement</p>
+      <h1>How can we help?</h1>
+    </div>
+    <p class="interest-label">I'm here to…</p>
+
+    <button class="interest-btn" data-form="jumpoff" onclick="switchForm('jumpoff')">
+      <span class="interest-icon">⚡</span>
+      <span class="interest-text-wrap">
+        <span class="interest-title">Register for the Jump Off</span>
+        <span class="interest-sub">July 18 · 125th St, Harlem</span>
+      </span>
+      <span class="interest-dot"></span>
+    </button>
+
+    <button class="interest-btn" data-form="session" onclick="switchForm('session')">
+      <span class="interest-icon">🪢</span>
+      <span class="interest-text-wrap">
+        <span class="interest-title">Join a Public Session</span>
+        <span class="interest-sub">One-time check-in form</span>
+      </span>
+      <span class="interest-dot"></span>
+    </button>
+
+    <button class="interest-btn" data-form="volunteer" onclick="switchForm('volunteer')">
+      <span class="interest-icon">🙋</span>
+      <span class="interest-text-wrap">
+        <span class="interest-title">Volunteer</span>
+        <span class="interest-sub">Coach, mentor, or support</span>
+      </span>
+      <span class="interest-dot"></span>
+    </button>
+
+    <button class="interest-btn" data-form="partner" onclick="switchForm('partner')">
+      <span class="interest-icon">🏢</span>
+      <span class="interest-text-wrap">
+        <span class="interest-title">Partner With Us</span>
+        <span class="interest-sub">Schools, orgs & businesses</span>
+      </span>
+      <span class="interest-dot"></span>
+    </button>
+  </aside>
+
+  <!-- FORM PANEL -->
+  <main class="form-panel" id="form-panel">
+
+    <!-- ── JUMP OFF FORM ── -->
+    <div id="form-jumpoff" class="form-section" style="display:none;">
+      <div class="form-banner banner-jumpoff">
+        <span class="banner-icon">⚡</span>
+        <div>
+          <h2>ShowDem Jump Off Registration</h2>
+          <p>Saturday, July 18th · 6:00–9:00 PM · Adam Clayton Powell Jr. Building, 125th St, Harlem</p>
+        </div>
+      </div>
+      <div class="form-body">
+        <div class="notice notice-gold">
+          <strong>Represent your borough or city</strong> — come solo or as a duo! If registering with a partner, they must also submit their own form.
+        </div>
+
+        <div class="two-col">
+          <div class="field-group">
+            <label class="field-label">Full Name <span class="req">*</span></label>
+            <input class="field-input" id="jo-name" type="text" placeholder="Your full name">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Email Address <span class="opt">(optional)</span></label>
+            <input class="field-input" id="jo-email" type="email" placeholder="you@email.com">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Emergency Contact — Name & Phone <span class="req">*</span></label>
+          <input class="field-input" id="jo-emergency" type="text" placeholder="e.g. Jane Doe – 917-555-0123">
+        </div>
+
+        <div class="two-col">
+          <div class="field-group">
+            <label class="field-label">Borough or City Representing <span class="req">*</span></label>
+            <select class="field-input" id="jo-borough">
+              <option value="" disabled selected>Select…</option>
+              <option>Bronx</option>
+              <option>Brooklyn</option>
+              <option>Manhattan</option>
+              <option>Queens</option>
+              <option>Staten Island</option>
+              <option>Other City / Out of State</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <label class="field-label">Social Media Handle(s) <span class="req">*</span></label>
+            <input class="field-input" id="jo-social" type="text" placeholder="@yourhandle">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Double Dutch Experience Level <span class="req">*</span></label>
+          <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="jo-level" value="Beginner"> <span>Beginner</span></label>
+            <label class="radio-option"><input type="radio" name="jo-level" value="Intermediate"> <span>Intermediate</span></label>
+            <label class="radio-option"><input type="radio" name="jo-level" value="Advanced"> <span>Advanced</span></label>
+            <label class="radio-option"><input type="radio" name="jo-level" value="Vibe"> <span>I'm just coming to vibe / watch / support</span></label>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Jumping Solo or with a Partner? <span class="req">*</span></label>
+          <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="jo-solo" value="Solo" onchange="togglePartner(false)"> <span>Solo</span></label>
+            <label class="radio-option"><input type="radio" name="jo-solo" value="Duo" onchange="togglePartner(true)"> <span>Duo (With Partner)</span></label>
+          </div>
+        </div>
+
+        <div class="field-group" id="partner-field" style="display:none;">
+          <label class="field-label">Partner's Full Name <span class="req">*</span></label>
+          <input class="field-input" id="jo-partner" type="text" placeholder="Your partner's full name">
+          <p class="field-hint">Your partner must also complete their own registration. No partner yet? Write "No."</p>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">What brings you to the Jump Off? <span class="req">*</span></label>
+          <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="jo-reason" value="Battle"> <span>I want to Battle</span></label>
+            <label class="radio-option"><input type="radio" name="jo-reason" value="Jump"> <span>I want to Jump and Vibe</span></label>
+            <label class="radio-option"><input type="radio" name="jo-reason" value="Watch"> <span>I just want to watch and socialize</span></label>
+            <label class="radio-option"><input type="radio" name="jo-reason" value="All"> <span>All of the above</span></label>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Media Release Consent <span class="req">*</span></label>
+          <p class="field-hint" style="margin-bottom:0.6rem;">Do you give ShowDem Movement Foundation permission to record and share videos/photos of you during this event?</p>
+          <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="jo-media" value="Yes"> <span>Yes, I give permission</span></label>
+            <label class="radio-option"><input type="radio" name="jo-media" value="No"> <span>No, I do not give permission</span></label>
+          </div>
+        </div>
+
+        <button class="submit-btn submit-coral" onclick="submitJumpOff()">Register for the Jump Off ⚡</button>
+      </div>
+      <div class="success-state" id="jo-success">
+        <span class="success-emoji">🎉</span>
+        <h3>You're Registered!</h3>
+        <p>See you <strong>Saturday, July 18th at 6PM</strong> at the Adam Clayton Powell Jr. State Office Building on 125th Street. Come ready to jump!</p>
+        <div class="success-detail">
+          <strong>📅 Saturday, July 18 · 6:00–9:00 PM</strong>
+          Adam Clayton Powell Jr. State Office Building · 125th Street, Harlem
+        </div>
+        <a class="back-home" href="showdem.html">← Back to ShowDem Home</a>
+      </div>
+    </div>
+
+    <!-- ── PUBLIC SESSION FORM ── -->
+    <div id="form-session" class="form-section" style="display:none;">
+      <div class="form-banner banner-session">
+        <span class="banner-icon">💫</span>
+        <div>
+          <h2>Public Session Check-In</h2>
+          <p>One-time form — once submitted, you're cleared for all future ShowDem sessions</p>
+        </div>
+      </div>
+      <div class="form-body">
+        <div class="notice notice-teal">
+          <strong>Welcome to ShowDem Movement!</strong> This form is required for anyone participating in public sessions, community jump sessions, classes, or events. Complete it once and you're good to go for every future session.
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Full Legal Name <span class="req">*</span></label>
+          <input class="field-input" id="ps-name" type="text" placeholder="As it appears on your ID">
+        </div>
+
+        <div class="two-col">
+          <div class="field-group">
+            <label class="field-label">Email Address <span class="req">*</span></label>
+            <input class="field-input" id="ps-email" type="email" placeholder="you@email.com">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Phone Number <span class="req">*</span></label>
+            <input class="field-input" id="ps-phone" type="tel" placeholder="917-555-0123">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Social Media Handle <span class="opt">(if applicable)</span></label>
+          <input class="field-input" id="ps-social" type="text" placeholder="@yourhandle">
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Emergency Contact — Name & Phone Number <span class="req">*</span></label>
+          <input class="field-input" id="ps-emergency" type="text" placeholder="e.g. Jane Doe – 917-555-0123">
+        </div>
+
+        <button class="submit-btn submit-teal" onclick="submitSession()">Complete Check-In 💫</button>
+      </div>
+      <div class="success-state" id="ps-success">
+        <span class="success-emoji">💫</span>
+        <h3>Welcome to ShowDem!</h3>
+        <p>You're all set. This was a one-time form — you're now eligible to participate in any future ShowDem public sessions. See you on the ropes!</p>
+        <a class="back-home" href="showdem.html">← Back to ShowDem Home</a>
+      </div>
+    </div>
+
+    <!-- ── VOLUNTEER FORM ── -->
+    <div id="form-volunteer" class="form-section" style="display:none;">
+      <div class="form-banner banner-volunteer">
+        <span class="banner-icon">🙋</span>
+        <div>
+          <h2>Volunteer with ShowDem</h2>
+          <p>Coach, mentor, organize, or cheer — we'd love to have you on the team</p>
+        </div>
+      </div>
+      <div class="form-body">
+
+        <div class="two-col">
+          <div class="field-group">
+            <label class="field-label">Full Name <span class="req">*</span></label>
+            <input class="field-input" id="vol-name" type="text" placeholder="Your full name">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Email Address <span class="req">*</span></label>
+            <input class="field-input" id="vol-email" type="email" placeholder="you@email.com">
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="field-group">
+            <label class="field-label">Phone Number <span class="req">*</span></label>
+            <input class="field-input" id="vol-phone" type="tel" placeholder="917-555-0123">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Social Media Handle <span class="opt">(optional)</span></label>
+            <input class="field-input" id="vol-social" type="text" placeholder="@yourhandle">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">How would you like to volunteer? <span class="req">*</span></label>
+          <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="vol-role" value="Coach"> <span>🪢 Double Dutch Coach / Instructor</span></label>
+            <label class="radio-option"><input type="radio" name="vol-role" value="Mentor"> <span>⭐ Youth Mentor</span></label>
+            <label class="radio-option"><input type="radio" name="vol-role" value="Event"> <span>🎉 Event Support & Setup</span></label>
+            <label class="radio-option"><input type="radio" name="vol-role" value="Admin"> <span>📋 Admin & Communications</span></label>
+            <label class="radio-option"><input type="radio" name="vol-role" value="Any"> <span>🙌 Whatever's needed!</span></label>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Tell us a little about yourself <span class="req">*</span></label>
+          <textarea class="field-input" id="vol-bio" rows="4" placeholder="Any relevant experience, why you want to volunteer, skills you bring…" style="resize:vertical;"></textarea>
+        </div>
+
+        <button class="submit-btn submit-navy" onclick="submitVolunteer()">Submit Volunteer Interest 🙋</button>
+      </div>
+      <div class="success-state" id="vol-success">
+        <span class="success-emoji">🙌</span>
+        <h3>Thank You!</h3>
+        <p>We've received your volunteer interest form. Martha and the ShowDem team will be in touch soon. We're excited to have you!</p>
+        <a class="back-home" href="showdem.html">← Back to ShowDem Home</a>
+      </div>
+    </div>
+
+    <!-- ── PARTNER FORM ── -->
+    <div id="form-partner" class="form-section" style="display:none;">
+      <div class="form-banner banner-partner">
+        <span class="banner-icon">🏢</span>
+        <div>
+          <h2>Partner With ShowDem</h2>
+          <p>Schools, nonprofits, businesses — let's build something meaningful together</p>
+        </div>
+      </div>
+      <div class="form-body">
+
+        <div class="two-col">
+          <div class="field-group">
+            <label class="field-label">Your Name <span class="req">*</span></label>
+            <input class="field-input" id="pt-name" type="text" placeholder="Your full name">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Organization / School Name <span class="req">*</span></label>
+            <input class="field-input" id="pt-org" type="text" placeholder="Organization name">
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="field-group">
+            <label class="field-label">Email Address <span class="req">*</span></label>
+            <input class="field-input" id="pt-email" type="email" placeholder="you@org.com">
+          </div>
+          <div class="field-group">
+            <label class="field-label">Phone Number <span class="opt">(optional)</span></label>
+            <input class="field-input" id="pt-phone" type="tel" placeholder="917-555-0123">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Type of Organization <span class="req">*</span></label>
+          <select class="field-input" id="pt-type">
+            <option value="" disabled selected>Select…</option>
+            <option>School / Educational Institution</option>
+            <option>Nonprofit / Community Organization</option>
+            <option>Business / Corporation</option>
+            <option>Government Agency</option>
+            <option>Faith-Based Organization</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">What kind of partnership are you interested in? <span class="req">*</span></label>
+          <div class="radio-group">
+            <label class="radio-option"><input type="radio" name="pt-kind" value="Program"> <span>🪢 Hosting a ShowDem program or event</span></label>
+            <label class="radio-option"><input type="radio" name="pt-kind" value="Sponsor"> <span>💛 Financial sponsorship or donation</span></label>
+            <label class="radio-option"><input type="radio" name="pt-kind" value="InKind"> <span>🎁 In-kind support (space, supplies, etc.)</span></label>
+            <label class="radio-option"><input type="radio" name="pt-kind" value="Media"> <span>📸 Media or marketing collaboration</span></label>
+            <label class="radio-option"><input type="radio" name="pt-kind" value="Other"> <span>💬 Something else — tell us more</span></label>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Tell us more about your interest <span class="req">*</span></label>
+          <textarea class="field-input" id="pt-message" rows="4" placeholder="Describe your organization, what you have in mind, and how you'd like to work together…" style="resize:vertical;"></textarea>
+        </div>
+
+        <button class="submit-btn submit-gold" onclick="submitPartner()">Send Partnership Inquiry 🏢</button>
+      </div>
+      <div class="success-state" id="pt-success">
+        <span class="success-emoji">🤝</span>
+        <h3>Inquiry Received!</h3>
+        <p>Thanks for reaching out. The ShowDem team will review your message and be in touch within a few business days. We love building with community!</p>
+        <a class="back-home" href="showdem.html">← Back to ShowDem Home</a>
+      </div>
+    </div>
+
+    <!-- DEFAULT (no selection) -->
+    <div id="form-default">
+      <div style="padding:4rem 2.5rem;text-align:center;">
+        <span style="font-size:3.5rem;display:block;margin-bottom:1.5rem;">🪢</span>
+        <h2 style="font-size:1.4rem;font-weight:900;color:var(--navy);margin-bottom:0.75rem;">Choose what you're here for</h2>
+        <p style="color:#888;font-size:0.9rem;line-height:1.7;max-width:320px;margin:0 auto;">
+          Select an option on the left and the right form will update to match. No extra pages, no confusion.
+        </p>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // Read URL param to auto-select a form on load
+  const params = new URLSearchParams(window.location.search);
+  const initial = params.get('form');
+  if (initial) {
+    switchForm(initial);
+  }
+
+  function switchForm(key) {
+    // Hide all sections
+    document.querySelectorAll('.form-section').forEach(s => s.style.display = 'none');
+    document.getElementById('form-default').style.display = 'none';
+
+    // Show selected
+    const target = document.getElementById('form-' + key);
+    if (target) target.style.display = 'block';
+    else document.getElementById('form-default').style.display = 'block';
+
+    // Update sidebar active state
+    document.querySelectorAll('.interest-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.form === key);
+    });
+
+    // Scroll form into view on mobile
+    if (window.innerWidth < 860) {
+      document.getElementById('form-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function togglePartner(show) {
+    document.getElementById('partner-field').style.display = show ? 'block' : 'none';
+  }
+
+  function validate(fields, radioNames) {
+    let ok = true;
+    fields.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (!el.value.trim()) { el.classList.add('error'); ok = false; }
+      else el.classList.remove('error');
+    });
+    (radioNames || []).forEach(name => {
+      if (!document.querySelector(`input[name="${name}"]:checked`)) ok = false;
+    });
+    return ok;
+  }
+
+  function showSuccess(formId, successId) {
+    document.getElementById(formId).querySelector('.form-body').style.display = 'none';
+    document.getElementById(successId).style.display = 'block';
+    document.getElementById(formId).scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function submitJumpOff() {
+    if (!validate(
+      ['jo-name','jo-emergency','jo-borough','jo-social'],
+      ['jo-level','jo-solo','jo-reason','jo-media']
+    )) { alert('Please fill in all required fields.'); return; }
+    showSuccess('form-jumpoff', 'jo-success');
+  }
+
+  function submitSession() {
+    if (!validate(['ps-name','ps-email','ps-phone','ps-emergency'])) {
+      alert('Please fill in all required fields.'); return;
+    }
+    showSuccess('form-session', 'ps-success');
+  }
+
+  function submitVolunteer() {
+    if (!validate(['vol-name','vol-email','vol-phone','vol-bio'], ['vol-role'])) {
+      alert('Please fill in all required fields.'); return;
+    }
+    showSuccess('form-volunteer', 'vol-success');
+  }
+
+  function submitPartner() {
+    if (!validate(['pt-name','pt-org','pt-email','pt-message'], ['pt-kind'])) {
+      alert('Please fill in all required fields.'); return;
+    }
+    showSuccess('form-partner', 'pt-success');
+  }
+
+  // Live error clearing
+  document.addEventListener('input', e => {
+    if (e.target.classList.contains('field-input')) e.target.classList.remove('error');
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Get Involved – ShowDem Movement Foundation</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--coral:#FF6B4A;--gold:#FFC857;--teal:#2EC4B6;--navy:#12355B;--cream:#FFF8F0;--white:#ffffff}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:'Montserrat',sans-serif;background:var(--white);color:var(--navy);overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:68px}
+.nav-logo{font-size:1.3rem;font-weight:900;text-decoration:none;color:var(--white)}.nav-logo span{color:var(--coral)}.nav-logo em{color:var(--teal);font-style:normal}
+.nav-links{display:flex;gap:1.8rem;list-style:none;align-items:center}
+.nav-links a{color:rgba(255,248,240,.8);text-decoration:none;font-size:.78rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--gold)}
+.nav-cta{background:var(--coral);color:var(--white)!important;padding:.5rem 1.2rem;border-radius:50px}
+.nav-cta:hover{background:var(--gold)!important;color:var(--navy)!important}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.hamburger span{display:block;width:24px;height:2px;background:var(--white);border-radius:2px}
+.mobile-nav{display:none;position:fixed;top:68px;left:0;right:0;background:var(--navy);z-index:99;padding:1.5rem 5%;flex-direction:column;gap:1rem;border-top:1px solid rgba(255,255,255,.1)}
+.mobile-nav a{color:rgba(255,248,240,.8);text-decoration:none;font-size:.9rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.mobile-nav a.mob-cta{color:var(--coral)!important}
+.btn{display:inline-block;padding:.85rem 2rem;border-radius:50px;font-weight:800;font-size:.82rem;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;transition:transform .2s,box-shadow .2s;cursor:pointer;border:none;font-family:'Montserrat',sans-serif}
+.btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.btn-coral{background:var(--coral);color:var(--white)}.btn-teal{background:var(--teal);color:var(--white)}.btn-gold{background:var(--gold);color:var(--navy)}.btn-navy{background:var(--navy);color:var(--white)}.btn-white{background:var(--white);color:var(--navy)}
+.section-label{font-size:.7rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:.6rem;display:block}
+.section-title{font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:900;line-height:1.1;margin-bottom:1.2rem}
+
+/* PAGE HERO */
+.page-hero{background:var(--teal);padding:140px 5% 90px;text-align:center;position:relative;overflow:hidden}
+.page-hero::before{content:'';position:absolute;width:400px;height:400px;border-radius:50%;border:2px solid rgba(255,255,255,.1);top:50%;left:-80px;transform:translateY(-50%)}
+.page-hero::after{content:'';position:absolute;width:300px;height:300px;border-radius:50%;border:2px solid rgba(255,255,255,.08);bottom:-60px;right:10%}
+.page-hero .section-label{color:rgba(255,255,255,.7);justify-content:center;display:flex}
+.page-hero h1{font-size:clamp(2.5rem,5vw,4rem);font-weight:900;color:var(--white);line-height:1.05;margin-bottom:1.2rem;position:relative}
+.page-hero p{font-size:1rem;color:rgba(255,255,255,.85);max-width:540px;margin:0 auto 2rem;line-height:1.8;position:relative}
+
+/* WAY CARDS */
+.ways{padding:90px 5%;background:var(--cream)}
+.ways-inner{max-width:1100px;margin:0 auto}
+.ways-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2rem;margin-top:3rem}
+.way-card{border-radius:24px;overflow:hidden;background:var(--white);box-shadow:0 4px 30px rgba(18,53,91,.07);transition:transform .25s,box-shadow .25s;display:flex;flex-direction:column}
+.way-card:hover{transform:translateY(-6px);box-shadow:0 20px 60px rgba(18,53,91,.12)}
+.way-banner{padding:2rem 2.5rem;display:flex;align-items:center;gap:1.2rem}
+.way-banner.wb1{background:var(--coral)}.way-banner.wb2{background:var(--navy)}.way-banner.wb3{background:var(--teal)}.way-banner.wb4{background:var(--gold)}
+.way-icon{font-size:2.5rem;flex-shrink:0}
+.way-banner h2{font-size:1.3rem;font-weight:900;color:var(--white)}
+.way-banner.wb4 h2{color:var(--navy)}
+.way-banner p{font-size:.78rem;color:rgba(255,255,255,.75);margin-top:.2rem}
+.way-banner.wb4 p{color:rgba(18,53,91,.6)}
+.way-body{padding:2rem 2.5rem;flex:1;display:flex;flex-direction:column}
+.way-body p{font-size:.9rem;line-height:1.8;color:#555;margin-bottom:1.2rem;flex:1}
+.way-list{list-style:none;margin-bottom:1.5rem}
+.way-list li{font-size:.85rem;color:#555;padding:.4rem 0;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;gap:.6rem}
+.way-list li::before{content:'→';color:var(--teal);font-weight:900;flex-shrink:0}
+
+/* IMPACT QUOTE */
+.impact-quote{background:var(--navy);padding:80px 5%;text-align:center}
+.impact-quote blockquote{font-size:clamp(1.5rem,3vw,2.2rem);font-weight:800;color:var(--white);line-height:1.35;max-width:760px;margin:0 auto 1.5rem;font-style:italic}
+.impact-quote blockquote em{color:var(--gold);font-style:normal}
+.impact-quote cite{font-size:.8rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,248,240,.5)}
+
+/* DONATE SECTION */
+.donate-section{background:var(--coral);padding:90px 5%}
+.donate-inner{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center}
+.donate-text .section-label{color:var(--gold)}
+.donate-text h2{font-size:clamp(2rem,3.5vw,2.8rem);font-weight:900;color:var(--white);margin-bottom:1rem;line-height:1.1}
+.donate-text p{color:rgba(255,255,255,.85);font-size:.92rem;line-height:1.8;margin-bottom:1.5rem}
+.donate-pills{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1.5rem}
+.d-pill{padding:.55rem 1.3rem;border:2px solid rgba(255,255,255,.4);border-radius:50px;color:var(--white);font-weight:800;font-size:.88rem;cursor:pointer;background:transparent;font-family:'Montserrat',sans-serif;transition:background .2s}
+.d-pill:hover,.d-pill.active{background:var(--white);color:var(--coral)}
+.donate-visual{background:rgba(255,255,255,.1);border-radius:24px;padding:2.5rem;text-align:center}
+.donate-visual .dv-heart{font-size:4.5rem;display:block;margin-bottom:1rem;animation:heartbeat 1.5s ease-in-out infinite}
+.donate-visual h3{color:var(--white);font-size:1rem;font-weight:900;margin-bottom:.75rem}
+.donate-visual p{color:rgba(255,255,255,.8);font-size:.82rem;line-height:1.6}
+@keyframes heartbeat{0%,100%{transform:scale(1)}25%{transform:scale(1.1)}50%{transform:scale(1)}75%{transform:scale(1.06)}}
+
+/* FOOTER */
+footer{background:var(--navy);padding:60px 5% 30px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.footer-logo{font-size:1.4rem;font-weight:900;color:var(--white);display:block;margin-bottom:1rem;text-decoration:none}
+.footer-logo span{color:var(--coral)}.footer-logo em{color:var(--teal);font-style:normal}
+.footer-brand p{font-size:.83rem;color:rgba(255,248,240,.5);line-height:1.7;max-width:240px}
+.footer-social{display:flex;gap:.75rem;margin-top:1.5rem}
+.social-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:var(--white);font-size:.9rem;text-decoration:none;transition:background .2s}
+.social-btn:hover{background:var(--teal)}
+.footer-col h4{font-size:.68rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem}
+.footer-col ul{list-style:none}.footer-col li{margin-bottom:.6rem}
+.footer-col a{color:rgba(255,248,240,.55);text-decoration:none;font-size:.83rem;transition:color .2s}
+.footer-col a:hover{color:var(--teal)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.footer-bottom p{font-size:.78rem;color:rgba(255,248,240,.35)}.footer-tagline{font-size:.78rem;font-weight:700;color:var(--gold);font-style:italic}
+
+@media(max-width:900px){
+  .ways-grid{grid-template-columns:1fr}
+  .donate-inner{grid-template-columns:1fr;gap:3rem}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:640px){.nav-links{display:none}.hamburger{display:flex}.footer-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="showdem.html"><span>SHOW</span><em>DEM</em></a>
+  <ul class="nav-links">
+    <li><a href="showdem.html">Home</a></li><li><a href="about.html">About</a></li>
+    <li><a href="events.html">Events</a></li>
+    <li><a href="involve.html" class="active">Get Involved</a></li>
+    <li><a href="donate.html">Donate</a></li>
+    <li><a href="contact.html" class="nav-cta">Connect</a></li>
+  </ul>
+  <button class="hamburger" onclick="toggleMobile()" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-nav" id="mobile-nav">
+  <a href="showdem.html">Home</a><a href="about.html">About</a><a href="events.html">Events</a>
+  <a href="involve.html">Get Involved</a><a href="donate.html">Donate</a>
+  <a href="contact.html" class="mob-cta">Connect →</a>
+</div>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <span class="section-label">Join ShowDem</span>
+  <h1>There's a Place for You Here</h1>
+  <p>Jump, volunteer, partner, or give — every form of love and support helps us build the community ShowDem is for.</p>
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+    <a href="contact.html?form=session" class="btn btn-navy">Join a Session</a>
+    <a href="contact.html?form=volunteer" class="btn btn-white">Volunteer</a>
+  </div>
+</div>
+
+<!-- WAYS -->
+<section class="ways">
+  <div class="ways-inner">
+    <span class="section-label">Ways to Get Involved</span>
+    <h2 class="section-title">How You Can Show Up</h2>
+    <div class="ways-grid">
+
+      <div class="way-card">
+        <div class="way-banner wb1">
+          <span class="way-icon">🪢</span>
+          <div><h2>Join a Public Session</h2><p>One-time check-in — cleared for all future sessions</p></div>
+        </div>
+        <div class="way-body">
+          <p>ShowDem hosts regular community jump sessions open to all ages and skill levels. Complete our one-time check-in form and you're ready to participate in every future session — no re-registration ever.</p>
+          <ul class="way-list">
+            <li>Open to all ages and skill levels</li>
+            <li>One form, all future sessions</li>
+            <li>Community jump sessions, classes & events</li>
+            <li>Safe, joyful, and welcoming environment</li>
+          </ul>
+          <a href="contact.html?form=session" class="btn btn-coral">Complete Check-In →</a>
+        </div>
+      </div>
+
+      <div class="way-card">
+        <div class="way-banner wb2">
+          <span class="way-icon">🙋</span>
+          <div><h2>Volunteer</h2><p>Coach, mentor, organize, or cheer</p></div>
+        </div>
+        <div class="way-body">
+          <p>ShowDem runs on community. Our volunteers are the backbone of every program, every event, and every session we deliver. Whether you're a double dutch expert or just someone with a big heart, there's a role for you.</p>
+          <ul class="way-list">
+            <li>Double Dutch Coach / Instructor</li>
+            <li>Youth Mentor & Role Model</li>
+            <li>Event Support & Setup</li>
+            <li>Admin, Communications & Outreach</li>
+          </ul>
+          <a href="contact.html?form=volunteer" class="btn btn-navy">Apply to Volunteer →</a>
+        </div>
+      </div>
+
+      <div class="way-card">
+        <div class="way-banner wb3">
+          <span class="way-icon">🏢</span>
+          <div><h2>Partner With Us</h2><p>Schools, nonprofits & businesses</p></div>
+        </div>
+        <div class="way-body">
+          <p>ShowDem partners with organizations that share our commitment to community, youth development, and cultural celebration. Whether you want to host a program, sponsor an event, or co-create something new — let's talk.</p>
+          <ul class="way-list">
+            <li>Host a ShowDem program or event</li>
+            <li>Financial sponsorship or in-kind support</li>
+            <li>Media and marketing collaboration</li>
+            <li>School and afterschool partnerships</li>
+          </ul>
+          <a href="contact.html?form=partner" class="btn btn-teal">Send a Partnership Inquiry →</a>
+        </div>
+      </div>
+
+      <div class="way-card">
+        <div class="way-banner wb4">
+          <span class="way-icon">❤️</span>
+          <div><h2>Donate</h2><p>Every dollar goes directly to the work</p></div>
+        </div>
+        <div class="way-body">
+          <p>Your financial support makes programs possible, sends youth to events, funds workshops, and keeps ShowDem showing up for communities that need it most. Every gift — at any amount — is an act of love.</p>
+          <ul class="way-list">
+            <li>$25 covers materials for a session</li>
+            <li>$50 sends a youth to their first showcase</li>
+            <li>$100 funds a community workshop</li>
+            <li>$250 sponsors a full event day</li>
+          </ul>
+          <a href="donate.html" class="btn btn-gold">Give Now →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<div class="impact-quote">
+  <blockquote>"ShowDem is built <em>by</em> the community, <em>for</em> the community. Your presence — in whatever form — is part of what makes it real."</blockquote>
+  <cite>— Martha Igbinosa, Founder</cite>
+</div>
+
+<!-- DONATE SECTION -->
+<section class="donate-section" id="donate">
+  <div class="donate-inner">
+    <div class="donate-text">
+      <span class="section-label">Give</span>
+      <h2>Your Gift Moves Mountains</h2>
+      <p>No gift is too small. All love counts. Your support goes directly into the programs, people, and communities ShowDem is built to serve.</p>
+      <div class="donate-pills">
+        <button class="d-pill" onclick="selectPill(this)">$25</button>
+        <button class="d-pill active" onclick="selectPill(this)">$50</button>
+        <button class="d-pill" onclick="selectPill(this)">$100</button>
+        <button class="d-pill" onclick="selectPill(this)">$250</button>
+        <button class="d-pill" onclick="selectPill(this)">Other</button>
+      </div>
+      <a href="donate.html" class="btn btn-gold">Go to Donate Page →</a>
+    </div>
+    <div class="donate-visual">
+      <span class="dv-heart">❤️</span>
+      <h3>Every Gift Has a Story</h3>
+      <p>Your $50 could send a child to their first ShowDem showcase. Your $100 could fund a workshop. Your love — at any amount — keeps this movement alive and growing.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a class="footer-logo" href="showdem.html"><span>SHOW</span><em>DEM</em></a>
+      <p>Spreading love, empowering communities, and celebrating talent through the art of double dutch and beyond.</p>
+      <div class="footer-social">
+        <a class="social-btn" href="#" aria-label="Instagram">📸</a><a class="social-btn" href="#" aria-label="Facebook">📘</a>
+        <a class="social-btn" href="#" aria-label="TikTok">🎵</a><a class="social-btn" href="#" aria-label="YouTube">▶️</a>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Organization</h4><ul>
+      <li><a href="about.html">Our Story</a></li><li><a href="about.html#mission">Mission & Vision</a></li>
+      <li><a href="about.html#martha">Meet Martha</a></li><li><a href="about.html#values">Our Values</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Get Involved</h4><ul>
+      <li><a href="events.html">Events</a></li><li><a href="involve.html">Volunteer</a></li>
+      <li><a href="contact.html?form=partner">Partner With Us</a></li><li><a href="donate.html">Donate</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Contact</h4><ul>
+      <li><a href="mailto:hello@showdemmovement.org">hello@showdemmovement.org</a></li>
+      <li><a href="contact.html">Connect With Us</a></li>
+      <li><a href="contact.html?form=partner">Media Inquiries</a></li>
+    </ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 ShowDem Movement Foundation. All rights reserved. 501(c)(3) nonprofit.</p>
+    <p class="footer-tagline">Love in our hearts. Purpose in our actions. Impact in our communities.</p>
+  </div>
+</footer>
+<script>
+function toggleMobile(){const m=document.getElementById('mobile-nav');m.style.display=m.style.display==='flex'?'none':'flex'}
+function selectPill(el){document.querySelectorAll('.d-pill').forEach(p=>p.classList.remove('active'));el.classList.add('active')}
+</script>
+</body>
+</html>

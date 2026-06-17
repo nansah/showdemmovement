@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Donate – ShowDem Movement Foundation</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--coral:#FF6B4A;--gold:#FFC857;--teal:#2EC4B6;--navy:#12355B;--cream:#FFF8F0;--white:#ffffff}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:'Montserrat',sans-serif;background:var(--white);color:var(--navy);overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--navy);display:flex;align-items:center;justify-content:space-between;padding:0 5%;height:68px}
+.nav-logo{font-size:1.3rem;font-weight:900;text-decoration:none;color:var(--white)}.nav-logo span{color:var(--coral)}.nav-logo em{color:var(--teal);font-style:normal}
+.nav-links{display:flex;gap:1.8rem;list-style:none;align-items:center}
+.nav-links a{color:rgba(255,248,240,.8);text-decoration:none;font-size:.78rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--gold)}
+.nav-cta{background:var(--coral);color:var(--white)!important;padding:.5rem 1.2rem;border-radius:50px}
+.nav-cta:hover{background:var(--gold)!important;color:var(--navy)!important}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.hamburger span{display:block;width:24px;height:2px;background:var(--white);border-radius:2px}
+.mobile-nav{display:none;position:fixed;top:68px;left:0;right:0;background:var(--navy);z-index:99;padding:1.5rem 5%;flex-direction:column;gap:1rem;border-top:1px solid rgba(255,255,255,.1)}
+.mobile-nav a{color:rgba(255,248,240,.8);text-decoration:none;font-size:.9rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.mobile-nav a.mob-cta{color:var(--coral)!important}
+.btn{display:inline-block;padding:.85rem 2rem;border-radius:50px;font-weight:800;font-size:.82rem;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;transition:transform .2s,box-shadow .2s;cursor:pointer;border:none;font-family:'Montserrat',sans-serif}
+.btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.2)}
+.btn-coral{background:var(--coral);color:var(--white)}.btn-gold{background:var(--gold);color:var(--navy)}.btn-navy{background:var(--navy);color:var(--white)}.btn-teal{background:var(--teal);color:var(--white)}
+.section-label{font-size:.7rem;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:var(--teal);margin-bottom:.6rem;display:block}
+.section-title{font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:900;line-height:1.1;margin-bottom:1.2rem}
+
+/* PAGE HERO */
+.page-hero{background:linear-gradient(135deg,var(--coral) 0%,#e8502a 100%);padding:140px 5% 90px;text-align:center;position:relative;overflow:hidden}
+.page-hero::before{content:'❤️';font-size:20rem;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity:.04;pointer-events:none}
+.page-hero .section-label{color:rgba(255,255,255,.7);display:flex;justify-content:center}
+.page-hero h1{font-size:clamp(2.5rem,5vw,4.5rem);font-weight:900;color:var(--white);line-height:1.05;margin-bottom:1.2rem;position:relative}
+.page-hero p{font-size:1rem;color:rgba(255,255,255,.85);max-width:540px;margin:0 auto 2rem;line-height:1.8;position:relative}
+
+/* DONATE PANEL */
+.donate-wrap{padding:80px 5%;background:var(--cream)}
+.donate-grid{max-width:1000px;margin:0 auto;display:grid;grid-template-columns:1fr 400px;gap:3rem;align-items:start}
+
+/* AMOUNTS */
+.amount-section{margin-bottom:2rem}
+.amount-label{font-size:.72rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--navy);margin-bottom:1rem;display:block}
+.amount-pills{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1rem}
+.a-pill{padding:1rem;border:2.5px solid #e8e8e8;border-radius:14px;font-family:'Montserrat',sans-serif;font-size:1.1rem;font-weight:900;color:var(--navy);background:var(--white);cursor:pointer;transition:border-color .2s,background .2s,color .2s;text-align:center}
+.a-pill:hover{border-color:var(--coral);color:var(--coral)}
+.a-pill.active{border-color:var(--coral);background:var(--coral);color:var(--white)}
+.a-pill-sub{font-size:.62rem;font-weight:700;color:inherit;display:block;margin-top:.2rem;opacity:.75;letter-spacing:.5px}
+.custom-input{width:100%;padding:.85rem 1rem;border:2.5px solid #e8e8e8;border-radius:14px;font-family:'Montserrat',sans-serif;font-size:1rem;font-weight:700;color:var(--navy);background:var(--white);transition:border-color .2s}
+.custom-input:focus{outline:none;border-color:var(--teal)}
+
+/* FREQUENCY */
+.freq-toggle{display:flex;background:var(--white);border:2px solid #e8e8e8;border-radius:12px;padding:4px;gap:4px;margin-bottom:2rem}
+.freq-btn{flex:1;padding:.65rem;border:none;border-radius:10px;font-family:'Montserrat',sans-serif;font-size:.8rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;cursor:pointer;background:transparent;color:#aaa;transition:background .2s,color .2s}
+.freq-btn.active{background:var(--navy);color:var(--white)}
+
+/* DONOR INFO */
+.donor-fields{display:flex;flex-direction:column;gap:1rem;margin-bottom:1.5rem}
+.d-field input{width:100%;padding:.8rem 1rem;border:2px solid #e8e8e8;border-radius:12px;font-family:'Montserrat',sans-serif;font-size:.88rem;color:var(--navy);background:var(--white);transition:border-color .2s}
+.d-field input:focus{outline:none;border-color:var(--teal)}
+.d-field label{font-size:.72rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#999;display:block;margin-bottom:.4rem}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+
+.donate-submit{width:100%;padding:1.1rem;background:var(--coral);color:var(--white);font-family:'Montserrat',sans-serif;font-weight:800;font-size:1rem;letter-spacing:1.5px;text-transform:uppercase;border:none;border-radius:14px;cursor:pointer;transition:background .2s,transform .2s;margin-bottom:.75rem}
+.donate-submit:hover{background:#e55a3a;transform:translateY(-2px)}
+.donate-secure{font-size:.72rem;color:#aaa;text-align:center;line-height:1.5}
+
+/* SIDEBAR */
+.donate-sidebar{}
+.impact-box{background:var(--navy);border-radius:24px;padding:2rem;color:var(--white);margin-bottom:1.5rem}
+.impact-box h3{font-size:.72rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem}
+.impact-tier{display:flex;gap:.8rem;align-items:flex-start;padding:.75rem 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.impact-tier:last-child{border-bottom:none}
+.tier-amount{font-size:1.1rem;font-weight:900;color:var(--coral);flex-shrink:0;min-width:52px}
+.tier-desc{font-size:.8rem;color:rgba(255,248,240,.7);line-height:1.5}
+.testimonial-box{background:var(--cream);border-radius:20px;padding:1.8rem}
+.testimonial-box blockquote{font-size:.9rem;font-style:italic;color:#555;line-height:1.7;margin-bottom:.75rem}
+.testimonial-box cite{font-size:.7rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--teal)}
+.tax-note{background:rgba(46,196,182,.08);border:1px solid rgba(46,196,182,.2);border-radius:14px;padding:1.2rem;margin-top:1.2rem;font-size:.78rem;color:#555;line-height:1.6;text-align:center}
+.tax-note strong{color:var(--teal)}
+
+/* OTHER WAYS */
+.other-ways{padding:80px 5%;background:var(--white)}
+.other-inner{max-width:900px;margin:0 auto}
+.other-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem}
+.other-card{border-radius:20px;padding:2rem;text-align:center;background:var(--cream)}
+.other-card .oc-icon{font-size:2.2rem;display:block;margin-bottom:.8rem}
+.other-card h3{font-size:.78rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:.5rem;color:var(--navy)}
+.other-card p{font-size:.82rem;color:#666;line-height:1.6;margin-bottom:1rem}
+
+/* SUCCESS */
+#donate-success{display:none;text-align:center;padding:3rem 2rem}
+#donate-success .ds-emoji{font-size:4rem;display:block;margin-bottom:1.2rem}
+#donate-success h3{font-size:1.6rem;font-weight:900;color:var(--navy);margin-bottom:.75rem}
+#donate-success p{color:#666;line-height:1.7;font-size:.9rem}
+
+/* FOOTER */
+footer{background:var(--navy);padding:60px 5% 30px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.footer-logo{font-size:1.4rem;font-weight:900;color:var(--white);display:block;margin-bottom:1rem;text-decoration:none}
+.footer-logo span{color:var(--coral)}.footer-logo em{color:var(--teal);font-style:normal}
+.footer-brand p{font-size:.83rem;color:rgba(255,248,240,.5);line-height:1.7;max-width:240px}
+.footer-social{display:flex;gap:.75rem;margin-top:1.5rem}
+.social-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:var(--white);font-size:.9rem;text-decoration:none;transition:background .2s}
+.social-btn:hover{background:var(--teal)}
+.footer-col h4{font-size:.68rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:1.2rem}
+.footer-col ul{list-style:none}.footer-col li{margin-bottom:.6rem}
+.footer-col a{color:rgba(255,248,240,.55);text-decoration:none;font-size:.83rem;transition:color .2s}
+.footer-col a:hover{color:var(--teal)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.footer-bottom p{font-size:.78rem;color:rgba(255,248,240,.35)}.footer-tagline{font-size:.78rem;font-weight:700;color:var(--gold);font-style:italic}
+
+@media(max-width:900px){
+  .donate-grid{grid-template-columns:1fr}
+  .other-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:640px){.nav-links{display:none}.hamburger{display:flex}.footer-grid{grid-template-columns:1fr}.two-col{grid-template-columns:1fr}.amount-pills{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="showdem.html"><span>SHOW</span><em>DEM</em></a>
+  <ul class="nav-links">
+    <li><a href="showdem.html">Home</a></li><li><a href="about.html">About</a></li>
+    <li><a href="events.html">Events</a></li><li><a href="involve.html">Get Involved</a></li>
+    <li><a href="donate.html" class="active">Donate</a></li>
+    <li><a href="contact.html" class="nav-cta">Connect</a></li>
+  </ul>
+  <button class="hamburger" onclick="toggleMobile()" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-nav" id="mobile-nav">
+  <a href="showdem.html">Home</a><a href="about.html">About</a><a href="events.html">Events</a>
+  <a href="involve.html">Get Involved</a><a href="donate.html">Donate</a>
+  <a href="contact.html" class="mob-cta">Connect →</a>
+</div>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <span class="section-label">Give</span>
+  <h1>Your Love in Action ❤️</h1>
+  <p>Every dollar you give goes directly into programs, events, and the hands-on work of uplifting youth and communities. All love counts.</p>
+</div>
+
+<!-- DONATE PANEL -->
+<section class="donate-wrap">
+  <div class="donate-grid">
+    <div>
+      <div id="donate-form">
+        <!-- Frequency -->
+        <span class="amount-label" style="margin-bottom:.75rem">Give once or make it a habit</span>
+        <div class="freq-toggle">
+          <button class="freq-btn active" onclick="setFreq(this,'one')">One-Time</button>
+          <button class="freq-btn" onclick="setFreq(this,'monthly')">Monthly</button>
+        </div>
+
+        <!-- Amounts -->
+        <div class="amount-section">
+          <span class="amount-label">Choose an Amount</span>
+          <div class="amount-pills">
+            <button class="a-pill" onclick="selectAmount(this,'25')">$25<span class="a-pill-sub">Materials for a session</span></button>
+            <button class="a-pill active" onclick="selectAmount(this,'50')">$50<span class="a-pill-sub">Send a youth to a showcase</span></button>
+            <button class="a-pill" onclick="selectAmount(this,'100')">$100<span class="a-pill-sub">Fund a full workshop</span></button>
+            <button class="a-pill" onclick="selectAmount(this,'250')">$250<span class="a-pill-sub">Sponsor an event day</span></button>
+            <button class="a-pill" onclick="selectAmount(this,'500')">$500<span class="a-pill-sub">Community program fund</span></button>
+            <button class="a-pill" onclick="selectAmount(this,'custom')" id="other-pill">Other<span class="a-pill-sub">You choose the amount</span></button>
+          </div>
+          <input class="custom-input" type="number" id="custom-amount" placeholder="Enter custom amount ($)" style="display:none;margin-top:.5rem" min="1">
+        </div>
+
+        <!-- Donor info -->
+        <div class="donor-fields">
+          <div class="d-field two-col">
+            <div><label>First Name</label><input type="text" id="d-first" placeholder="First name"></div>
+            <div><label>Last Name</label><input type="text" id="d-last" placeholder="Last name"></div>
+          </div>
+          <div class="d-field"><label>Email Address</label><input type="email" id="d-email" placeholder="you@email.com"></div>
+        </div>
+
+        <button class="donate-submit" onclick="submitDonation()">Complete Donation ❤️</button>
+        <p class="donate-secure">🔒 Secure checkout &nbsp;·&nbsp; ShowDem Movement Foundation is a 501(c)(3) nonprofit. Your donation may be tax-deductible.</p>
+      </div>
+      <div id="donate-success">
+        <span class="ds-emoji">🎉</span>
+        <h3>Thank You So Much!</h3>
+        <p>Your generosity directly fuels the love, joy, and work of ShowDem Movement Foundation. You'll receive a confirmation and tax receipt by email. From Martha and the whole ShowDem family — thank you. ❤️</p>
+      </div>
+    </div>
+
+    <div class="donate-sidebar">
+      <div class="impact-box">
+        <h3>Where Your Gift Goes</h3>
+        <div class="impact-tier"><span class="tier-amount">$25</span><span class="tier-desc">Covers materials and supplies for one community session</span></div>
+        <div class="impact-tier"><span class="tier-amount">$50</span><span class="tier-desc">Sends a youth participant to their first ShowDem showcase</span></div>
+        <div class="impact-tier"><span class="tier-amount">$100</span><span class="tier-desc">Funds a full community education workshop</span></div>
+        <div class="impact-tier"><span class="tier-amount">$250</span><span class="tier-desc">Sponsors a complete event day — venue, equipment & more</span></div>
+        <div class="impact-tier"><span class="tier-amount">$500+</span><span class="tier-desc">Establishes a community program fund for ongoing sessions</span></div>
+      </div>
+      <div class="testimonial-box">
+        <blockquote>"ShowDem gave my daughter something she'd never had before — a stage, a crowd that believed in her, and a community that felt like home."</blockquote>
+        <cite>— ShowDem Community Member</cite>
+      </div>
+      <div class="tax-note">
+        <strong>ShowDem Movement Foundation is a 501(c)(3) nonprofit organization.</strong><br>
+        Your donation is tax-deductible to the extent permitted by law. You'll receive an email receipt for your records.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OTHER WAYS TO GIVE -->
+<section class="other-ways">
+  <div class="other-inner">
+    <span class="section-label">More Ways to Give</span>
+    <h2 class="section-title">Every Act of Generosity Counts</h2>
+    <div class="other-grid">
+      <div class="other-card">
+        <span class="oc-icon">🔄</span>
+        <h3>Monthly Giving</h3>
+        <p>Set up a recurring gift and become a foundational supporter of ShowDem's ongoing work. Small monthly gifts add up to massive impact over time.</p>
+        <a href="#" onclick="document.querySelector('.freq-btn:nth-child(2)').click();window.scrollTo({top:400,behavior:'smooth'});return false" class="btn btn-navy" style="font-size:.75rem;padding:.65rem 1.4rem">Become a Monthly Donor</a>
+      </div>
+      <div class="other-card">
+        <span class="oc-icon">🏢</span>
+        <h3>Corporate Giving</h3>
+        <p>Businesses and organizations can partner with ShowDem through sponsorships, matching gift programs, and in-kind contributions.</p>
+        <a href="contact.html?form=partner" class="btn btn-teal" style="font-size:.75rem;padding:.65rem 1.4rem">Contact Us About Sponsorship</a>
+      </div>
+      <div class="other-card">
+        <span class="oc-icon">📢</span>
+        <h3>Spread the Word</h3>
+        <p>Share our mission on social media, tell your network, and help us reach more communities. Awareness is also a form of giving.</p>
+        <a href="#" class="btn btn-coral" style="font-size:.75rem;padding:.65rem 1.4rem">Share ShowDem</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a class="footer-logo" href="showdem.html"><span>SHOW</span><em>DEM</em></a>
+      <p>Spreading love, empowering communities, and celebrating talent through the art of double dutch and beyond.</p>
+      <div class="footer-social">
+        <a class="social-btn" href="#" aria-label="Instagram">📸</a><a class="social-btn" href="#" aria-label="Facebook">📘</a>
+        <a class="social-btn" href="#" aria-label="TikTok">🎵</a><a class="social-btn" href="#" aria-label="YouTube">▶️</a>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Organization</h4><ul>
+      <li><a href="about.html">Our Story</a></li><li><a href="about.html#mission">Mission & Vision</a></li>
+      <li><a href="about.html#martha">Meet Martha</a></li><li><a href="about.html#values">Our Values</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Get Involved</h4><ul>
+      <li><a href="events.html">Events</a></li><li><a href="involve.html">Volunteer</a></li>
+      <li><a href="contact.html?form=partner">Partner With Us</a></li><li><a href="donate.html">Donate</a></li>
+    </ul></div>
+    <div class="footer-col"><h4>Contact</h4><ul>
+      <li><a href="mailto:hello@showdemmovement.org">hello@showdemmovement.org</a></li>
+      <li><a href="contact.html">Connect With Us</a></li>
+      <li><a href="contact.html?form=partner">Media Inquiries</a></li>
+    </ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 ShowDem Movement Foundation. All rights reserved. 501(c)(3) nonprofit.</p>
+    <p class="footer-tagline">Love in our hearts. Purpose in our actions. Impact in our communities.</p>
+  </div>
+</footer>
+<script>
+function toggleMobile(){const m=document.getElementById('mobile-nav');m.style.display=m.style.display==='flex'?'none':'flex'}
+function setFreq(btn,type){document.querySelectorAll('.freq-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}
+function selectAmount(btn,val){
+  document.querySelectorAll('.a-pill').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('custom-amount').style.display=val==='custom'?'block':'none';
+}
+function submitDonation(){
+  const first=document.getElementById('d-first').value.trim();
+  const email=document.getElementById('d-email').value.trim();
+  if(!first||!email){alert('Please enter your name and email to continue.');return;}
+  document.getElementById('donate-form').style.display='none';
+  document.getElementById('donate-success').style.display='block';
+  window.scrollTo({top:400,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
