@@ -1,0 +1,415 @@
+/* ══════════════════════════════════════════
+   SHOWDEM ADMIN PANEL  —  admin.css
+══════════════════════════════════════════ */
+
+/* ── Admin Toolbar ── */
+#admin-toolbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 99999;
+  background: #0d1b3e;
+  border-bottom: 3px solid #EF7FBB;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  font-family: 'Nunito', sans-serif;
+}
+.atb-inner {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.atb-badge {
+  background: #EF7FBB;
+  color: white;
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: .28rem .85rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.atb-hint {
+  font-size: .78rem;
+  color: rgba(255,255,255,.42);
+  flex: 1;
+}
+.atb-actions { display: flex; gap: .45rem; flex-shrink: 0; }
+.atb-actions button {
+  padding: .32rem .85rem;
+  border-radius: 8px;
+  border: none;
+  font-size: .77rem;
+  font-weight: 800;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  transition: opacity .15s, transform .1s;
+  white-space: nowrap;
+}
+.atb-actions button:hover  { opacity: .82; }
+.atb-actions button:active { transform: scale(.97); }
+#atbSave   { background: #EF7FBB; color: white; }
+#atbExport { background: #57C8E9; color: #0d1b3e; }
+#atbReset  { background: transparent; color: rgba(255,80,80,.8); border: 1px solid rgba(255,80,80,.3); }
+#atbExit   { background: rgba(255,255,255,.08); color: rgba(255,255,255,.8); }
+
+/* ── Editable text indicators ── */
+.admin-editable {
+  outline: none !important;
+  border-radius: 4px;
+  transition: background .15s, box-shadow .15s;
+  cursor: text;
+  position: relative;
+}
+.admin-editable::after {
+  content: '✏️';
+  font-size: .65rem;
+  position: absolute;
+  top: -8px; right: -4px;
+  opacity: 0;
+  transition: opacity .15s;
+  pointer-events: none;
+}
+.admin-editable:hover { background: rgba(239,127,187,.09); }
+.admin-editable:hover::after { opacity: 1; }
+.admin-editable:focus {
+  background: rgba(239,127,187,.14) !important;
+  box-shadow: 0 0 0 2px rgba(239,127,187,.45) !important;
+}
+
+/* Dark card — invert editable highlight */
+.ftl-card-today .admin-editable:hover { background: rgba(255,255,255,.07); }
+.ftl-card-today .admin-editable:focus { background: rgba(255,255,255,.1) !important; box-shadow: 0 0 0 2px rgba(239,127,187,.5) !important; }
+
+/* ── Media placeholder upload zones ── */
+.admin-upload-zone {
+  cursor: pointer !important;
+  position: relative;
+}
+.admin-upload-zone::before {
+  content: '📷 Click to add media';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(239,127,187,.18);
+  border-radius: inherit;
+  font-size: .78rem;
+  font-weight: 800;
+  color: #c4407a;
+  opacity: 0;
+  transition: opacity .2s;
+  pointer-events: none;
+  z-index: 5;
+}
+.admin-upload-zone:hover::before { opacity: 1; }
+.ftl-media-rendered.admin-upload-zone::before { content: '🔄 Click to replace'; }
+
+/* ── Toast notification ── */
+#admin-toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(140%);
+  background: #0d1b3e;
+  color: white;
+  padding: .65rem 1.6rem;
+  border-radius: 999px;
+  font-size: .84rem;
+  font-weight: 700;
+  font-family: 'Nunito', sans-serif;
+  border: 1px solid rgba(255,255,255,.12);
+  z-index: 99999;
+  transition: transform .3s cubic-bezier(.22,1,.36,1);
+  white-space: nowrap;
+  pointer-events: none;
+}
+#admin-toast.visible   { transform: translateX(-50%) translateY(0); }
+#admin-toast.is-error  { background: #b91c1c; border-color: rgba(255,100,100,.3); }
+#admin-toast.is-success { border-color: rgba(239,127,187,.4); }
+
+/* ── Media Modal ── */
+#admin-media-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.amm-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.52);
+  backdrop-filter: blur(5px);
+}
+.amm-box {
+  position: relative;
+  background: white;
+  border-radius: 22px;
+  padding: 2rem;
+  width: min(560px, 94vw);
+  max-height: 88vh;
+  overflow-y: auto;
+  box-shadow: 0 40px 100px rgba(0,0,0,.28);
+  font-family: 'Nunito', sans-serif;
+}
+.amm-close {
+  position: absolute;
+  top: 1rem; right: 1.1rem;
+  background: #f3f4f6;
+  border: none;
+  font-size: 1.1rem;
+  line-height: 1;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #555;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+.amm-close:hover { background: #e5e7eb; }
+.amm-title {
+  font-family: 'Fredoka One', sans-serif;
+  font-size: 1.25rem;
+  color: #0d1b3e;
+  margin-bottom: 1.1rem;
+}
+.amm-tabs {
+  display: flex;
+  gap: .3rem;
+  margin-bottom: 1.2rem;
+  border-bottom: 2px solid #edf0f7;
+  padding-bottom: .65rem;
+}
+.amm-tab {
+  background: none;
+  border: none;
+  padding: .3rem .85rem;
+  font-size: .8rem;
+  font-weight: 800;
+  font-family: 'Nunito', sans-serif;
+  color: #888;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background .15s, color .15s;
+}
+.amm-tab.active { background: rgba(239,127,187,.14); color: #c4407a; }
+.amm-tab:hover:not(.active) { background: #f3f4f6; color: #444; }
+.amm-panel.hidden { display: none; }
+
+/* Drop zone */
+.amm-drop-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #d0d5e0;
+  border-radius: 14px;
+  padding: 2.2rem 1.5rem;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  text-align: center;
+}
+.amm-drop-zone:hover { border-color: #EF7FBB; background: rgba(239,127,187,.04); }
+.amm-drop-icon { font-size: 2.2rem; margin-bottom: .6rem; }
+.amm-drop-text {
+  font-size: .83rem;
+  font-weight: 700;
+  color: #4a5e78;
+  margin: 0;
+  line-height: 1.5;
+}
+.amm-drop-text span { font-weight: 600; color: #aaa; font-size: .76rem; display: block; margin-top: .25rem; }
+
+/* Inputs */
+.amm-label {
+  display: block;
+  font-size: .75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: #4a5e78;
+  margin-bottom: .45rem;
+}
+.amm-input {
+  width: 100%;
+  border: 2px solid #edf0f7;
+  border-radius: 10px;
+  padding: .6rem 1rem;
+  font-size: .88rem;
+  font-family: 'Nunito', sans-serif;
+  outline: none;
+  transition: border-color .2s;
+  box-sizing: border-box;
+  color: #1a1a2e;
+}
+.amm-input:focus { border-color: #EF7FBB; }
+.amm-hint {
+  font-size: .75rem;
+  color: #999;
+  margin: .4rem 0 0;
+  line-height: 1.5;
+}
+.amm-preview { margin-top: 1rem; }
+.amm-preview img,
+.amm-preview video,
+.amm-preview iframe {
+  width: 100%;
+  border-radius: 10px;
+  display: block;
+}
+.amm-preview iframe { aspect-ratio: 16/9; border: none; }
+.amm-preview-error {
+  color: #b91c1c;
+  font-size: .8rem;
+  font-weight: 700;
+  padding: .5rem;
+}
+
+/* Actions */
+.amm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: .6rem;
+  margin-top: 1.4rem;
+  padding-top: 1rem;
+  border-top: 1px solid #edf0f7;
+}
+.amm-btn-cancel {
+  background: #f3f4f6;
+  border: none;
+  border-radius: 9px;
+  padding: .5rem 1.2rem;
+  font-size: .84rem;
+  font-weight: 800;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  color: #555;
+  transition: background .15s;
+}
+.amm-btn-cancel:hover { background: #e5e7eb; }
+.amm-btn-apply {
+  background: #EF7FBB;
+  border: none;
+  border-radius: 9px;
+  padding: .5rem 1.4rem;
+  font-size: .84rem;
+  font-weight: 800;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  color: white;
+  transition: opacity .15s;
+}
+.amm-btn-apply:disabled { opacity: .35; cursor: not-allowed; }
+.amm-btn-apply:not(:disabled):hover { opacity: .88; }
+
+/* ── Rendered media (non-admin too) ── */
+.ftl-media-rendered {
+  margin-top: 1rem;
+  border-radius: 10px;
+  overflow: hidden;
+  line-height: 0;
+}
+.ftl-media-rendered img,
+.ftl-media-rendered video,
+.ftl-media-rendered iframe {
+  width: 100%;
+  display: block;
+  border-radius: 10px;
+}
+.ftl-media-rendered iframe { aspect-ratio: 16/9; border: none; }
+
+/* ── Admin login modal ── */
+#admin-login-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Nunito', sans-serif;
+}
+.alm-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.6);
+  backdrop-filter: blur(6px);
+}
+.alm-box {
+  position: relative;
+  background: white;
+  border-radius: 22px;
+  padding: 2.4rem;
+  width: min(400px, 90vw);
+  text-align: center;
+  box-shadow: 0 40px 100px rgba(0,0,0,.3);
+}
+.alm-icon  { font-size: 2.5rem; margin-bottom: .6rem; }
+.alm-title {
+  font-family: 'Fredoka One', sans-serif;
+  font-size: 1.4rem;
+  color: #0d1b3e;
+  margin-bottom: .3rem;
+}
+.alm-sub   { font-size: .83rem; color: #888; margin-bottom: 1.4rem; }
+.alm-input {
+  width: 100%;
+  border: 2px solid #edf0f7;
+  border-radius: 12px;
+  padding: .75rem 1rem;
+  font-size: 1rem;
+  font-family: 'Nunito', sans-serif;
+  text-align: center;
+  letter-spacing: .06em;
+  outline: none;
+  transition: border-color .2s;
+  box-sizing: border-box;
+  margin-bottom: .8rem;
+}
+.alm-input:focus { border-color: #EF7FBB; }
+.alm-error {
+  color: #b91c1c;
+  font-size: .8rem;
+  font-weight: 700;
+  margin-bottom: .6rem;
+  display: none;
+}
+.alm-error.visible { display: block; }
+.alm-btn {
+  width: 100%;
+  background: #EF7FBB;
+  border: none;
+  border-radius: 12px;
+  padding: .75rem;
+  font-size: .95rem;
+  font-weight: 800;
+  font-family: 'Nunito', sans-serif;
+  color: white;
+  cursor: pointer;
+  transition: opacity .15s;
+  margin-bottom: .6rem;
+}
+.alm-btn:hover { opacity: .88; }
+.alm-cancel {
+  background: none;
+  border: none;
+  font-size: .8rem;
+  font-family: 'Nunito', sans-serif;
+  color: #aaa;
+  cursor: pointer;
+}
+.alm-cancel:hover { color: #666; }
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .atb-hint { display: none; }
+  .atb-actions button { padding: .28rem .6rem; font-size: .72rem; }
+}
