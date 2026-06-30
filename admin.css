@@ -408,6 +408,20 @@
 }
 .alm-cancel:hover { color: #666; }
 
+/* Token modal extra */
+#admin-token-modal .alm-sub { font-size: .82rem; line-height: 1.55; }
+#admin-token-modal .alm-sub strong { color: #0d1b3e; }
+.alm-hint-link {
+  margin-top: .9rem;
+  font-size: .78rem;
+  color: #888;
+  line-height: 1.6;
+  text-align: center;
+}
+.alm-hint-link a { color: #EF7FBB; font-weight: 700; text-decoration: none; }
+.alm-hint-link a:hover { text-decoration: underline; }
+.alm-hint-link small { color: #bbb; font-size: .72rem; }
+
 /* ── Responsive ── */
 @media (max-width: 640px) {
   .atb-hint { display: none; }

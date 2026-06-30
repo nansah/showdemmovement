@@ -1,59 +1,89 @@
 /**
  * Showdem Movement Foundation — Admin Content Manager
  *
- * Activation: click the footer area 5× within 3 seconds
- * Default password: showdem2025
+ * Activation : click the site footer 5× within 3 seconds
+ * Password   : showdem2025
  *
- * Features:
- *  - Inline text editing for all timeline card text
- *  - Per-placeholder media upload (image file, image URL, YouTube)
- *  - Saves to localStorage (persists across page reloads on same device)
- *  - Export content as JSON backup
- *  - Reset to original HTML
+ * Saves content.json and media/ files directly to the GitHub repo
+ * so every visitor sees updated content without localStorage.
+ *
+ * Required: a GitHub Personal Access Token with Contents write
+ * permission on nansah/showdemmovement. The token is stored in
+ * sessionStorage (cleared when the tab closes — never in the repo).
  */
 (function () {
   'use strict';
 
-  var STORAGE_KEY = 'showdem_content_v1';
-  var ADMIN_PASS  = 'showdem2025';
+  /* ── Repo config ─────────────────────────────── */
+  var GH = {
+    owner  : 'nansah',
+    repo   : 'showdemmovement',
+    branch : 'main',
+    content: 'content.json',
+    media  : 'media'
+  };
 
-  // ══════════════════════════════════════
-  //  UTILITIES
-  // ══════════════════════════════════════
+  var ADMIN_PASS   = 'showdem2025';
+  var TOKEN_KEY    = 'showdem_gh_token';   // sessionStorage key
 
-  function getYouTubeEmbedUrl(url) {
-    var match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
-    return match ? 'https://www.youtube.com/embed/' + match[1] + '?rel=0' : null;
+  /* ══════════════════════════════════════════════
+     UTILITIES
+  ══════════════════════════════════════════════ */
+
+  function ghUrl(path) {
+    return 'https://api.github.com/repos/' + GH.owner + '/' + GH.repo + '/contents/' + path;
   }
 
-  function showToast(msg, type) {
-    var t = document.getElementById('admin-toast');
-    if (!t) {
-      t = document.createElement('div');
-      t.id = 'admin-toast';
-      document.body.appendChild(t);
-    }
-    t.textContent = msg;
-    t.className = type === 'error' ? 'is-error' : 'is-success';
-    t.classList.add('visible');
-    clearTimeout(t._timer);
-    t._timer = setTimeout(function () { t.classList.remove('visible'); }, 3000);
+  function rawUrl(path) {
+    return 'https://raw.githubusercontent.com/' + GH.owner + '/' + GH.repo + '/' + GH.branch + '/' + path;
+  }
+
+  function b64Encode(str) {
+    return btoa(unescape(encodeURIComponent(str)));
+  }
+
+  function getToken() {
+    return sessionStorage.getItem(TOKEN_KEY) || '';
+  }
+
+  function ghHeaders(token) {
+    return {
+      'Authorization' : 'Bearer ' + (token || getToken()),
+      'Accept'        : 'application/vnd.github+json',
+      'Content-Type'  : 'application/json',
+      'X-GitHub-Api-Version': '2022-11-28'
+    };
   }
 
   function isAdminMode() {
     return new URLSearchParams(window.location.search).get('admin') === '1';
   }
 
-  // ══════════════════════════════════════
-  //  MEDIA RENDERING  (used by both load & admin upload)
-  // ══════════════════════════════════════
+  function getYouTubeEmbedUrl(url) {
+    var m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+    return m ? 'https://www.youtube.com/embed/' + m[1] + '?rel=0' : null;
+  }
 
-  function renderMedia(containerEl, media) {
+  function mediaKey(cardId, idx) { return 'card-' + cardId + '-' + idx; }
+
+  function showToast(msg, type) {
+    var t = document.getElementById('admin-toast');
+    if (!t) { t = document.createElement('div'); t.id = 'admin-toast'; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.className = type === 'error' ? 'is-error' : 'is-success';
+    t.classList.add('visible');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(function () { t.classList.remove('visible'); }, 4000);
+  }
+
+  /* ══════════════════════════════════════════════
+     MEDIA RENDERING  (shared: load + admin upload)
+  ══════════════════════════════════════════════ */
+
+  function renderMedia(el, media) {
     if (!media || !media.src) return;
-
-    containerEl.innerHTML = '';
-    containerEl.className = 'ftl-media-rendered';
-
+    el.innerHTML = '';
+    el.className = 'ftl-media-rendered';
     var inner;
     if (media.type === 'image') {
       inner = document.createElement('img');
@@ -68,125 +98,252 @@
       inner.src = media.src;
       inner.setAttribute('allow', 'accelerometer;autoplay;clipboard-write;encrypted-media;picture-in-picture');
       inner.setAttribute('allowfullscreen', '');
-      inner.title = 'YouTube video';
+      inner.title = 'Video';
     }
-
-    if (inner) containerEl.appendChild(inner);
+    if (inner) { inner._mediaRef = media; el.appendChild(inner); }
+    el._mediaRef = media;
   }
 
-  // Unique key for each placeholder slot
-  function mediaKey(cardId, slotIndex) {
-    return 'card-' + cardId + '-' + slotIndex;
+  /* ══════════════════════════════════════════════
+     LOAD CONTENT FROM content.json  (every visit)
+  ══════════════════════════════════════════════ */
+
+  function loadContent() {
+    fetch(rawUrl(GH.content) + '?t=' + Date.now())
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (data) { if (data) applyContent(data); })
+      .catch(function () {
+        // Fallback: try relative path (works when served from GitHub Pages)
+        fetch('content.json?t=' + Date.now())
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (data) { if (data) applyContent(data); })
+          .catch(function () {});
+      });
   }
 
-  // ══════════════════════════════════════
-  //  LOAD SAVED CONTENT  (runs on every page load)
-  // ══════════════════════════════════════
+  function applyContent(data) {
+    var text  = data.text  || {};
+    var media = data.media || {};
 
-  function loadSavedContent() {
-    var raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return;
-    var data;
-    try { data = JSON.parse(raw); } catch (e) { return; }
-
-    // Restore text
-    var textData = data.text || {};
-    Object.keys(textData).forEach(function (cardId) {
-      var cardEl = document.querySelector('.ftl-card[data-card="' + cardId + '"]');
-      if (!cardEl) return;
-      var t = textData[cardId];
-      var eyebrow = cardEl.querySelector('.ftl-card-eyebrow');
-      var title   = cardEl.querySelector('.ftl-card-h');
-      var body    = cardEl.querySelector('.ftl-card-p');
-      if (eyebrow && t.eyebrow !== undefined) eyebrow.textContent = t.eyebrow;
-      if (title   && t.title   !== undefined) title.textContent   = t.title;
-      if (body    && t.body    !== undefined) body.textContent    = t.body;
+    Object.keys(text).forEach(function (id) {
+      var card = document.querySelector('.ftl-card[data-card="' + id + '"]');
+      if (!card) return;
+      var t = text[id];
+      var ew = card.querySelector('.ftl-card-eyebrow');
+      var h  = card.querySelector('.ftl-card-h');
+      var p  = card.querySelector('.ftl-card-p');
+      if (ew && t.eyebrow) ew.textContent = t.eyebrow;
+      if (h  && t.title)   h.textContent  = t.title;
+      if (p  && t.body)    p.textContent  = t.body;
     });
 
-    // Restore media
-    var mediaData = data.media || {};
-    Object.keys(mediaData).forEach(function (key) {
-      // key format: "card-{id}-{slotIndex}"
-      var parts = key.split('-');
-      var cardId    = parts[1];
-      var slotIndex = parseInt(parts[2]);
-      var cardEl = document.querySelector('.ftl-card[data-card="' + cardId + '"]');
-      if (!cardEl) return;
-      var slots = cardEl.querySelectorAll('.ftl-media-ph');
-      var target = slots[slotIndex];
-      if (target) renderMedia(target, mediaData[key]);
+    Object.keys(media).forEach(function (key) {
+      var parts  = key.split('-');   // "card-{id}-{slot}"
+      var cardId = parts[1];
+      var slotIdx = parseInt(parts[2]);
+      var card = document.querySelector('.ftl-card[data-card="' + cardId + '"]');
+      if (!card) return;
+      var slots = card.querySelectorAll('.ftl-media-ph');
+      if (slots[slotIdx]) renderMedia(slots[slotIdx], media[key]);
     });
   }
 
-  // ══════════════════════════════════════
-  //  COLLECT & SAVE CONTENT
-  // ══════════════════════════════════════
+  /* ══════════════════════════════════════════════
+     GITHUB API  —  read / write content.json
+  ══════════════════════════════════════════════ */
 
-  function collectAndSave() {
-    var textData  = {};
-    var mediaData = {};
+  function ghGetFileSha(path, token) {
+    return fetch(ghUrl(path), { headers: ghHeaders(token) })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (info) { return info ? info.sha : undefined; });
+  }
 
-    document.querySelectorAll('.ftl-card[data-card]').forEach(function (cardEl) {
-      var cardId  = cardEl.dataset.card;
-      var eyebrow = cardEl.querySelector('.ftl-card-eyebrow');
-      var title   = cardEl.querySelector('.ftl-card-h');
-      var body    = cardEl.querySelector('.ftl-card-p');
-      textData[cardId] = {
-        eyebrow: eyebrow ? eyebrow.textContent.trim() : '',
-        title:   title   ? title.textContent.trim()   : '',
-        body:    body    ? body.textContent.trim()     : ''
+  function ghPutFile(path, base64Content, commitMsg, sha, token) {
+    var body = { message: commitMsg, content: base64Content, branch: GH.branch };
+    if (sha) body.sha = sha;
+    return fetch(ghUrl(path), {
+      method : 'PUT',
+      headers: ghHeaders(token),
+      body   : JSON.stringify(body)
+    });
+  }
+
+  /* ── Upload a media file to /media/ in the repo ── */
+  function uploadMediaFile(filename, base64Data, token) {
+    var filePath = GH.media + '/' + filename;
+    return ghGetFileSha(filePath, token).then(function (sha) {
+      return ghPutFile(filePath, base64Data, 'Upload media: ' + filename, sha, token);
+    }).then(function (r) {
+      if (!r.ok) return r.json().then(function (e) { throw new Error(e.message); });
+      return rawUrl(filePath) + '?t=' + Date.now();
+    });
+  }
+
+  /* ── Collect current card content into a data object ── */
+  function collectContent() {
+    var text  = {};
+    var media = {};
+
+    document.querySelectorAll('.ftl-card[data-card]').forEach(function (card) {
+      var id = card.dataset.card;
+      var ew = card.querySelector('.ftl-card-eyebrow');
+      var h  = card.querySelector('.ftl-card-h');
+      var p  = card.querySelector('.ftl-card-p');
+      text[id] = {
+        eyebrow: ew ? ew.textContent.trim() : '',
+        title:   h  ? h.textContent.trim()  : '',
+        body:    p  ? p.textContent.trim()  : ''
       };
 
-      // Collect per-slot media from stored references
-      var mediaStore = cardEl._adminMediaSlots || {};
-      Object.keys(mediaStore).forEach(function (slotIdx) {
-        var key = mediaKey(cardId, slotIdx);
-        mediaData[key] = mediaStore[slotIdx];
+      // Collect from admin upload slots
+      var slots = card._adminMediaSlots || {};
+      Object.keys(slots).forEach(function (idx) {
+        media[mediaKey(id, idx)] = slots[idx];
       });
 
-      // Also preserve already-loaded media (from previous saves)
-      cardEl.querySelectorAll('.ftl-media-rendered').forEach(function (rendered, idx) {
-        var k = mediaKey(cardId, idx);
-        if (!mediaData[k] && rendered._mediaRef) {
-          mediaData[k] = rendered._mediaRef;
-        }
+      // Also carry forward already-rendered media
+      card.querySelectorAll('.ftl-media-rendered').forEach(function (el, idx) {
+        var k = mediaKey(id, idx);
+        if (!media[k] && el._mediaRef) media[k] = el._mediaRef;
       });
     });
 
-    var payload = { text: textData, media: mediaData, savedAt: new Date().toISOString() };
-
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-      showToast('Changes saved!', 'success');
-    } catch (e) {
-      if (e.name === 'QuotaExceededError') {
-        showToast('Storage full — try smaller images or use image URLs instead', 'error');
-      } else {
-        showToast('Save failed: ' + e.message, 'error');
-      }
-    }
+    return { text: text, media: media, updatedAt: new Date().toISOString() };
   }
 
-  function resetContent() {
-    if (!confirm('Reset all content to original? This cannot be undone.')) return;
-    localStorage.removeItem(STORAGE_KEY);
-    showToast('Content reset — reloading…', 'success');
-    setTimeout(function () { window.location.reload(); }, 800);
+  /* ── Main save function ── */
+  function saveContent() {
+    var token = getToken();
+    if (!token) { showTokenModal(saveContent); return; }
+
+    var btn = document.getElementById('atbSave');
+    if (btn) { btn.textContent = '⏳ Saving…'; btn.disabled = true; }
+
+    var data    = collectContent();
+    var encoded = b64Encode(JSON.stringify(data, null, 2));
+
+    ghGetFileSha(GH.content, token)
+      .then(function (sha) {
+        return ghPutFile(GH.content, encoded, 'Update site content via admin panel', sha, token);
+      })
+      .then(function (r) {
+        if (btn) { btn.textContent = '💾 Save'; btn.disabled = false; }
+        if (r.ok) {
+          showToast('Saved! Live site updates in ~1 minute.', 'success');
+        } else {
+          return r.json().then(function (e) {
+            if (r.status === 401 || r.status === 403) {
+              sessionStorage.removeItem(TOKEN_KEY);
+              showToast('Token invalid or expired — re-enter it.', 'error');
+              setTimeout(function () { showTokenModal(saveContent); }, 1500);
+            } else {
+              showToast('Save failed: ' + (e.message || r.status), 'error');
+            }
+          });
+        }
+      })
+      .catch(function (e) {
+        if (btn) { btn.textContent = '💾 Save'; btn.disabled = false; }
+        showToast('Network error: ' + e.message, 'error');
+      });
   }
 
+  /* ── Export JSON ── */
   function exportJSON() {
-    var raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) { showToast('Nothing saved yet — save first', 'error'); return; }
-    var blob = new Blob([raw], { type: 'application/json' });
+    var data = collectContent();
+    var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     var a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'showdem-content-' + new Date().toISOString().slice(0,10) + '.json';
+    a.download = 'showdem-content-' + new Date().toISOString().slice(0, 10) + '.json';
     a.click();
   }
 
-  // ══════════════════════════════════════
-  //  MEDIA MODAL
-  // ══════════════════════════════════════
+  /* ── Reset (re-save empty content.json) ── */
+  function resetContent() {
+    if (!confirm('Reset all content to original HTML? This will clear all edits and media.')) return;
+    var token = getToken();
+    if (!token) { showTokenModal(resetContent); return; }
+    var encoded = b64Encode(JSON.stringify({ text: {}, media: {}, updatedAt: null }, null, 2));
+    ghGetFileSha(GH.content, token)
+      .then(function (sha) { return ghPutFile(GH.content, encoded, 'Reset site content', sha, token); })
+      .then(function (r) {
+        if (r.ok) { showToast('Reset! Reloading…', 'success'); setTimeout(function () { window.location.reload(); }, 1200); }
+        else showToast('Reset failed', 'error');
+      })
+      .catch(function (e) { showToast('Network error: ' + e.message, 'error'); });
+  }
+
+  /* ══════════════════════════════════════════════
+     GITHUB TOKEN MODAL
+  ══════════════════════════════════════════════ */
+
+  function showTokenModal(callback) {
+    var existing = document.getElementById('admin-token-modal');
+    if (existing) existing.remove();
+
+    var modal = document.createElement('div');
+    modal.id = 'admin-token-modal';
+    modal.innerHTML = [
+      '<div class="alm-backdrop"></div>',
+      '<div class="alm-box">',
+        '<div class="alm-icon">🔑</div>',
+        '<h2 class="alm-title">GitHub Token</h2>',
+        '<p class="alm-sub">Enter a Personal Access Token with <strong>Contents: Write</strong> permission on the <em>nansah/showdemmovement</em> repo. It will be remembered for this browser session only.</p>',
+        '<input type="password" class="alm-input" id="tokenInput" placeholder="github_pat_…" autocomplete="off">',
+        '<p class="alm-error" id="tokenError">Could not verify token — check it and try again.</p>',
+        '<button class="alm-btn" id="tokenSubmit">Connect &amp; Continue</button>',
+        '<button class="alm-cancel" id="tokenCancel">Cancel</button>',
+        '<p class="alm-hint-link">',
+          '<a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">',
+            'Create a token on GitHub &rarr;</a><br>',
+          '<small>Scopes needed: Repository → Contents → Read &amp; Write</small>',
+        '</p>',
+      '</div>'
+    ].join('');
+    document.body.appendChild(modal);
+
+    var input    = modal.querySelector('#tokenInput');
+    var errorEl  = modal.querySelector('#tokenError');
+    var submitBtn = modal.querySelector('#tokenSubmit');
+
+    input.focus();
+
+    function tryToken() {
+      var tok = input.value.trim();
+      if (!tok) return;
+      submitBtn.textContent = 'Verifying…';
+      submitBtn.disabled = true;
+
+      // Verify by reading the repo
+      fetch('https://api.github.com/repos/' + GH.owner + '/' + GH.repo, { headers: ghHeaders(tok) })
+        .then(function (r) {
+          if (r.ok) {
+            sessionStorage.setItem(TOKEN_KEY, tok);
+            modal.remove();
+            if (callback) callback();
+          } else {
+            errorEl.classList.add('visible');
+            submitBtn.textContent = 'Connect & Continue';
+            submitBtn.disabled = false;
+          }
+        })
+        .catch(function () {
+          errorEl.textContent = 'Network error — check your connection.';
+          errorEl.classList.add('visible');
+          submitBtn.textContent = 'Connect & Continue';
+          submitBtn.disabled = false;
+        });
+    }
+
+    submitBtn.addEventListener('click', tryToken);
+    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') tryToken(); });
+    modal.querySelector('#tokenCancel').addEventListener('click', function () { modal.remove(); });
+    modal.querySelector('.alm-backdrop').addEventListener('click', function () { modal.remove(); });
+  }
+
+  /* ══════════════════════════════════════════════
+     MEDIA MODAL  (per card slot)
+  ══════════════════════════════════════════════ */
 
   function openMediaModal(cardEl, phEl, slotIndex) {
     var existing = document.getElementById('admin-media-modal');
@@ -197,57 +354,51 @@
     modal.innerHTML = [
       '<div class="amm-backdrop"></div>',
       '<div class="amm-box">',
-        '<button class="amm-close" title="Close">&times;</button>',
+        '<button class="amm-close">&times;</button>',
         '<h3 class="amm-title">Add Media</h3>',
         '<div class="amm-tabs">',
-          '<button class="amm-tab active" data-tab="upload">Upload Photo</button>',
+          '<button class="amm-tab active" data-tab="upload">Upload Photo / Video</button>',
           '<button class="amm-tab" data-tab="url">Image URL</button>',
           '<button class="amm-tab" data-tab="youtube">YouTube Video</button>',
         '</div>',
 
-        // Upload tab
         '<div class="amm-panel" data-panel="upload">',
           '<label class="amm-drop-zone" id="ammDropZone">',
             '<input type="file" id="ammFileInput" accept="image/*,video/mp4,video/webm" style="display:none">',
             '<div class="amm-drop-icon">📁</div>',
-            '<p class="amm-drop-text">Click to choose a photo or video<span>JPG, PNG, GIF, MP4, WebM · max 8 MB recommended</span></p>',
+            '<p class="amm-drop-text">Click to choose a photo or video<span>Uploads directly to your GitHub repo</span></p>',
           '</label>',
           '<div id="ammUploadPreview" class="amm-preview"></div>',
+          '<p id="ammUploadStatus" class="amm-hint" style="display:none"></p>',
         '</div>',
 
-        // URL tab
         '<div class="amm-panel hidden" data-panel="url">',
           '<label class="amm-label">Image URL</label>',
           '<input type="url" id="ammUrlInput" class="amm-input" placeholder="https://example.com/photo.jpg">',
           '<div id="ammUrlPreview" class="amm-preview"></div>',
         '</div>',
 
-        // YouTube tab
         '<div class="amm-panel hidden" data-panel="youtube">',
           '<label class="amm-label">YouTube URL</label>',
           '<input type="url" id="ammYtInput" class="amm-input" placeholder="https://www.youtube.com/watch?v=…">',
-          '<p class="amm-hint">Paste a YouTube watch URL or a short youtu.be link.</p>',
+          '<p class="amm-hint">Paste any YouTube watch or youtu.be link.</p>',
           '<div id="ammYtPreview" class="amm-preview"></div>',
         '</div>',
 
         '<div class="amm-actions">',
           '<button class="amm-btn-cancel">Cancel</button>',
-          '<button class="amm-btn-apply" disabled>Apply</button>',
+          '<button class="amm-btn-apply" id="ammApply" disabled>Apply</button>',
         '</div>',
       '</div>'
     ].join('');
-
     document.body.appendChild(modal);
 
+    var applyBtn    = modal.querySelector('#ammApply');
     var pendingMedia = null;
-    var applyBtn = modal.querySelector('.amm-btn-apply');
 
-    function setPending(media) {
-      pendingMedia = media;
-      applyBtn.disabled = !media;
-    }
+    function setPending(m) { pendingMedia = m; applyBtn.disabled = !m; }
 
-    // ── Tabs ──
+    /* Tabs */
     modal.querySelectorAll('.amm-tab').forEach(function (tab) {
       tab.addEventListener('click', function () {
         modal.querySelectorAll('.amm-tab').forEach(function (t) { t.classList.remove('active'); });
@@ -259,136 +410,146 @@
       });
     });
 
-    // ── File upload ──
-    var fileInput       = modal.querySelector('#ammFileInput');
-    var dropZone        = modal.querySelector('#ammDropZone');
-    var uploadPreview   = modal.querySelector('#ammUploadPreview');
+    /* ── Upload tab ── */
+    var fileInput = modal.querySelector('#ammFileInput');
+    var dropZone  = modal.querySelector('#ammDropZone');
+    var uploadPrev = modal.querySelector('#ammUploadPreview');
+    var uploadStatus = modal.querySelector('#ammUploadStatus');
 
     dropZone.addEventListener('click', function () { fileInput.click(); });
 
     fileInput.addEventListener('change', function () {
       var file = fileInput.files[0];
       if (!file) return;
-      var isImage = file.type.startsWith('image/');
-      var isVideo = file.type.startsWith('video/');
 
-      if (file.size > 20 * 1024 * 1024) {
-        uploadPreview.innerHTML = '<p class="amm-preview-error">File is too large. Please use an image URL or YouTube link for large videos.</p>';
-        setPending(null);
+      if (file.size > 50 * 1024 * 1024) {
+        uploadStatus.textContent = 'File too large (max 50 MB). Use YouTube for videos.';
+        uploadStatus.style.display = 'block';
+        uploadStatus.style.color = '#b91c1c';
         return;
       }
 
+      var isImage = file.type.startsWith('image/');
+      var isVideo = file.type.startsWith('video/');
+      if (!isImage && !isVideo) return;
+
+      uploadStatus.textContent = '⏳ Uploading to GitHub…';
+      uploadStatus.style.color = '#888';
+      uploadStatus.style.display = 'block';
+      applyBtn.disabled = true;
+
       var reader = new FileReader();
       reader.onload = function (e) {
-        var src = e.target.result;
-        if (isImage) {
-          uploadPreview.innerHTML = '<img src="' + src + '" alt="">';
-          setPending({ type: 'image', src: src, alt: file.name });
-        } else if (isVideo) {
-          uploadPreview.innerHTML = '<video src="' + src + '" controls></video>';
-          setPending({ type: 'video-file', src: src });
+        var dataUrl   = e.target.result;
+        var base64    = dataUrl.split(',')[1];
+        var ext       = file.name.split('.').pop();
+        var timestamp = Date.now();
+        var filename  = 'img-' + timestamp + '.' + ext;
+        if (isVideo) filename = 'vid-' + timestamp + '.' + ext;
+
+        var token = getToken();
+
+        function doUpload(tok) {
+          uploadMediaFile(filename, base64, tok)
+            .then(function (liveUrl) {
+              if (isImage) {
+                uploadPrev.innerHTML = '<img src="' + liveUrl + '" alt="">';
+                setPending({ type: 'image', src: liveUrl, alt: file.name });
+              } else {
+                uploadPrev.innerHTML = '<video src="' + liveUrl + '" controls></video>';
+                setPending({ type: 'video-file', src: liveUrl });
+              }
+              uploadStatus.textContent = '✅ Uploaded to GitHub!';
+              uploadStatus.style.color = '#16a34a';
+            })
+            .catch(function (err) {
+              uploadStatus.textContent = '❌ Upload failed: ' + err.message;
+              uploadStatus.style.color = '#b91c1c';
+            });
+        }
+
+        if (!token) {
+          showTokenModal(function () { doUpload(getToken()); });
+        } else {
+          doUpload(token);
         }
       };
       reader.readAsDataURL(file);
     });
 
-    // ── Image URL ──
-    var urlInput   = modal.querySelector('#ammUrlInput');
-    var urlPreview = modal.querySelector('#ammUrlPreview');
+    /* ── Image URL tab ── */
+    var urlInput  = modal.querySelector('#ammUrlInput');
+    var urlPrev   = modal.querySelector('#ammUrlPreview');
     var urlTimer;
-
     urlInput.addEventListener('input', function () {
       clearTimeout(urlTimer);
       var src = urlInput.value.trim();
-      if (!src) { urlPreview.innerHTML = ''; setPending(null); return; }
+      if (!src) { urlPrev.innerHTML = ''; setPending(null); return; }
       urlTimer = setTimeout(function () {
         var img = new Image();
-        img.onload = function () {
-          urlPreview.innerHTML = '<img src="' + src + '" alt="">';
-          setPending({ type: 'image', src: src, alt: '' });
-        };
-        img.onerror = function () {
-          urlPreview.innerHTML = '<p class="amm-preview-error">Could not load image from that URL.</p>';
-          setPending(null);
-        };
+        img.onload  = function () { urlPrev.innerHTML = '<img src="' + src + '" alt="">'; setPending({ type: 'image', src: src, alt: '' }); };
+        img.onerror = function () { urlPrev.innerHTML = '<p class="amm-preview-error">Could not load that URL.</p>'; setPending(null); };
         img.src = src;
       }, 500);
     });
 
-    // ── YouTube ──
-    var ytInput   = modal.querySelector('#ammYtInput');
-    var ytPreview = modal.querySelector('#ammYtPreview');
-
+    /* ── YouTube tab ── */
+    var ytInput = modal.querySelector('#ammYtInput');
+    var ytPrev  = modal.querySelector('#ammYtPreview');
     ytInput.addEventListener('input', function () {
-      var embedUrl = getYouTubeEmbedUrl(ytInput.value.trim());
-      if (!embedUrl) {
-        ytPreview.innerHTML = '';
-        setPending(null);
-        return;
-      }
-      ytPreview.innerHTML = '<iframe src="' + embedUrl + '" allowfullscreen title="YouTube preview"></iframe>';
-      setPending({ type: 'youtube', src: embedUrl });
+      var embed = getYouTubeEmbedUrl(ytInput.value.trim());
+      if (!embed) { ytPrev.innerHTML = ''; setPending(null); return; }
+      ytPrev.innerHTML = '<iframe src="' + embed + '" allowfullscreen title="Preview"></iframe>';
+      setPending({ type: 'youtube', src: embed });
     });
 
-    // ── Apply ──
+    /* ── Apply ── */
     applyBtn.addEventListener('click', function () {
       if (!pendingMedia) return;
-
-      // Render immediately
       renderMedia(phEl, pendingMedia);
-      phEl._mediaRef = pendingMedia;
-
-      // Store on card for collectAndSave
       if (!cardEl._adminMediaSlots) cardEl._adminMediaSlots = {};
       cardEl._adminMediaSlots[slotIndex] = pendingMedia;
-
-      // Re-attach upload handler since the element's classes changed
       if (isAdminMode()) makeSlotEditable(cardEl, phEl, slotIndex);
-
       modal.remove();
     });
 
-    // ── Close ──
     function closeModal() { modal.remove(); }
     modal.querySelector('.amm-close').addEventListener('click', closeModal);
     modal.querySelector('.amm-btn-cancel').addEventListener('click', closeModal);
     modal.querySelector('.amm-backdrop').addEventListener('click', closeModal);
-
-    // Focus first input
-    setTimeout(function () { modal.querySelector('.amm-input, #ammDropZone'); }, 50);
   }
 
-  // ══════════════════════════════════════
-  //  MAKE A SINGLE SLOT EDITABLE
-  // ══════════════════════════════════════
+  /* ══════════════════════════════════════════════
+     ADMIN  —  wire editable slot
+  ══════════════════════════════════════════════ */
 
   function makeSlotEditable(cardEl, slotEl, slotIndex) {
     slotEl.classList.add('admin-upload-zone');
-    // Remove old listener by cloning
-    var newSlot = slotEl.cloneNode(true);
-    slotEl.parentNode.replaceChild(newSlot, slotEl);
-    newSlot._mediaRef = slotEl._mediaRef;
-    newSlot.addEventListener('click', function (e) {
+    var fresh = slotEl.cloneNode(true);
+    fresh._mediaRef = slotEl._mediaRef;
+    slotEl.parentNode.replaceChild(fresh, slotEl);
+    fresh.addEventListener('click', function (e) {
       e.stopPropagation();
-      openMediaModal(cardEl, newSlot, slotIndex);
+      openMediaModal(cardEl, fresh, slotIndex);
     });
   }
 
-  // ══════════════════════════════════════
-  //  ADMIN MODE INIT
-  // ══════════════════════════════════════
+  /* ══════════════════════════════════════════════
+     ADMIN MODE  —  toolbar + editable cards
+  ══════════════════════════════════════════════ */
 
   function initAdminMode() {
-    // ── Toolbar ──
+    /* Toolbar */
     var toolbar = document.createElement('div');
     toolbar.id = 'admin-toolbar';
     toolbar.innerHTML = [
       '<div class="atb-inner">',
         '<span class="atb-badge">🔧 Admin Mode</span>',
-        '<span class="atb-hint">Click any text to edit · Click photo/video zones to upload</span>',
+        '<span class="atb-hint">Click text to edit · Click photo/video zones to upload</span>',
         '<div class="atb-actions">',
-          '<button id="atbSave">💾 Save</button>',
+          '<button id="atbSave">💾 Save to Live Site</button>',
           '<button id="atbExport">📤 Export JSON</button>',
+          '<button id="atbToken">🔑 Token</button>',
           '<button id="atbReset" class="atb-danger">↺ Reset</button>',
           '<button id="atbExit">✕ Exit</button>',
         '</div>',
@@ -397,54 +558,41 @@
     document.body.prepend(toolbar);
     document.body.style.paddingTop = '56px';
 
-    document.getElementById('atbSave').addEventListener('click', collectAndSave);
+    document.getElementById('atbSave').addEventListener('click', saveContent);
     document.getElementById('atbExport').addEventListener('click', exportJSON);
     document.getElementById('atbReset').addEventListener('click', resetContent);
+    document.getElementById('atbToken').addEventListener('click', function () { showTokenModal(null); });
     document.getElementById('atbExit').addEventListener('click', function () {
       var url = new URL(window.location.href);
       url.searchParams.delete('admin');
       window.location.href = url.toString();
     });
 
-    // ── Restore saved media references for already-rendered slots ──
-    var raw = localStorage.getItem(STORAGE_KEY);
-    var savedMedia = {};
-    if (raw) {
-      try { savedMedia = JSON.parse(raw).media || {}; } catch (e) {}
-    }
-
-    // ── Wire up each card ──
-    document.querySelectorAll('.ftl-card[data-card]').forEach(function (cardEl) {
-      var cardId = cardEl.dataset.card;
-
-      // Make text fields editable
+    /* Wire each card */
+    document.querySelectorAll('.ftl-card[data-card]').forEach(function (card) {
+      /* Editable text */
       ['.ftl-card-eyebrow', '.ftl-card-h', '.ftl-card-p'].forEach(function (sel) {
-        var el = cardEl.querySelector(sel);
+        var el = card.querySelector(sel);
         if (!el) return;
         el.contentEditable = 'true';
         el.spellcheck = true;
         el.classList.add('admin-editable');
-        // Prevent Enter from making new blocks
-        el.addEventListener('keydown', function (e) {
-          if (e.key === 'Enter') { e.preventDefault(); }
-        });
+        el.addEventListener('keydown', function (e) { if (e.key === 'Enter') e.preventDefault(); });
       });
 
-      // Wire up media slots — both placeholders and already-rendered
-      var slots = cardEl.querySelectorAll('.ftl-media-ph, .ftl-media-rendered');
-      slots.forEach(function (slotEl, idx) {
-        // Restore media reference if previously saved
-        var key = mediaKey(cardId, idx);
-        if (savedMedia[key]) slotEl._mediaRef = savedMedia[key];
-
-        makeSlotEditable(cardEl, slotEl, idx);
+      /* Media slots */
+      card.querySelectorAll('.ftl-media-ph, .ftl-media-rendered').forEach(function (slot, idx) {
+        makeSlotEditable(card, slot, idx);
       });
     });
+
+    /* Prompt for token if not already stored */
+    if (!getToken()) showTokenModal(null);
   }
 
-  // ══════════════════════════════════════
-  //  ADMIN LOGIN MODAL
-  // ══════════════════════════════════════
+  /* ══════════════════════════════════════════════
+     ADMIN LOGIN  (password modal)
+  ══════════════════════════════════════════════ */
 
   function showLoginModal() {
     var modal = document.createElement('div');
@@ -454,7 +602,7 @@
       '<div class="alm-box">',
         '<div class="alm-icon">🔒</div>',
         '<h2 class="alm-title">Admin Access</h2>',
-        '<p class="alm-sub">Enter the admin password to edit site content</p>',
+        '<p class="alm-sub">Enter the admin password to edit content on the live site</p>',
         '<input type="password" class="alm-input" id="almPassInput" placeholder="Password" autocomplete="current-password">',
         '<p class="alm-error" id="almError">Incorrect password. Try again.</p>',
         '<button class="alm-btn" id="almSubmit">Enter Admin Mode</button>',
@@ -463,10 +611,8 @@
     ].join('');
     document.body.appendChild(modal);
 
-    var input   = modal.querySelector('#almPassInput');
-    var errMsg  = modal.querySelector('#almError');
-    var submitBtn = modal.querySelector('#almSubmit');
-
+    var input = modal.querySelector('#almPassInput');
+    var errEl = modal.querySelector('#almError');
     input.focus();
 
     function tryLogin() {
@@ -475,45 +621,37 @@
         url.searchParams.set('admin', '1');
         window.location.href = url.toString();
       } else {
-        errMsg.classList.add('visible');
+        errEl.classList.add('visible');
         input.value = '';
         input.focus();
-        setTimeout(function () { errMsg.classList.remove('visible'); }, 3000);
+        setTimeout(function () { errEl.classList.remove('visible'); }, 2500);
       }
     }
 
-    submitBtn.addEventListener('click', tryLogin);
+    modal.querySelector('#almSubmit').addEventListener('click', tryLogin);
     input.addEventListener('keydown', function (e) { if (e.key === 'Enter') tryLogin(); });
     modal.querySelector('#almCancel').addEventListener('click', function () { modal.remove(); });
     modal.querySelector('.alm-backdrop').addEventListener('click', function () { modal.remove(); });
   }
 
-  // ══════════════════════════════════════
-  //  SECRET FOOTER CLICK TRIGGER
-  // ══════════════════════════════════════
+  /* ══════════════════════════════════════════════
+     SECRET FOOTER CLICK TRIGGER
+  ══════════════════════════════════════════════ */
 
-  var secretClicks = 0;
-  var secretTimer  = null;
-
+  var clicks = 0, clickTimer = null;
   document.addEventListener('click', function (e) {
     if (!e.target.closest('footer')) return;
-    secretClicks++;
-    clearTimeout(secretTimer);
-    secretTimer = setTimeout(function () { secretClicks = 0; }, 3000);
-    if (secretClicks >= 5) {
-      secretClicks = 0;
-      if (!isAdminMode()) showLoginModal();
-    }
+    clicks++;
+    clearTimeout(clickTimer);
+    clickTimer = setTimeout(function () { clicks = 0; }, 3000);
+    if (clicks >= 5) { clicks = 0; if (!isAdminMode()) showLoginModal(); }
   });
 
-  // ══════════════════════════════════════
-  //  BOOTSTRAP
-  // ══════════════════════════════════════
+  /* ══════════════════════════════════════════════
+     BOOTSTRAP
+  ══════════════════════════════════════════════ */
 
-  // Always load saved content on every page visit
-  loadSavedContent();
-
-  // If URL has ?admin=1, activate admin mode
+  loadContent();
   if (isAdminMode()) initAdminMode();
 
 })();
