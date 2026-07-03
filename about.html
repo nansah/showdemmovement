@@ -595,8 +595,23 @@ footer{background:var(--navy);color:rgba(255,255,255,.55);padding:5rem 2rem 2rem
 .d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
 
 /* ── RESPONSIVE ── */
+
+/* ── HAMBURGER + MOBILE NAV ── */
+.nav-ham{display:none;flex-direction:column;justify-content:center;align-items:center;gap:5px;width:40px;height:40px;background:none;border:none;cursor:pointer;padding:4px;flex-shrink:0}
+.nav-ham span{display:block;width:24px;height:2.5px;background:white;border-radius:2px;transition:transform .3s,opacity .3s}
+.nav-mobile-overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:9998;opacity:0;pointer-events:none;transition:opacity .3s}
+.nav-mobile-overlay.open{opacity:1;pointer-events:all}
+.nav-mobile-panel{position:fixed;top:0;right:0;width:min(300px,83vw);height:100%;background:var(--navy);z-index:9999;padding:4.5rem 1.8rem 2rem;transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);overflow-y:auto;box-shadow:-8px 0 40px rgba(0,0,0,.25)}
+.nav-mobile-panel.open{transform:translateX(0)}
+.nav-mobile-panel ul{list-style:none;padding:0;margin:0}
+.nav-mobile-panel ul li{border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-mobile-panel ul li a{display:block;padding:.85rem 0;color:rgba(255,255,255,.88);text-decoration:none;font-size:.95rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;transition:color .2s}
+.nav-mobile-panel ul li a:hover{color:var(--pink)}
+.nav-mobile-donate{display:block;text-align:center;margin-top:1.5rem;background:var(--pink);color:white;padding:.7rem 1.8rem;border-radius:999px;font-weight:800;font-size:.9rem;text-decoration:none;box-shadow:0 4px 16px rgba(239,127,187,.35)}
+.nav-mobile-close{position:absolute;top:1.1rem;right:1.1rem;background:rgba(255,255,255,.1);border:none;color:white;font-size:1.2rem;cursor:pointer;line-height:1;padding:.4rem .6rem;border-radius:8px}
 @media(max-width:900px){
   .nav-links{display:none}
+  .nav-ham{display:flex}
   .about-grid,.founder-grid,.join-grid{grid-template-columns:1fr;gap:3rem}
   .exp-cards,.what-grid,.programs-grid,.test-grid,.events-grid,.faq-grid{grid-template-columns:1fr}
   .prog-card.featured{grid-column:span 1;grid-template-columns:1fr}
@@ -986,7 +1001,9 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
     </li>
     <li><a href="contact.html">Contact</a></li>
   </ul>
-  <a href="donate.html" class="nav-btn">Donate Now</a>
+  <button class="nav-ham" id="navHam" aria-label="Open menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
 <main>
@@ -1934,14 +1951,21 @@ nav {
 /* ── RESPONSIVE ── */
 @media(max-width:640px) {
   .ftl-sticky-panel {
-    grid-template-columns: 32px 1fr;
-    gap: 0 1rem;
-    height: 480px;
-    top: 110px;
+    grid-template-columns: 28px 1fr;
+    gap: 0 .75rem;
+    height: auto;
+    min-height: 440px;
+    top: 100px;
+    padding: 0 1rem;
   }
-  .ftl-year-badge { font-size: 2.5rem; }
-  .ftl-card-h { font-size: 1.15rem; }
+  .ftl-year-badge { font-size: 2rem; }
+  .ftl-card-h { font-size: 1.1rem; }
+  .ftl-card-p { font-size: .85rem; }
+  .ftl-card { padding: 1.3rem 1.1rem; max-height: 380px; }
   .ftl-media-grid2 { grid-template-columns: 1fr; }
+  .ftl-pillars { gap: .3rem; }
+  .ftl-pillar { font-size: .72rem; padding: .25rem .6rem; }
+  .ftl-intro { padding: 4rem 1.2rem 2.5rem; }
 }
 </style>
 
@@ -2159,5 +2183,40 @@ nav {
 </style>
 
 <script src="admin.js" defer></script>
+
+<div class="nav-mobile-overlay" id="navOverlay"></div>
+<div class="nav-mobile-panel" id="navPanel">
+  <button class="nav-mobile-close" id="navClose" aria-label="Close">&#10005;</button>
+  <ul>
+    <li><a href="about.html">About</a></li>
+    <li><a href="programs.html">Programs</a></li>
+    <li><a href="events.html">Events</a></li>
+    <li><a href="membership.html">Membership</a></li>
+    <li><a href="donate.html">Donate</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="donate.html" class="nav-mobile-donate">Donate Now</a>
+</div>
+<script>
+(function(){
+  var h=document.getElementById('navHam'),o=document.getElementById('navOverlay'),
+      p=document.getElementById('navPanel'),c=document.getElementById('navClose');
+  if(!h)return;
+  function openNav(){p.classList.add('open');o.classList.add('open');
+    h.setAttribute('aria-expanded','true');document.body.style.overflow='hidden';
+    var s=h.querySelectorAll('span');
+    s[0].style.transform='rotate(45deg) translate(5.5px,5.5px)';
+    s[1].style.opacity='0';s[1].style.transform='scaleX(0)';
+    s[2].style.transform='rotate(-45deg) translate(5.5px,-5.5px)'}
+  function closeNav(){p.classList.remove('open');o.classList.remove('open');
+    h.setAttribute('aria-expanded','false');document.body.style.overflow='';
+    var s=h.querySelectorAll('span');
+    s[0].style.transform='';s[1].style.opacity='';s[1].style.transform='';s[2].style.transform=''}
+  h.addEventListener('click',function(){p.classList.contains('open')?closeNav():openNav()});
+  o.addEventListener('click',closeNav);
+  c.addEventListener('click',closeNav);
+  document.querySelectorAll('#navPanel a').forEach(function(a){a.addEventListener('click',closeNav)});
+})();
+</script>
 </body>
 </html>
