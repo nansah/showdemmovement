@@ -623,16 +623,6 @@ footer{background:var(--navy);color:rgba(255,255,255,.55);padding:5rem 2rem 2rem
   .hero-content{padding:8rem 1.5rem 4rem}
   .hero-h1{color:var(--navy)}
   .f-cards-row{grid-template-columns:1fr 1fr}
-  .mv-grid{grid-template-columns:1fr !important}
-  .values-grid{grid-template-columns:1fr !important}
-  .founder-story-grid{grid-template-columns:1fr;gap:2rem}
-  .founder-sticky{position:static}
-  .mv-card{background:none !important;border-radius:0;padding:0;box-shadow:none;overflow:visible;margin-bottom:2rem;border:none !important}
-  .mv-card h3{font-size:1rem !important;text-transform:uppercase;letter-spacing:.08em;font-weight:800;margin-bottom:.6rem}
-  .mv-card.mission h3{color:var(--pink) !important}
-  .mv-card.vision h3{color:var(--blue-dk) !important}
-  .mv-card p{color:var(--navy) !important;font-size:.97rem;line-height:1.8;font-weight:600}
-  .mv-card-icon{display:none}
 }
 @media(max-width:560px){
   .impact-stats{grid-template-columns:1fr 1fr}
@@ -1976,6 +1966,23 @@ nav {
   .ftl-pillars { gap: .3rem; }
   .ftl-pillar { font-size: .72rem; padding: .25rem .6rem; }
   .ftl-intro { padding: 4rem 1.2rem 2.5rem; }
+}
+
+/* ── ABOUT PAGE MOBILE — placed after all base styles so source order wins ── */
+@media(max-width:900px){
+  /* Collapse every multi-column grid to a single stacking column */
+  .mv-grid,
+  .values-grid{display:block}
+  .founder-story-grid{grid-template-columns:1fr;gap:2rem}
+  .founder-sticky{position:static}
+
+  /* Mission / Vision: plain prose, no card look */
+  .mv-card{background:none;border-radius:0;padding:0;box-shadow:none;overflow:visible;margin-bottom:2.5rem;border:none}
+  .mv-card h3{font-size:1rem;text-transform:uppercase;letter-spacing:.08em;font-weight:800;margin-bottom:.6rem;color:var(--navy)}
+  .mv-card.mission h3{color:var(--pink)}
+  .mv-card.vision h3{color:var(--blue-dk)}
+  .mv-card p{color:var(--navy);font-size:.97rem;line-height:1.8;font-weight:600}
+  .mv-card-icon{display:none}
 }
 </style>
 
