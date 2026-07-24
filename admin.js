@@ -55,6 +55,20 @@
       var slots = card.querySelectorAll('.ftl-media-ph');
       if (slots[slotIdx]) renderMedia(slots[slotIdx], media[key]);
     });
+
+    // Hide empty placeholders for cards where admin turned them off.
+    // Runs after media render so slots that received media are already
+    // converted to .ftl-media-rendered and won't be affected.
+    var placeholderMap = data.placeholder || {};
+    Object.keys(placeholderMap).forEach(function (id) {
+      if (placeholderMap[id] === false) {
+        var card = document.querySelector('.ftl-card[data-card="' + id + '"]');
+        if (!card) return;
+        card.querySelectorAll('.ftl-media-ph').forEach(function (el) {
+          el.style.display = 'none';
+        });
+      }
+    });
   }
 
   fetch('/api/content')

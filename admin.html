@@ -215,6 +215,32 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 #adm-toast.visible{transform:translateX(-50%) translateY(0)}
 #adm-toast.err{background:#b91c1c}
 
+/* ══ PLACEHOLDER TOGGLE ══ */
+.ph-toggle-row{
+  display:flex;align-items:center;gap:.7rem;
+  padding:.55rem .9rem;background:#f8f9fc;
+  border-radius:8px;border:1px solid var(--border);
+}
+.ph-toggle-label{
+  display:flex;align-items:center;gap:.55rem;
+  font-size:.78rem;font-weight:700;color:var(--muted);cursor:pointer;
+  user-select:none;
+}
+.ph-switch{position:relative;display:inline-block;width:34px;height:19px;flex-shrink:0}
+.ph-switch input{opacity:0;width:0;height:0;position:absolute}
+.ph-track{
+  position:absolute;inset:0;border-radius:999px;
+  background:#d1d5db;transition:background .2s;cursor:pointer;
+}
+.ph-switch input:checked + .ph-track{background:var(--pink)}
+.ph-track::after{
+  content:'';position:absolute;
+  width:13px;height:13px;border-radius:50%;background:white;
+  top:3px;left:3px;transition:transform .2s;
+  box-shadow:0 1px 3px rgba(0,0,0,.2);
+}
+.ph-switch input:checked + .ph-track::after{transform:translateX(15px)}
+
 @media(max-width:600px){
   .adm-header{padding:.75rem 1rem;gap:.5rem}
   .adm-nav a,.adm-nav button{padding:.28rem .6rem;font-size:.72rem}
@@ -352,6 +378,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
   function buildCardEditors(savedData) {
     var container = document.getElementById('cardsContainer');
     container.innerHTML = '';
+    var savedPlaceholders = savedData.placeholder || {};
 
     CARDS.forEach(function (card) {
       var saved    = savedData.text[card.id] || {};
@@ -360,8 +387,9 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
       var body     = saved.body    || card.defaultBody;
       var mediaKey = 'card-' + card.id + '-0';
       var media    = (savedData.media || {})[mediaKey] || null;
+      var showPh   = savedPlaceholders[card.id] !== false; // default ON
 
-      pendingData[card.id] = { eyebrow: eyebrow, title: title, body: body, media: media };
+      pendingData[card.id] = { eyebrow: eyebrow, title: title, body: body, media: media, showPlaceholder: showPh };
 
       var el = document.createElement('div');
       el.className = 'card-editor';
@@ -404,6 +432,15 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
               '<div class="media-uploading" style="display:none">⏳ Uploading…</div>',
             '</div>',
           '</div>',
+          '<div class="ph-toggle-row">',
+            '<label class="ph-toggle-label">',
+              '<span class="ph-switch">',
+                '<input type="checkbox" class="f-show-ph"' + (showPh ? ' checked' : '') + '>',
+                '<span class="ph-track"></span>',
+              '</span>',
+              'Show empty placeholder to visitors',
+            '</label>',
+          '</div>',
         '</div>'
       ].join('');
 
@@ -434,6 +471,9 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
     el.querySelector('.f-eyebrow').addEventListener('input', function () { pendingData[cardId].eyebrow = this.value; });
     el.querySelector('.f-title').addEventListener('input', function () { pendingData[cardId].title = this.value; });
     el.querySelector('.f-body').addEventListener('input', function () { pendingData[cardId].body = this.value; });
+
+    /* Placeholder toggle */
+    el.querySelector('.f-show-ph').addEventListener('change', function () { pendingData[cardId].showPlaceholder = this.checked; });
 
     var zone       = el.querySelector('.media-zone');
     var previewEl  = el.querySelector('.media-preview');
@@ -519,19 +559,21 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
     var btn = document.getElementById('saveAllBtn');
     btn.disabled = true; btn.textContent = '⏳ Saving…';
 
-    var text  = {};
-    var media = {};
+    var text        = {};
+    var media       = {};
+    var placeholder = {};
 
     Object.keys(pendingData).forEach(function (id) {
       var d = pendingData[id];
       text[id] = { eyebrow: d.eyebrow, title: d.title, body: d.body };
       if (d.media) media['card-' + id + '-0'] = d.media;
+      placeholder[id] = d.showPlaceholder !== false;
     });
 
     fetch('/api/content', {
       method: 'POST',
       headers: authHeaders(),
-      body: JSON.stringify({ text: text, media: media })
+      body: JSON.stringify({ text: text, media: media, placeholder: placeholder })
     })
     .then(function (r) {
       if (r.status === 401) { clearToken(); location.reload(); return; }
