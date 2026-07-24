@@ -874,13 +874,19 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
   overflow:hidden;
   transition:border-color .2s;
 }
+.founder-img-placeholder img{
+  width:100%;height:100%;
+  object-fit:cover;
+  object-position:top center;
+  border-radius:24px;
+}
 .founder-img-placeholder:hover{border-color:var(--pink)}
 .fip-inner{text-align:center;padding:2rem}
 .fip-icon{font-size:3.5rem;margin-bottom:.75rem;opacity:.5}
 .fip-label{color:rgba(255,255,255,.4);font-size:.85rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
 @media(max-width:900px){
   .founder-home-grid{grid-template-columns:1fr;gap:2.5rem}
-  .founder-img-placeholder{aspect-ratio:16/9;max-height:280px}
+  .founder-img-placeholder{aspect-ratio:3/4;max-width:300px;margin:0 auto}
 }
 
 /* ── COLOR PALETTE OVERRIDES ── */

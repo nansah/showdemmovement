@@ -16,6 +16,10 @@
   display: block;
   border-radius: 10px;
 }
+.ftl-media-rendered img {
+  object-fit: cover;
+  object-position: top center;
+}
 .ftl-media-rendered iframe {
   aspect-ratio: 16 / 9;
   border: none;
