@@ -1213,36 +1213,6 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
               </div>
             </div>
 
-            <div class="ftl-card ftl-card-today" data-card="7">
-              <span class="ftl-card-eyebrow" style="color:#EF7FBB">The Mission Continues</span>
-              <h3 class="ftl-card-h" style="color:white">Creating Spaces Where Everyone Can Shine</h3>
-              <p class="ftl-card-p">Today, Showdem Movement Foundation continues to use Double Dutch to promote:</p>
-              <div class="ftl-pillars">
-                <span class="ftl-pillar">Love</span>
-                <span class="ftl-pillar">Unity</span>
-                <span class="ftl-pillar">Wellness</span>
-                <span class="ftl-pillar">Healing</span>
-                <span class="ftl-pillar">Leadership</span>
-                <span class="ftl-pillar">Community</span>
-              </div>
-              <div class="ftl-mission-box">
-                <p class="ftl-mission-lbl">Our mission is simple:</p>
-                <p class="ftl-mission-stmt">&ldquo;To create spaces where everyone can shine.&rdquo;</p>
-                <div class="ftl-mission-steps">
-                  <p class="ftl-mission-step">Every community session&hellip;</p>
-                  <p class="ftl-mission-step">Every school partnership&hellip;</p>
-                  <p class="ftl-mission-step">Every volunteer&hellip;</p>
-                  <p class="ftl-mission-step">Every smile&hellip;</p>
-                </div>
-                <p class="ftl-mission-close">All began with one step of faith.</p>
-              </div>
-              <div class="ftl-media-ph">
-                <span class="ftl-ph-icon">📸</span>
-                <span class="ftl-ph-text">Photo from today's mission</span>
-                <span class="ftl-ph-tag">Add Photo</span>
-              </div>
-              <a href="programs.html" class="btn-pink" style="display:inline-block;margin-top:1.2rem;font-size:.875rem">Explore Our Programs &rarr;</a>
-            </div>
 
           </div><!-- end ftl-cards -->
         </div><!-- end ftl-content-area -->
@@ -1253,8 +1223,35 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
     </div><!-- end ftl-scroll-container -->
   </div><!-- end founder-section -->
 
+  <!-- TODAY SECTION -->
+  <section class="today-section">
+    <div class="container">
+      <p class="eyebrow white reveal" style="justify-content:center">The Mission Continues</p>
+      <h2 class="headline white reveal d1" style="text-align:center">We Create Spaces Where<br>Everyone Can <span class="pk">Shine.</span></h2>
+      <p class="reveal d1" style="color:rgba(255,255,255,.72);font-size:1rem;line-height:1.82;font-weight:600;max-width:580px;margin:.9rem auto 2.5rem;text-align:center">Today, Showdem Movement Foundation continues to use Double Dutch to promote love, unity, healing, and the power of community — everywhere we go.</p>
 
+      <div class="ftl-pillars reveal d2" style="justify-content:center;margin-bottom:2.5rem">
+        <span class="ftl-pillar">Love</span>
+        <span class="ftl-pillar">Unity</span>
+        <span class="ftl-pillar">Wellness</span>
+        <span class="ftl-pillar">Healing</span>
+        <span class="ftl-pillar">Leadership</span>
+        <span class="ftl-pillar">Community</span>
+      </div>
 
+      <div class="today-steps reveal d2">
+        <div class="today-step">Every community session&hellip;</div>
+        <div class="today-step">Every school partnership&hellip;</div>
+        <div class="today-step">Every volunteer&hellip;</div>
+        <div class="today-step">Every smile&hellip;</div>
+      </div>
+      <p class="today-close reveal d3">All began with one step of faith.</p>
+
+      <div class="reveal d3" style="text-align:center;margin-top:2.5rem">
+        <a href="programs.html" class="btn-pink">Explore Our Programs &rarr;</a>
+      </div>
+    </div>
+  </section>
 
 </main>
 
@@ -1975,6 +1972,13 @@ nav {
   .ftl-intro { padding: 4rem 1.2rem 2.5rem; }
 }
 
+/* ── TODAY SECTION ── */
+.today-section{background:linear-gradient(160deg,#0b1e42 0%,#0d1b3e 100%);padding:6rem 2rem;text-align:center}
+.today-steps{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;max-width:480px;margin:0 auto 1.5rem}
+.today-step{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:.85rem 1rem;color:rgba(255,255,255,.75);font-size:.92rem;font-weight:700}
+.today-close{color:var(--pink);font-family:var(--display);font-size:1.25rem;margin-top:.5rem}
+@media(max-width:600px){.today-steps{grid-template-columns:1fr}.today-section{padding:4rem 1.5rem}}
+
 /* ── ABOUT PAGE MOBILE — placed after all base styles so source order wins ── */
 @media(max-width:900px){
   /* Collapse every multi-column grid to a single stacking column */
@@ -1995,11 +1999,11 @@ nav {
 
 <script>
 (function() {
-  const MILESTONES = 8;
+  const MILESTONES = 7;
   const PANEL_H = 540;    // px — sticky panel height
   const STEP_H  = 380;    // px — scroll distance per milestone
 
-  const years = ['2018','2022','Jul 1, 2022','2022','Times Square','2025','2025','Today'];
+  const years = ['2018','2022','Jul 1, 2022','2022','Times Square','2025','2025'];
 
   const container = document.getElementById('ftlScrollContainer');
   const track     = document.getElementById('ftlTrack');
