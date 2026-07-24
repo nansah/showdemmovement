@@ -17,20 +17,42 @@ cloudinary.config({
   api_secret : process.env.CLOUDINARY_API_SECRET
 });
 
-/* ── Content store (JSON file) ──────────────── */
-const DATA_DIR    = path.join(__dirname, 'data');
+/* ── Content store ───────────────────────────
+   Uses JSONbin.io when JSONBIN_BIN_ID + JSONBIN_API_KEY are set (Vercel).
+   Falls back to local data/content.json for local dev.
+──────────────────────────────────────────── */
+const DATA_DIR     = path.join(__dirname, 'data');
 const CONTENT_FILE = path.join(DATA_DIR, 'content.json');
+const EMPTY        = { text: {}, media: {}, placeholder: {}, updatedAt: null };
 
-function readContent() {
+async function readContent() {
+  const binId = process.env.JSONBIN_BIN_ID;
+  const key   = process.env.JSONBIN_API_KEY;
+  if (binId && key) {
+    try {
+      const r = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
+        headers: { 'X-Master-Key': key, 'X-Bin-Meta': 'false' }
+      });
+      if (r.ok) return (await r.json()).record || EMPTY;
+    } catch (_) {}
+  }
   try {
-    if (fs.existsSync(CONTENT_FILE)) {
-      return JSON.parse(fs.readFileSync(CONTENT_FILE, 'utf8'));
-    }
-  } catch (e) { /* fall through */ }
-  return { text: {}, media: {}, updatedAt: null };
+    if (fs.existsSync(CONTENT_FILE)) return JSON.parse(fs.readFileSync(CONTENT_FILE, 'utf8'));
+  } catch (_) {}
+  return { ...EMPTY };
 }
 
-function writeContent(data) {
+async function writeContent(data) {
+  const binId = process.env.JSONBIN_BIN_ID;
+  const key   = process.env.JSONBIN_API_KEY;
+  if (binId && key) {
+    await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+      method  : 'PUT',
+      headers : { 'X-Master-Key': key, 'Content-Type': 'application/json' },
+      body    : JSON.stringify(data)
+    });
+    return;
+  }
   if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
   fs.writeFileSync(CONTENT_FILE, JSON.stringify(data, null, 2));
 }
@@ -50,7 +72,7 @@ function requireAuth(req, res, next) {
 
 /* ── Middleware ──────────────────────────────── */
 app.use(express.json({ limit: '10mb' }));
-app.use(express.static(path.join(__dirname)));   // serve all HTML/CSS/JS files
+app.use(express.static(path.join(__dirname)));
 
 /* ══════════════════════════════════════════════
    API ROUTES
@@ -70,68 +92,60 @@ app.post('/api/login', (req, res) => {
   res.json({ token });
 });
 
-/* GET /api/content  — public, all visitors */
-app.get('/api/content', (req, res) => {
-  res.json(readContent());
+/* GET /api/content */
+app.get('/api/content', async (req, res) => {
+  res.json(await readContent());
 });
 
-/* POST /api/content  — admin only */
-app.post('/api/content', requireAuth, (req, res) => {
+/* POST /api/content */
+app.post('/api/content', requireAuth, async (req, res) => {
   const incoming = req.body;
   if (!incoming || typeof incoming !== 'object') {
     return res.status(400).json({ error: 'Invalid content' });
   }
-  const data = { ...incoming, updatedAt: new Date().toISOString() };
-  writeContent(data);
+  await writeContent({ ...incoming, updatedAt: new Date().toISOString() });
   res.json({ ok: true });
 });
 
-/* POST /api/upload  — admin only, returns Cloudinary URL */
+/* POST /api/upload */
 app.post('/api/upload', requireAuth, upload.single('file'), async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file received' });
-
   const b64     = req.file.buffer.toString('base64');
   const dataUri = `data:${req.file.mimetype};base64,${b64}`;
-
   try {
     const result = await cloudinary.uploader.upload(dataUri, {
-      folder        : 'showdem',
-      resource_type : 'auto',
-      use_filename  : false
+      folder: 'showdem', resource_type: 'auto', use_filename: false
     });
     res.json({ url: result.secure_url, type: result.resource_type });
   } catch (e) {
-    console.error('Cloudinary upload error:', e.message);
     res.status(500).json({ error: 'Upload failed: ' + e.message });
   }
 });
 
-/* GET /api/backup  — download content.json */
-app.get('/api/backup', requireAuth, (req, res) => {
-  const data = readContent();
+/* GET /api/backup */
+app.get('/api/backup', requireAuth, async (req, res) => {
+  const data = await readContent();
   const date = new Date().toISOString().slice(0, 10);
   res.setHeader('Content-Disposition', `attachment; filename="showdem-backup-${date}.json"`);
   res.setHeader('Content-Type', 'application/json');
   res.send(JSON.stringify(data, null, 2));
 });
 
-/* POST /api/restore  — import a backup JSON */
-app.post('/api/restore', requireAuth, (req, res) => {
+/* POST /api/restore */
+app.post('/api/restore', requireAuth, async (req, res) => {
   const data = req.body;
-  if (!data || typeof data !== 'object') {
-    return res.status(400).json({ error: 'Invalid backup file' });
-  }
-  writeContent(data);
+  if (!data || typeof data !== 'object') return res.status(400).json({ error: 'Invalid backup' });
+  await writeContent(data);
   res.json({ ok: true });
 });
 
-/* ── Catch-all: serve index.html for /admin path ── */
+/* GET /admin */
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
-/* ── Start ───────────────────────────────────── */
+/* ── Start (ignored by Vercel, used locally) ── */
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Showdem server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Showdem server running on port ${PORT}`));
+
+module.exports = app;
