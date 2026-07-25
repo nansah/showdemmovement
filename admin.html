@@ -241,10 +241,65 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 }
 .ph-switch input:checked + .ph-track::after{transform:translateX(15px)}
 
+/* ══ TAB BAR ══ */
+.adm-tabs{display:flex;gap:.4rem;margin-bottom:2rem;border-bottom:2px solid var(--border);padding-bottom:0}
+.adm-tab{background:none;border:none;cursor:pointer;font-family:'Fredoka One',sans-serif;font-size:.95rem;color:var(--muted);padding:.55rem 1.2rem;border-radius:8px 8px 0 0;border-bottom:3px solid transparent;margin-bottom:-2px;transition:color .2s,border-color .2s,background .2s}
+.adm-tab:hover{color:var(--navy);background:var(--bg)}
+.adm-tab.active{color:var(--pink);border-bottom-color:var(--pink);background:white}
+/* ══ APPLICATIONS ══ */
+#applicationsSection{display:none}
+.apps-toolbar{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;margin-bottom:1.2rem}
+.apps-filter{padding:.35rem .85rem;border:1.5px solid var(--border);border-radius:999px;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;background:white;color:var(--muted);cursor:pointer;transition:border-color .2s,color .2s}
+.apps-filter.active,.apps-filter:hover{border-color:var(--pink);color:var(--pink)}
+.apps-count{margin-left:auto;font-size:.78rem;font-weight:700;color:var(--muted)}
+.apps-empty{text-align:center;padding:3rem 1rem;color:var(--muted);font-size:.9rem;font-weight:700}
+.app-card{background:white;border-radius:14px;border:2px solid var(--border);margin-bottom:.75rem;overflow:hidden;transition:border-color .2s}
+.app-card.status-approved{border-left:5px solid #16a34a}
+.app-card.status-rejected{border-left:5px solid #dc2626}
+.app-card.status-pending{border-left:5px solid #d97706}
+.app-row{display:flex;align-items:center;gap:.9rem;padding:.9rem 1rem;cursor:pointer;user-select:none}
+.app-avatar{width:40px;height:40px;border-radius:50%;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,var(--pink),var(--blue));display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:800;color:white}
+.app-avatar img{width:100%;height:100%;object-fit:cover;object-position:top}
+.app-meta{flex:1;min-width:0}
+.app-name{font-weight:800;font-size:.88rem;color:var(--navy)}
+.app-email{font-size:.76rem;color:var(--muted);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.app-date{font-size:.73rem;color:var(--muted);font-weight:600;white-space:nowrap}
+.status-badge{font-size:.66rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:.2rem .6rem;border-radius:999px;white-space:nowrap}
+.status-badge.pending{background:#fef3c7;color:#92400e}
+.status-badge.approved{background:#dcfce7;color:#166534}
+.status-badge.rejected{background:#fee2e2;color:#991b1b}
+.app-toggle{color:var(--muted);font-size:.75rem;margin-left:.25rem;transition:transform .25s;flex-shrink:0}
+.app-card.open .app-toggle{transform:rotate(180deg)}
+.app-detail{display:none;border-top:1px solid var(--border);padding:1.1rem}
+.app-card.open .app-detail{display:block}
+.app-photo-wrap{text-align:center;margin-bottom:1rem}
+.app-photo-wrap img{width:80px;height:80px;border-radius:50%;object-fit:cover;object-position:top;border:3px solid var(--pink)}
+.app-initials-lg{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--blue));display:inline-flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;color:white}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:.5rem .9rem;margin-bottom:1rem}
+.detail-field label{display:block;font-size:.68rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.12rem}
+.detail-field p{font-size:.83rem;font-weight:600;color:var(--navy);word-break:break-word;line-height:1.5}
+.detail-field.full{grid-column:1/-1}
+.detail-sep{font-size:.7rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:.85rem 0 .5rem;display:flex;align-items:center;gap:.4rem}
+.detail-sep::after{content:'';flex:1;height:1px;background:var(--border)}
+.app-status-row{display:flex;gap:.45rem;flex-wrap:wrap;margin:.8rem 0 .6rem}
+.btn-status{padding:.38rem .95rem;border-radius:999px;border:2px solid transparent;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.76rem;font-weight:800;transition:opacity .2s}
+.btn-status:hover{opacity:.8}
+.btn-status.approve{background:#dcfce7;color:#166534;border-color:#86efac}
+.btn-status.reject{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
+.btn-status.set-pending{background:#fef3c7;color:#92400e;border-color:#fde68a}
+.btn-status.current{outline:2px solid currentColor;outline-offset:1px}
+.notes-area{width:100%;padding:.6rem .8rem;border:1.5px solid var(--border);border-radius:8px;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:600;resize:vertical;min-height:58px;transition:border-color .2s;outline:none}
+.notes-area:focus{border-color:var(--pink)}
+.app-actions-row{display:flex;gap:.5rem;margin-top:.55rem;flex-wrap:wrap}
+.btn-save-notes{background:var(--navy);color:white;border:none;border-radius:8px;padding:.36rem .85rem;font-size:.76rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;transition:opacity .2s}
+.btn-save-notes:hover{opacity:.8}
+.btn-delete-app{background:none;border:1.5px solid #fca5a5;color:#dc2626;border-radius:8px;padding:.36rem .85rem;font-size:.76rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;transition:background .2s}
+.btn-delete-app:hover{background:#fee2e2}
 @media(max-width:600px){
   .adm-header{padding:.75rem 1rem;gap:.5rem}
   .adm-nav a,.adm-nav button{padding:.28rem .6rem;font-size:.72rem}
   .adm-main{padding:1.5rem 1rem 4rem}
+  .detail-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -278,8 +333,27 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
   </header>
 
   <main class="adm-main">
-    <h2 class="adm-section-title">Founder Timeline Cards</h2>
-    <div id="cardsContainer"></div>
+    <div class="adm-tabs">
+      <button class="adm-tab active" id="tabTimeline" onclick="switchTab('timeline')">📋 Timeline Cards</button>
+      <button class="adm-tab" id="tabApps" onclick="switchTab('applications')">👥 Applications <span id="pendingBadge" style="display:none;background:var(--pink);color:white;border-radius:999px;font-size:.65rem;padding:.1rem .45rem;margin-left:.3rem;vertical-align:middle"></span></button>
+    </div>
+
+    <div id="timelineSection">
+      <h2 class="adm-section-title">Founder Timeline Cards</h2>
+      <div id="cardsContainer"></div>
+    </div>
+
+    <div id="applicationsSection">
+      <h2 class="adm-section-title">Member Applications</h2>
+      <div class="apps-toolbar">
+        <button class="apps-filter active" data-filter="all">All</button>
+        <button class="apps-filter" data-filter="pending">Pending</button>
+        <button class="apps-filter" data-filter="approved">Approved</button>
+        <button class="apps-filter" data-filter="rejected">Rejected</button>
+        <span class="apps-count" id="appsCount"></span>
+      </div>
+      <div id="appsList"></div>
+    </div>
   </main>
 </div>
 
@@ -626,6 +700,187 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
   });
 
   document.getElementById('saveAllBtn').addEventListener('click', saveAll);
+
+  /* ══════════════════════════════════════════
+     APPLICATIONS TAB
+  ══════════════════════════════════════════ */
+  var allApps = [];
+  var activeFilter = 'all';
+
+  function switchTab(tab) {
+    var isTimeline = tab === 'timeline';
+    document.getElementById('timelineSection').style.display    = isTimeline ? '' : 'none';
+    document.getElementById('applicationsSection').style.display = isTimeline ? 'none' : '';
+    document.getElementById('tabTimeline').classList.toggle('active', isTimeline);
+    document.getElementById('tabApps').classList.toggle('active', !isTimeline);
+    if (!isTimeline) loadApplications();
+  }
+
+  function loadApplications() {
+    fetch('/api/applications', { headers: authHeaders() })
+      .then(function(r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function(apps) {
+        allApps = apps;
+        updatePendingBadge();
+        renderApplications();
+      })
+      .catch(function() { document.getElementById('appsList').innerHTML = '<p class="apps-empty">Could not load applications.</p>'; });
+  }
+
+  function updatePendingBadge() {
+    var pending = allApps.filter(function(a) { return a.status === 'pending'; }).length;
+    var badge = document.getElementById('pendingBadge');
+    if (pending > 0) { badge.style.display = ''; badge.textContent = pending; }
+    else { badge.style.display = 'none'; }
+  }
+
+  function renderApplications() {
+    var filtered = activeFilter === 'all' ? allApps : allApps.filter(function(a) { return a.status === activeFilter; });
+    document.getElementById('appsCount').textContent = filtered.length + ' application' + (filtered.length === 1 ? '' : 's');
+    if (!filtered.length) {
+      document.getElementById('appsList').innerHTML = '<p class="apps-empty">No ' + (activeFilter === 'all' ? '' : activeFilter + ' ') + 'applications yet.</p>';
+      return;
+    }
+    document.getElementById('appsList').innerHTML = filtered.map(function(app) {
+      return buildAppCard(app);
+    }).join('');
+    // bind events
+    document.querySelectorAll('.app-row').forEach(function(row) {
+      row.addEventListener('click', function() {
+        var card = this.closest('.app-card');
+        card.classList.toggle('open');
+      });
+    });
+    document.querySelectorAll('.btn-status').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var id = this.dataset.id, status = this.dataset.status;
+        updateAppStatus(id, status);
+      });
+    });
+    document.querySelectorAll('.btn-save-notes').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var id = this.dataset.id;
+        var notes = document.querySelector('.notes-area[data-id="' + id + '"]').value;
+        saveAppNotes(id, notes);
+      });
+    });
+    document.querySelectorAll('.btn-delete-app').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (!confirm('Delete this application? This cannot be undone.')) return;
+        deleteApp(this.dataset.id);
+      });
+    });
+  }
+
+  function buildAppCard(app) {
+    var d    = app.data || {};
+    var name = (d.first_name || '') + ' ' + (d.last_name || '');
+    var initials = ((d.first_name || '?')[0] + (d.last_name || '?')[0]).toUpperCase();
+    var date = app.submittedAt ? new Date(app.submittedAt).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'}) : '';
+    var avatarHtml = d.photo_url
+      ? '<div class="app-avatar"><img src="' + d.photo_url + '" alt=""></div>'
+      : '<div class="app-avatar">' + initials + '</div>';
+    var badgeCls = app.status || 'pending';
+    var checks = [
+      ['ack_guide','Read Official Membership Guide'],['ack_standards','Agreed to Community Standards'],
+      ['ack_brand','Agreed to Brand Policy'],['ack_tshirt','T-Shirt Purchase Confirmed'],
+      ['ack_volunteer','Volunteer Terms Understood'],['media_release','Media Release Signed'],
+      ['liability_waiver','Liability Waiver Signed']
+    ];
+    var acksHtml = checks.map(function(c) {
+      var val = d[c[0]];
+      var ok  = val === 'on' || val === 'true' || val === true;
+      return '<span style="font-size:.78rem;font-weight:700;color:' + (ok ? '#166534' : '#991b1b') + '">' + (ok ? '✓' : '✗') + ' ' + c[1] + '</span>';
+    }).join('<br>');
+
+    return '<div class="app-card status-' + badgeCls + '" data-id="' + app.id + '">' +
+      '<div class="app-row">' +
+        avatarHtml +
+        '<div class="app-meta"><div class="app-name">' + (name.trim() || 'Unknown') + '</div>' +
+        '<div class="app-email">' + (d.email || '') + '</div></div>' +
+        '<div class="app-date">' + date + '</div>' +
+        '<span class="status-badge ' + badgeCls + '">' + badgeCls + '</span>' +
+        '<span class="app-toggle">▾</span>' +
+      '</div>' +
+      '<div class="app-detail">' +
+        (d.photo_url ? '<div class="app-photo-wrap"><img src="' + d.photo_url + '" alt="Applicant photo"></div>' : '<div class="app-photo-wrap"><div class="app-initials-lg">' + initials + '</div></div>') +
+        '<div class="detail-sep">Personal Info</div>' +
+        '<div class="detail-grid">' +
+          field('Full Name', name.trim()) +
+          field('Email', d.email) +
+          field('Phone', d.phone) +
+          field('Date of Birth', d.date_of_birth) +
+          field('Address', d.address, true) +
+        '</div>' +
+        '<div class="detail-sep">Emergency Contact</div>' +
+        '<div class="detail-grid">' +
+          field('Name', d.emergency_contact_name) +
+          field('Phone', d.emergency_contact_phone) +
+          field('Relationship', d.emergency_contact_relationship) +
+        '</div>' +
+        (d.allergies || d.medical_conditions || d.medications ? '<div class="detail-sep">Medical Info</div><div class="detail-grid">' + field('Allergies', d.allergies) + field('Conditions', d.medical_conditions) + field('Medications', d.medications) + '</div>' : '') +
+        '<div class="detail-sep">About the Applicant</div>' +
+        '<div class="detail-grid">' +
+          field('Why Join', d.why_join, true) +
+          field('Attended Session?', d.attended_session) +
+          field('DD Experience', d.double_dutch_experience, true) +
+          field('Skills / Talents', d.skills_talents, true) +
+        '</div>' +
+        '<div class="detail-sep">Agreements</div>' +
+        '<div style="margin-bottom:.9rem;display:flex;flex-direction:column;gap:.2rem">' + acksHtml + '</div>' +
+        '<div class="detail-sep">Digital Signature</div>' +
+        '<div class="detail-grid">' +
+          field('Signed As', d.digital_signature, false, 'font-style:italic;font-size:1rem') +
+          field('Signature Date', d.signature_date) +
+        '</div>' +
+        '<div class="detail-sep">Status</div>' +
+        '<div class="app-status-row">' +
+          '<button class="btn-status approve' + (app.status==='approved'?' current':'') + '" data-id="' + app.id + '" data-status="approved">✓ Approve</button>' +
+          '<button class="btn-status set-pending' + (app.status==='pending'?' current':'') + '" data-id="' + app.id + '" data-status="pending">◷ Pending</button>' +
+          '<button class="btn-status reject' + (app.status==='rejected'?' current':'') + '" data-id="' + app.id + '" data-status="rejected">✗ Reject</button>' +
+        '</div>' +
+        '<div class="detail-sep">Admin Notes</div>' +
+        '<textarea class="notes-area" data-id="' + app.id + '" placeholder="Add internal notes…">' + (app.notes || '') + '</textarea>' +
+        '<div class="app-actions-row">' +
+          '<button class="btn-save-notes" data-id="' + app.id + '">Save Notes</button>' +
+          '<button class="btn-delete-app" data-id="' + app.id + '">Delete Application</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function field(label, val, full, style) {
+    if (!val) return '';
+    return '<div class="detail-field' + (full ? ' full' : '') + '"><label>' + label + '</label><p' + (style ? ' style="' + style + '"' : '') + '>' + val + '</p></div>';
+  }
+
+  function updateAppStatus(id, status) {
+    fetch('/api/applications', { method: 'PATCH', headers: Object.assign({'Content-Type':'application/json'}, authHeaders()), body: JSON.stringify({id:id, status:status}) })
+      .then(function(r) { if(r.ok) { loadApplications(); showToast('Status updated to ' + status); } else showToast('Update failed', true); });
+  }
+
+  function saveAppNotes(id, notes) {
+    fetch('/api/applications', { method: 'PATCH', headers: Object.assign({'Content-Type':'application/json'}, authHeaders()), body: JSON.stringify({id:id, notes:notes}) })
+      .then(function(r) { if(r.ok) showToast('Notes saved'); else showToast('Save failed', true); });
+  }
+
+  function deleteApp(id) {
+    fetch('/api/applications', { method: 'DELETE', headers: Object.assign({'Content-Type':'application/json'}, authHeaders()), body: JSON.stringify({id:id}) })
+      .then(function(r) { if(r.ok) { loadApplications(); showToast('Application deleted'); } else showToast('Delete failed', true); });
+  }
+
+  // Filter buttons
+  document.querySelectorAll('.apps-filter').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.apps-filter').forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+      activeFilter = this.dataset.filter;
+      renderApplications();
+    });
+  });
 
   /* ── Auto-login if token already stored ── */
   if (getToken()) {

@@ -916,14 +916,50 @@ document.getElementById('sigDateInput').value = dateStr;
 // FORM SUBMISSION
 document.getElementById('memberForm').addEventListener('submit', async function(e) {
   e.preventDefault();
-  const btn = this.querySelector('.btn-submit');
+  const form = this;
+  const btn  = form.querySelector('.btn-submit');
   btn.textContent = 'Submitting…';
   btn.disabled = true;
+
   try {
-    const data = new FormData(this);
-    const res = await fetch(this.action, {method:'POST', body:data, headers:{Accept:'application/json'}});
-    if(res.ok) {
-      this.style.display = 'none';
+    // 1. Try to upload photo to Cloudinary via /api/upload
+    var photoUrl = '';
+    var photoFile = document.getElementById('photoInput').files[0];
+    if (photoFile) {
+      try {
+        var fd = new FormData();
+        fd.append('file', photoFile);
+        var token = localStorage.getItem('adm_token') || '';
+        var upRes = await fetch('/api/upload', {
+          method: 'POST', body: fd,
+          headers: token ? { Authorization: 'Bearer ' + token } : {}
+        });
+        if (upRes.ok) { var upData = await upRes.json(); photoUrl = upData.url || ''; }
+      } catch(_) {}
+    }
+
+    // 2. Collect form fields into a plain object
+    var fd2 = new FormData(form);
+    var payload = {};
+    fd2.forEach(function(val, key) {
+      if (key === 'photo') return; // handled above
+      if (payload[key]) {
+        payload[key] = [].concat(payload[key], val);
+      } else {
+        payload[key] = val;
+      }
+    });
+    if (photoUrl) payload.photo_url = photoUrl;
+
+    // 3. POST JSON to /api/applications
+    var res = await fetch('/api/applications', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (res.ok) {
+      form.style.display = 'none';
       document.getElementById('confirmBanner').style.display = 'block';
       document.getElementById('confirmBanner').scrollIntoView({behavior:'smooth', block:'center'});
     } else {

@@ -139,6 +139,13 @@ app.post('/api/restore', requireAuth, async (req, res) => {
   res.json({ ok: true });
 });
 
+/* ── Applications ────────────────────────────── */
+const appsHandler = require('./api/applications');
+app.get('/api/applications',   (req, res) => appsHandler(req, res));
+app.post('/api/applications',  (req, res) => appsHandler(req, res));
+app.patch('/api/applications', (req, res) => appsHandler(req, res));
+app.delete('/api/applications',(req, res) => appsHandler(req, res));
+
 /* GET /admin */
 app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'admin.html'));
