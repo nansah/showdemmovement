@@ -99,7 +99,6 @@ nav.scrolled{box-shadow:0 4px 32px rgba(0,0,0,.28)}
 .val-chip span{color:var(--gray);font-size:.78rem;font-weight:600;line-height:1.4}
 
 /* FORM SECTION */
-.form-section{background:var(--white);padding:5rem 2rem}
 .form-header{text-align:center;margin-bottom:3rem}
 .form-header .eyebrow{display:inline-flex;align-items:center;gap:.4rem;background:var(--blush);border:1px solid rgba(239,127,187,.3);color:#c4407a;font-size:.73rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:.35rem 1rem;border-radius:999px;margin-bottom:1rem}
 .form-header h2{font-family:var(--display);font-size:clamp(1.8rem,4vw,2.8rem);color:var(--navy);margin-bottom:.6rem}
@@ -153,6 +152,24 @@ nav.scrolled{box-shadow:0 4px 32px rgba(0,0,0,.28)}
 .submit-note{color:var(--gray);font-size:.8rem;font-weight:600;margin-top:.85rem;line-height:1.6}
 
 /* CONFIRMATION */
+/* GUIDE GATE */
+.guide-gate{background:var(--white);padding:3rem 2rem;border-top:2px solid #edf0f7}
+.gate-box{max-width:680px;margin:0 auto;background:linear-gradient(135deg,#0f2347 0%,#1e3a6e 100%);border-radius:24px;padding:2.5rem 2.8rem;position:relative;overflow:hidden}
+.gate-box::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:var(--pink);opacity:.12}
+.gate-box-title{font-family:var(--display);font-size:1.3rem;color:white;margin-bottom:.5rem;position:relative;z-index:1}
+.gate-box-sub{color:rgba(255,255,255,.7);font-size:.88rem;font-weight:600;line-height:1.65;margin-bottom:1.6rem;position:relative;z-index:1}
+.gate-check{display:flex;align-items:flex-start;gap:.9rem;cursor:pointer;position:relative;z-index:1}
+.gate-check input{width:22px;height:22px;accent-color:var(--pink);flex-shrink:0;margin-top:.1rem;cursor:pointer}
+.gate-check-text{color:rgba(255,255,255,.9);font-size:.9rem;font-weight:700;line-height:1.55}
+.gate-check-text span{color:var(--pink)}
+.gate-btn{display:block;width:100%;margin-top:1.5rem;padding:.95rem;border-radius:999px;background:var(--pink);color:white;border:none;font-family:var(--display);font-size:1.05rem;cursor:pointer;transition:transform .2s,box-shadow .2s,opacity .2s;box-shadow:0 8px 28px rgba(239,127,187,.4);opacity:.4;pointer-events:none;position:relative;z-index:1}
+.gate-btn.ready{opacity:1;pointer-events:all}
+.gate-btn.ready:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(239,127,187,.5)}
+
+/* FORM hidden until gate passed */
+.form-section{background:var(--white);padding:5rem 2rem;display:none}
+.form-section.revealed{display:block}
+
 .confirm-banner{background:linear-gradient(135deg,var(--blue) 0%,var(--blue-dk) 100%);border-radius:20px;padding:2.5rem 2rem;text-align:center;margin-top:2rem;display:none}
 .confirm-banner .cb-icon{font-size:3rem;margin-bottom:.75rem;display:block}
 .confirm-banner h3{font-family:var(--display);font-size:1.6rem;color:white;margin-bottom:.6rem}
@@ -497,6 +514,19 @@ footer{background:var(--navy);padding:4rem 2rem 2rem;color:white}
   </div>
 </section>
 
+<!-- GUIDE GATE -->
+<div class="guide-gate">
+  <div class="gate-box reveal">
+    <div class="gate-box-title">Ready to Apply?</div>
+    <p class="gate-box-sub">Before beginning the application, please confirm that you have read and understood the entire Official Membership Guide above.</p>
+    <label class="gate-check">
+      <input type="checkbox" id="guideReadCheck">
+      <span class="gate-check-text">I confirm that I have read and understood the <span>Official Membership Guide</span>, including the mission, values, member expectations, brand representation policy, media release, liability waiver, and all community standards.</span>
+    </label>
+    <button class="gate-btn" id="gateBtn" type="button">Begin Application &rarr;</button>
+  </div>
+</div>
+
 <!-- APPLICATION FORM -->
 <section class="form-section" id="application">
   <div class="container">
@@ -813,6 +843,21 @@ footer{background:var(--navy);padding:4rem 2rem 2rem;color:white}
 </div>
 
 <script>
+// GUIDE GATE
+const guideCheck = document.getElementById('guideReadCheck');
+const gateBtn    = document.getElementById('gateBtn');
+const formSection = document.querySelector('.form-section');
+guideCheck.addEventListener('change', () => {
+  gateBtn.classList.toggle('ready', guideCheck.checked);
+});
+gateBtn.addEventListener('click', () => {
+  if (!guideCheck.checked) return;
+  formSection.classList.add('revealed');
+  setTimeout(() => {
+    formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 80);
+});
+
 // NAV
 const nav = document.getElementById('nav');
 window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 40), {passive:true});
