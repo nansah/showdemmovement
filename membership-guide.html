@@ -844,15 +844,28 @@ footer{background:var(--navy);padding:4rem 2rem 2rem;color:white}
 
 <script>
 // GUIDE GATE
-const guideCheck = document.getElementById('guideReadCheck');
-const gateBtn    = document.getElementById('gateBtn');
+const guideCheck  = document.getElementById('guideReadCheck');
+const gateBtn     = document.getElementById('gateBtn');
 const formSection = document.querySelector('.form-section');
+const gateBox     = document.querySelector('.gate-box');
+
+// Activate button once gate section scrolls into view
+const gateObserver = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting) {
+    gateBtn.classList.add('ready');
+    gateObserver.disconnect();
+  }
+}, { threshold: 0.5 });
+gateObserver.observe(gateBox);
+
+// Checkbox also activates button early if user ticks it before scrolling
 guideCheck.addEventListener('change', () => {
-  gateBtn.classList.toggle('ready', guideCheck.checked);
+  if (guideCheck.checked) gateBtn.classList.add('ready');
 });
+
 gateBtn.addEventListener('click', () => {
-  if (!guideCheck.checked) return;
   formSection.classList.add('revealed');
+  history.pushState(null, '', '#application');
   setTimeout(() => {
     formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, 80);

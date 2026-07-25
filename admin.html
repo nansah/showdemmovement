@@ -341,6 +341,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
     <div id="timelineSection">
       <h2 class="adm-section-title">Founder Timeline Cards</h2>
       <div id="cardsContainer"></div>
+      <button id="addCardBtn" style="margin-top:1.2rem;background:var(--navy);color:white;border:none;padding:.65rem 1.5rem;border-radius:10px;font-family:'Fredoka One',sans-serif;font-size:.95rem;cursor:pointer;display:flex;align-items:center;gap:.5rem">＋ Add New Card</button>
     </div>
 
     <div id="applicationsSection">
@@ -452,17 +453,24 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
     var container = document.getElementById('cardsContainer');
     container.innerHTML = '';
     var savedPlaceholders = savedData.placeholder || {};
+    var savedYears        = savedData.years || {};
 
-    CARDS.forEach(function (card) {
-      var saved    = savedData.text[card.id] || {};
-      var eyebrow  = saved.eyebrow || card.defaultEyebrow;
-      var title    = saved.title   || card.defaultTitle;
-      var body     = saved.body    || card.defaultBody;
+    // If server has a saved card list, use it to update CARDS order/years
+    if (savedData.cards && savedData.cards.length) {
+      CARDS = savedData.cards;
+    }
+
+    CARDS.forEach(function (card, idx) {
+      var saved    = (savedData.text || {})[card.id] || {};
+      var eyebrow  = saved.eyebrow || card.defaultEyebrow || card.label || '';
+      var title    = saved.title   || card.defaultTitle   || '';
+      var body     = saved.body    || card.defaultBody    || '';
+      var year     = savedYears[card.id] !== undefined ? savedYears[card.id] : card.year;
       var mediaKey = 'card-' + card.id + '-0';
       var media    = (savedData.media || {})[mediaKey] || null;
-      var showPh   = savedPlaceholders[card.id] !== false; // default ON
+      var showPh   = savedPlaceholders[card.id] !== false;
 
-      pendingData[card.id] = { eyebrow: eyebrow, title: title, body: body, media: media, showPlaceholder: showPh };
+      pendingData[card.id] = { year: year, eyebrow: eyebrow, title: title, body: body, media: media, showPlaceholder: showPh };
 
       var el = document.createElement('div');
       el.className = 'card-editor';
@@ -470,12 +478,16 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 
       el.innerHTML = [
         '<div class="card-editor-head">',
-          '<span class="card-num">' + (card.id + 1) + '</span>',
-          '<span class="card-year">' + card.year + '</span>',
-          '<span class="card-section-name">' + card.label + '</span>',
+          '<span class="card-num">' + (idx + 1) + '</span>',
+          '<span class="card-year">' + esc(year) + '</span>',
+          '<span class="card-section-name">' + esc(card.label || card.defaultEyebrow || '') + '</span>',
           '<span class="card-chevron">▼</span>',
         '</div>',
         '<div class="card-editor-body">',
+          '<div>',
+            '<label class="field-label">Year / Date</label>',
+            '<input type="text" class="field-input f-year" value="' + esc(year) + '" placeholder="e.g. 2025 or Jul 1, 2022">',
+          '</div>',
           '<div>',
             '<label class="field-label">Eyebrow Label</label>',
             '<input type="text" class="field-input f-eyebrow" value="' + esc(eyebrow) + '">',
@@ -493,7 +505,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
             '<div class="media-zone' + (media ? ' has-media' : '') + '">',
               '<div class="media-preview">' + renderMediaHTML(media) + '</div>',
               '<div class="media-upload-row">',
-                '<span class="media-btn media-btn-upload"><input type="file" class="media-file-input" accept="image/*,video/mp4,video/webm">📷 Upload Photo/Video</span>',
+                '<span class="media-btn media-btn-upload"><input type="file" class="media-file-input" accept="image/*,video/mp4,video/webm,video/quicktime,.mov">📷 Upload Photo/Video</span>',
                 '<button class="media-btn media-btn-url">🔗 Image URL</button>',
                 '<button class="media-btn media-btn-yt">▶ YouTube</button>',
                 '<button class="media-btn media-btn-clear" style="' + (media ? '' : 'display:none') + '">✕ Clear</button>',
@@ -513,6 +525,9 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
               '</span>',
               'Show empty placeholder to visitors',
             '</label>',
+          '</div>',
+          '<div style="text-align:right;margin-top:1.2rem;padding-top:1rem;border-top:1px solid #edf0f7">',
+            '<button class="card-del-btn" style="background:none;border:1px solid #e03;color:#e03;padding:.4rem 1.1rem;border-radius:8px;cursor:pointer;font-size:.82rem;font-family:inherit">🗑 Delete Card</button>',
           '</div>',
         '</div>'
       ].join('');
@@ -541,12 +556,31 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
     });
 
     /* Text field changes */
+    el.querySelector('.f-year').addEventListener('input', function () {
+      pendingData[cardId].year = this.value;
+      var card = CARDS.find(function(c) { return c.id === cardId; });
+      if (card) {
+        card.year = this.value;
+        el.querySelector('.card-year').textContent = this.value;
+      }
+    });
     el.querySelector('.f-eyebrow').addEventListener('input', function () { pendingData[cardId].eyebrow = this.value; });
     el.querySelector('.f-title').addEventListener('input', function () { pendingData[cardId].title = this.value; });
     el.querySelector('.f-body').addEventListener('input', function () { pendingData[cardId].body = this.value; });
 
     /* Placeholder toggle */
     el.querySelector('.f-show-ph').addEventListener('change', function () { pendingData[cardId].showPlaceholder = this.checked; });
+
+    /* Delete card */
+    el.querySelector('.card-del-btn').addEventListener('click', function () {
+      if (!confirm('Delete this card? This cannot be undone until you save.')) return;
+      CARDS = CARDS.filter(function(c) { return c.id !== cardId; });
+      delete pendingData[cardId];
+      el.remove();
+      // re-number the counters
+      var all = document.querySelectorAll('.card-editor');
+      all.forEach(function(e, i) { var n = e.querySelector('.card-num'); if (n) n.textContent = i + 1; });
+    });
 
     var zone       = el.querySelector('.media-zone');
     var previewEl  = el.querySelector('.media-preview');
@@ -635,24 +669,33 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
     var text        = {};
     var media       = {};
     var placeholder = {};
+    var years       = {};
 
     Object.keys(pendingData).forEach(function (id) {
       var d = pendingData[id];
-      text[id] = { eyebrow: d.eyebrow, title: d.title, body: d.body };
+      text[id]        = { eyebrow: d.eyebrow, title: d.title, body: d.body };
+      years[id]       = d.year;
       if (d.media) media['card-' + id + '-0'] = d.media;
       placeholder[id] = d.showPlaceholder !== false;
+    });
+
+    // Save the current card list (preserves add/delete/order)
+    var savedCards = CARDS.map(function(c) {
+      return { id: c.id, year: pendingData[c.id] ? pendingData[c.id].year : c.year, label: c.label || c.defaultEyebrow || '', defaultEyebrow: c.defaultEyebrow, defaultTitle: c.defaultTitle, defaultBody: c.defaultBody };
     });
 
     fetch('/api/content', {
       method: 'POST',
       headers: authHeaders(),
-      body: JSON.stringify({ text: text, media: media, placeholder: placeholder })
+      body: JSON.stringify({ cards: savedCards, text: text, media: media, placeholder: placeholder, years: years })
     })
     .then(function (r) {
       if (r.status === 401) { clearToken(); location.reload(); return; }
       btn.disabled = false; btn.textContent = '💾 Save All';
-      if (r.ok) { showToast('Saved! All visitors will see the updates.'); }
-      else       { showToast('Save failed', true); }
+      return r.json().then(function(d) {
+        if (r.ok) { showToast('Saved! All visitors will see the updates.'); }
+        else { showToast('Save failed: ' + (d.error || r.status), true); }
+      });
     })
     .catch(function (e) {
       btn.disabled = false; btn.textContent = '💾 Save All';
@@ -701,6 +744,91 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 
   document.getElementById('saveAllBtn').addEventListener('click', saveAll);
 
+  /* ── Add new card ── */
+  document.getElementById('addCardBtn').addEventListener('click', function () {
+    var newId = Date.now();
+    var newCard = { id: newId, year: new Date().getFullYear().toString(), label: 'New Card', defaultEyebrow: 'New Section', defaultTitle: 'New Card Title', defaultBody: 'Describe this moment…' };
+    CARDS.push(newCard);
+    pendingData[newId] = { year: newCard.year, eyebrow: newCard.defaultEyebrow, title: newCard.defaultTitle, body: newCard.defaultBody, media: null, showPlaceholder: true };
+
+    // Rebuild only the new card and append it
+    var tempData = { text: {}, media: {}, placeholder: {}, years: {} };
+    Object.keys(pendingData).forEach(function(id) {
+      var d = pendingData[id];
+      tempData.text[id]        = { eyebrow: d.eyebrow, title: d.title, body: d.body };
+      tempData.years[id]       = d.year;
+      tempData.placeholder[id] = d.showPlaceholder !== false;
+      if (d.media) tempData.media['card-' + id + '-0'] = d.media;
+    });
+    tempData.cards = CARDS;
+
+    // Append just the new card editor
+    var container = document.getElementById('cardsContainer');
+    var idx = CARDS.length - 1;
+    var card = newCard;
+    var el = document.createElement('div');
+    el.className = 'card-editor open';
+    el.dataset.id = card.id;
+    el.innerHTML = [
+      '<div class="card-editor-head">',
+        '<span class="card-num">' + (idx + 1) + '</span>',
+        '<span class="card-year">' + esc(card.year) + '</span>',
+        '<span class="card-section-name">' + esc(card.label) + '</span>',
+        '<span class="card-chevron">▼</span>',
+      '</div>',
+      '<div class="card-editor-body">',
+        '<div>',
+          '<label class="field-label">Year / Date</label>',
+          '<input type="text" class="field-input f-year" value="' + esc(card.year) + '" placeholder="e.g. 2025 or Jul 1, 2022">',
+        '</div>',
+        '<div>',
+          '<label class="field-label">Eyebrow Label</label>',
+          '<input type="text" class="field-input f-eyebrow" value="' + esc(card.defaultEyebrow) + '">',
+        '</div>',
+        '<div>',
+          '<label class="field-label">Card Title</label>',
+          '<input type="text" class="field-input f-title" value="' + esc(card.defaultTitle) + '">',
+        '</div>',
+        '<div>',
+          '<label class="field-label">Body Text</label>',
+          '<textarea class="field-textarea f-body">' + escText(card.defaultBody) + '</textarea>',
+        '</div>',
+        '<div>',
+          '<label class="field-label">Photo / Video</label>',
+          '<div class="media-zone">',
+            '<div class="media-preview"></div>',
+            '<div class="media-upload-row">',
+              '<span class="media-btn media-btn-upload"><input type="file" class="media-file-input" accept="image/*,video/mp4,video/webm,video/quicktime,.mov">📷 Upload Photo/Video</span>',
+              '<button class="media-btn media-btn-url">🔗 Image URL</button>',
+              '<button class="media-btn media-btn-yt">▶ YouTube</button>',
+              '<button class="media-btn media-btn-clear" style="display:none">✕ Clear</button>',
+            '</div>',
+            '<div class="media-url-row">',
+              '<input type="url" class="media-url-input" placeholder="https://…">',
+              '<button class="media-url-apply">Apply</button>',
+            '</div>',
+            '<div class="media-uploading" style="display:none">⏳ Uploading…</div>',
+          '</div>',
+        '</div>',
+        '<div class="ph-toggle-row">',
+          '<label class="ph-toggle-label">',
+            '<span class="ph-switch">',
+              '<input type="checkbox" class="f-show-ph" checked>',
+              '<span class="ph-track"></span>',
+            '</span>',
+            'Show empty placeholder to visitors',
+          '</label>',
+        '</div>',
+        '<div style="text-align:right;margin-top:1.2rem;padding-top:1rem;border-top:1px solid #edf0f7">',
+          '<button class="card-del-btn" style="background:none;border:1px solid #e03;color:#e03;padding:.4rem 1.1rem;border-radius:8px;cursor:pointer;font-size:.82rem;font-family:inherit">🗑 Delete Card</button>',
+        '</div>',
+      '</div>'
+    ].join('');
+    container.appendChild(el);
+    wireCardEditor(el, newId);
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
   /* ══════════════════════════════════════════
      APPLICATIONS TAB
   ══════════════════════════════════════════ */
@@ -709,8 +837,8 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 
   function switchTab(tab) {
     var isTimeline = tab === 'timeline';
-    document.getElementById('timelineSection').style.display    = isTimeline ? '' : 'none';
-    document.getElementById('applicationsSection').style.display = isTimeline ? 'none' : '';
+    document.getElementById('timelineSection').style.display    = isTimeline ? 'block' : 'none';
+    document.getElementById('applicationsSection').style.display = isTimeline ? 'none' : 'block';
     document.getElementById('tabTimeline').classList.toggle('active', isTimeline);
     document.getElementById('tabApps').classList.toggle('active', !isTimeline);
     if (!isTimeline) loadApplications();
@@ -886,6 +1014,8 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
   if (getToken()) {
     showDashboard();
   }
+
+  window.switchTab = switchTab;
 
 })();
 </script>

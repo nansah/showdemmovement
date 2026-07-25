@@ -1,14 +1,15 @@
 {
   "version": 2,
-  "builds": [
-    { "src": "api/*.js",    "use": "@vercel/node" },
-    { "src": "**/*.html",   "use": "@vercel/static" },
-    { "src": "**/*.css",    "use": "@vercel/static" },
-    { "src": "*.js",        "use": "@vercel/static" }
-  ],
   "routes": [
-    { "src": "/api/(.*)",         "dest": "/api/$1" },
-    { "src": "/admin",            "dest": "/admin.html" },
-    { "src": "/membership-guide", "dest": "/membership-guide.html" }
+    { "src": "/about",            "dest": "/about.html" },
+    { "src": "/contact",          "dest": "/contact.html" },
+    { "src": "/donate",           "dest": "/donate.html" },
+    { "src": "/events",           "dest": "/events.html" },
+    { "src": "/membership",       "dest": "/membership.html" },
+    { "src": "/membership-guide", "dest": "/membership-guide.html" },
+    { "src": "/programs",         "dest": "/programs.html" },
+    { "src": "/volunteer",        "dest": "/volunteer.html" },
+    { "src": "/waiver",           "dest": "/waiver.html" },
+    { "src": "/admin",            "dest": "/admin.html" }
   ]
 }
