@@ -6,6 +6,7 @@
     { "src": "**/*.js",   "use": "@vercel/static" }
   ],
   "routes": [
-    { "src": "/admin", "dest": "/admin.html" }
+    { "src": "/admin", "dest": "/admin.html" },
+    { "src": "/membership-guide", "dest": "/membership-guide.html" }
   ]
 }
