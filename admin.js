@@ -36,6 +36,70 @@
     if (inner) el.appendChild(inner);
   }
 
+  // Cards created in the admin panel (ids beyond the 7 built-in milestones)
+  // have no matching .ftl-card/.ftl-dot in the static markup — build them
+  // here so admin-added cards actually render on the timeline.
+  function buildPlaceholder() {
+    var ph = document.createElement('div');
+    ph.className = 'ftl-media-ph';
+    ph.innerHTML = '<span class="ftl-ph-icon">📸</span>' +
+                    '<span class="ftl-ph-text">Add a photo or video</span>' +
+                    '<span class="ftl-ph-tag">Add Media</span>';
+    return ph;
+  }
+
+  function buildCard(cardDef, textMap) {
+    var t       = textMap[cardDef.id] || {};
+    var eyebrow = t.eyebrow || cardDef.defaultEyebrow || cardDef.label || '';
+    var title   = t.title   || cardDef.defaultTitle   || '';
+    var body    = t.body    || cardDef.defaultBody    || '';
+
+    var card = document.createElement('div');
+    card.className = 'ftl-card';
+    card.setAttribute('data-card', cardDef.id);
+    card.setAttribute('data-year', cardDef.year || '');
+
+    var ew = document.createElement('span'); ew.className = 'ftl-card-eyebrow'; ew.textContent = eyebrow;
+    var h  = document.createElement('h3');   h.className  = 'ftl-card-h';       h.textContent  = title;
+    var p  = document.createElement('p');    p.className  = 'ftl-card-p';       p.textContent  = body;
+    card.appendChild(ew);
+    card.appendChild(h);
+    card.appendChild(p);
+    card.appendChild(buildPlaceholder());
+    return card;
+  }
+
+  function buildMissingCards(data) {
+    var cardsList = data.cards;
+    if (!Array.isArray(cardsList) || !cardsList.length) return false;
+
+    var cardsContainer = document.getElementById('ftlCards');
+    var dotNav          = document.getElementById('ftlDotNav');
+    if (!cardsContainer || !dotNav) return false;
+
+    // The static markup has one extra decorative "Today" dot after the real
+    // milestone dots — new dots must be inserted before it, not after, or
+    // every card/dot index past this point would be off by one.
+    var todayDot = dotNav.querySelector('.ftl-dot-today');
+    var textMap  = data.text || {};
+    var added    = false;
+
+    cardsList.forEach(function (cardDef) {
+      var existing = document.querySelector('.ftl-card[data-card="' + cardDef.id + '"]');
+      if (existing) {
+        if (cardDef.year) existing.setAttribute('data-year', cardDef.year);
+        return;
+      }
+      cardsContainer.appendChild(buildCard(cardDef, textMap));
+      var dot = document.createElement('button');
+      dot.className = 'ftl-dot';
+      dotNav.insertBefore(dot, todayDot || null);
+      added = true;
+    });
+
+    return added;
+  }
+
   function applyContent(data) {
     var text  = data.text  || {};
     var media = data.media || {};
@@ -80,7 +144,15 @@
 
   fetch('/api/content')
     .then(function (r) { return r.ok ? r.json() : null; })
-    .then(function (data) { if (data) applyContent(data); })
+    .then(function (data) {
+      if (!data) return;
+      var added = buildMissingCards(data);
+      applyContent(data);
+      // Rebuild the scroll-jacking state so newly-appended cards/dots are
+      // included — the timeline script's querySelectorAll snapshots were
+      // taken before these nodes existed.
+      if (added && window.ftlSetupTimeline) window.ftlSetupTimeline();
+    })
     .catch(function () {});
 
 })();

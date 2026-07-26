@@ -1126,7 +1126,7 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
           <!-- Cards (one visible at a time) -->
           <div class="ftl-cards" id="ftlCards">
 
-            <div class="ftl-card active" data-card="0">
+            <div class="ftl-card active" data-card="0" data-year="2018">
               <span class="ftl-card-eyebrow">The Beginning</span>
               <h3 class="ftl-card-h">Original Double Dutch Video</h3>
               <p class="ftl-card-p">In 2018, I recorded a video of myself jumping Double Dutch on July 4th. At the time, I had no idea this simple video would one day become the beginning of something much bigger.</p>
@@ -1137,7 +1137,7 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
               </div>
             </div>
 
-            <div class="ftl-card" data-card="1">
+            <div class="ftl-card" data-card="1" data-year="2022">
               <span class="ftl-card-eyebrow">A Step of Faith</span>
               <h3 class="ftl-card-h">Searching for Purpose</h3>
               <p class="ftl-card-p">After walking away from my six-figure business, I entered a season of searching for purpose — praying, fasting, and growing in my relationship with Jesus. I trusted that God was leading me somewhere greater.</p>
@@ -1151,7 +1151,7 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
               </div>
             </div>
 
-            <div class="ftl-card ftl-card-pink" data-card="2">
+            <div class="ftl-card ftl-card-pink" data-card="2" data-year="Jul 1, 2022">
               <span class="ftl-card-eyebrow">One Old Video. One New Beginning.</span>
               <h3 class="ftl-card-h">It Went Viral</h3>
               <p class="ftl-card-p">On July 1, 2022, I reposted my old Double Dutch video. I thought I was sharing an old memory. Instead, it unexpectedly went viral and reached millions — and that single post became the spark that started the Showdem Movement.</p>
@@ -1162,7 +1162,7 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
               </div>
             </div>
 
-            <div class="ftl-card" data-card="3">
+            <div class="ftl-card" data-card="3" data-year="2022">
               <span class="ftl-card-eyebrow">Community Begins</span>
               <h3 class="ftl-card-h">The First Community Sessions</h3>
               <p class="ftl-card-p">Inspired by the response, I began hosting free community Double Dutch sessions. People from different ages, cultures, and backgrounds came together to jump, connect, and build community. This was the moment I knew Double Dutch could become much more.</p>
@@ -1173,7 +1173,7 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
               </div>
             </div>
 
-            <div class="ftl-card ftl-card-blue" data-card="4">
+            <div class="ftl-card ftl-card-blue" data-card="4" data-year="Times Square">
               <span class="ftl-card-eyebrow">The Movement Grew</span>
               <h3 class="ftl-card-h">Times Square — 42 Million Views</h3>
               <p class="ftl-card-p">We brought Double Dutch to Times Square. A Times Square session video went on to be viewed more than 42 million times, introducing people around the world to street-style Double Dutch.</p>
@@ -1187,7 +1187,7 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
               </div>
             </div>
 
-            <div class="ftl-card" data-card="5">
+            <div class="ftl-card" data-card="5" data-year="2025">
               <span class="ftl-card-eyebrow">More Than a Viral Moment</span>
               <h3 class="ftl-card-h">A Real Community</h3>
               <p class="ftl-card-p">By 2025, Showdem had become much more than viral videos. People from different boroughs and cities gathered in Times Square to jump, connect, encourage one another, and celebrate street-style Double Dutch.</p>
@@ -1198,7 +1198,7 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
               </div>
             </div>
 
-            <div class="ftl-card ftl-card-pink" data-card="6">
+            <div class="ftl-card ftl-card-pink" data-card="6" data-year="2025">
               <span class="ftl-card-eyebrow">First Official Event</span>
               <h3 class="ftl-card-h">The First Showdem Jump Off</h3>
               <p class="ftl-card-p">People traveled from different boroughs and cities to compete, jump, connect, and celebrate the culture together. Borough vs. Borough. City vs. City. One Community.</p>
@@ -2006,45 +2006,38 @@ nav {
 
 <script>
 (function() {
-  const MILESTONES = 7;
   const PANEL_H = 620;    // px — sticky panel height (must match .ftl-sticky-panel's CSS height)
   const STEP_H  = 380;    // px — scroll distance per milestone
 
-  const years = ['2018','2022','Jul 1, 2022','2022','Times Square','2025','2025'];
-
   const container = document.getElementById('ftlScrollContainer');
   const track     = document.getElementById('ftlTrack');
-  const panel     = document.getElementById('ftlPanel');
   const fill      = document.getElementById('ftlProgressFill');
   const yearEl    = document.getElementById('ftlYearBadge');
-  const cards     = document.querySelectorAll('.ftl-card');
-  const navDots   = document.querySelectorAll('.ftl-dot');
+  const dotNav    = document.getElementById('ftlDotNav');
   const blob1     = document.getElementById('ftlBgBlob1');
   const blob2     = document.getElementById('ftlBgBlob2');
   const blob3     = document.getElementById('ftlBgBlob3');
 
-  // Set track height so the sticky panel stays locked for all milestones
-  const totalH = STEP_H * MILESTONES + PANEL_H;
-  container.style.height = totalH + 'px';
-  track.style.height = totalH + 'px';
-
-  let current = 0;
+  // cards/navDots/MILESTONES/totalH are rebuilt by setup() — admin.js calls
+  // window.ftlSetupTimeline() again after it appends any admin-created cards,
+  // since querySelectorAll snapshots don't pick up nodes added afterward.
+  let cards      = [];
+  let navDots    = [];
+  let MILESTONES = 0;
+  let totalH     = 0;
+  let current    = -1;
 
   function goTo(idx) {
+    if (!cards.length) return;
     if (idx === current && cards[idx].classList.contains('active')) return;
     current = idx;
 
-    // Cards
     cards.forEach((c, i) => c.classList.toggle('active', i === idx));
-
-    // Nav dots
     navDots.forEach((d, i) => d.classList.toggle('active', i === idx));
 
-    // Year badge
-    yearEl.textContent = years[idx];
+    yearEl.textContent = cards[idx].dataset.year || '';
 
-    // Progress spine fill
-    const pct = idx / (MILESTONES - 1) * 100;
+    const pct = MILESTONES > 1 ? idx / (MILESTONES - 1) * 100 : 100;
     fill.style.height = pct + '%';
   }
 
@@ -2059,7 +2052,7 @@ nav {
     blob2.style.transform = `translateY(${s * -0.15}px)`;
     blob3.style.transform = `translateY(${s * 0.18}px)`;
 
-    if (scrolled < 0 || scrolled > totalH - PANEL_H) return;
+    if (!MILESTONES || scrolled < 0 || scrolled > totalH - PANEL_H) return;
 
     const idx = Math.min(
       MILESTONES - 1,
@@ -2068,22 +2061,40 @@ nav {
     goTo(idx);
   }
 
+  function setup() {
+    cards      = Array.prototype.slice.call(document.querySelectorAll('.ftl-card'));
+    navDots    = Array.prototype.slice.call(document.querySelectorAll('.ftl-dot'));
+    MILESTONES = cards.length;
+
+    // Set track height so the sticky panel stays locked for all milestones
+    totalH = STEP_H * MILESTONES + PANEL_H;
+    container.style.height = totalH + 'px';
+    track.style.height = totalH + 'px';
+
+    current = -1;
+    goTo(0);
+  }
+
   window.addEventListener('scroll', onScroll, { passive: true });
 
-  // Dot nav click — scroll to that milestone's position
-  navDots.forEach((d, i) => {
-    d.addEventListener('click', () => {
-      // container.offsetTop is relative to its nearest positioned ancestor
-      // (.ftl-section has position:relative), not the document — so it
-      // undershoots the real scroll target. getBoundingClientRect() + the
-      // current scroll offset gives the true absolute page position.
-      const containerTop = container.getBoundingClientRect().top + window.pageYOffset;
-      const targetScroll  = containerTop + (i * STEP_H) + 1;
-      window.scrollTo({ top: targetScroll, behavior: 'smooth' });
-    });
+  // Event delegation (not per-dot listeners) so dots added later by
+  // admin.js work without needing their own click handler wired up.
+  dotNav.addEventListener('click', function (e) {
+    const dot = e.target.closest('.ftl-dot');
+    if (!dot) return;
+    const i = navDots.indexOf(dot);
+    if (i === -1) return;
+    // container.offsetTop is relative to its nearest positioned ancestor
+    // (.ftl-section has position:relative), not the document — so it
+    // undershoots the real scroll target. getBoundingClientRect() + the
+    // current scroll offset gives the true absolute page position.
+    const containerTop = container.getBoundingClientRect().top + window.pageYOffset;
+    const targetScroll  = containerTop + (i * STEP_H) + 1;
+    window.scrollTo({ top: targetScroll, behavior: 'smooth' });
   });
 
-  goTo(0);
+  window.ftlSetupTimeline = setup;
+  setup();
 })();
 </script>
 
