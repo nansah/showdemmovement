@@ -125,20 +125,24 @@ async function deleteApp(id) {
 }
 
 /* ── File upload ──────────────────────────── */
-async function uploadFile(buffer, mimetype, originalname) {
+// Vercel serverless functions cap request bodies at a few MB, so large media
+// (especially phone videos) can't be uploaded through our own API. Instead we
+// hand the browser a signed Supabase Storage URL and let it PUT the file
+// straight to Supabase, bypassing our function's body limit entirely.
+async function createSignedUpload(originalname) {
   if (!hasSupabase()) throw new Error('Supabase not configured — set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY');
   const db  = getSupabase();
   const ext = (originalname.split('.').pop() || 'bin').toLowerCase();
   const key = `uploads/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-  const { error } = await db.storage.from('media').upload(key, buffer, { contentType: mimetype, upsert: false });
+  const { data, error } = await db.storage.from('media').createSignedUploadUrl(key);
   if (error) throw new Error(error.message);
-  const { data } = db.storage.from('media').getPublicUrl(key);
-  return { url: data.publicUrl, type: mimetype.startsWith('video') ? 'video-file' : 'image' };
+  const { data: pub } = db.storage.from('media').getPublicUrl(key);
+  return { signedUrl: data.signedUrl, token: data.token, path: data.path, publicUrl: pub.publicUrl };
 }
 
 module.exports = {
   requireAuth, parseBody,
   readContent, writeContent,
   readApps, writeApp, updateApp, deleteApp,
-  uploadFile
+  createSignedUpload
 };

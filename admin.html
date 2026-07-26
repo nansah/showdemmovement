@@ -302,6 +302,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
   .detail-grid{grid-template-columns:1fr}
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
 
@@ -600,28 +601,35 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
       clearBtn.style.display = media ? '' : 'none';
     }
 
-    /* File upload */
+    /* File upload — get a signed Supabase Storage URL from our API, then
+       upload the file straight to Supabase from the browser. Routing large
+       video files through our own serverless function would hit Vercel's
+       request body size limit. */
     uploadEl.addEventListener('change', function () {
       var file = this.files[0];
       if (!file) return;
       loadingEl.style.display = 'block';
+      var isVideo = file.type.indexOf('video') === 0;
 
-      var fd = new FormData();
-      fd.append('file', file);
-
-      fetch('/api/upload', { method: 'POST', headers: { 'Authorization': 'Bearer ' + getToken() }, body: fd })
+      fetch('/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + getToken() },
+        body: JSON.stringify({ filename: file.name })
+      })
         .then(function (r) {
           if (r.status === 401) { clearToken(); location.reload(); }
           return r.json();
         })
-        .then(function (data) {
-          loadingEl.style.display = 'none';
-          if (data.url) {
-            var type = data.type === 'video' ? 'video-file' : 'image';
-            setMedia({ type: type, src: data.url });
-          } else {
-            showToast('Upload failed: ' + (data.error || 'Unknown error'), true);
-          }
+        .then(function (meta) {
+          if (!meta.signedUrl) throw new Error(meta.error || 'Could not prepare upload');
+          var supa = window.supabase.createClient(meta.supabaseUrl, meta.supabaseAnonKey);
+          return supa.storage.from('media')
+            .uploadToSignedUrl(meta.path, meta.token, file, { contentType: file.type })
+            .then(function (result) {
+              if (result.error) throw new Error(result.error.message);
+              loadingEl.style.display = 'none';
+              setMedia({ type: isVideo ? 'video-file' : 'image', src: meta.url });
+            });
         })
         .catch(function (e) {
           loadingEl.style.display = 'none';
