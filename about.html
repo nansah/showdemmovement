@@ -2073,7 +2073,12 @@ nav {
   // Dot nav click — scroll to that milestone's position
   navDots.forEach((d, i) => {
     d.addEventListener('click', () => {
-      const targetScroll = container.offsetTop + (i * STEP_H) + 1;
+      // container.offsetTop is relative to its nearest positioned ancestor
+      // (.ftl-section has position:relative), not the document — so it
+      // undershoots the real scroll target. getBoundingClientRect() + the
+      // current scroll offset gives the true absolute page position.
+      const containerTop = container.getBoundingClientRect().top + window.pageYOffset;
+      const targetScroll  = containerTop + (i * STEP_H) + 1;
       window.scrollTo({ top: targetScroll, behavior: 'smooth' });
     });
   });
