@@ -1899,6 +1899,13 @@ nav {
 .ftl-media-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin-top: 1rem; }
 .ftl-media-grid2 .ftl-media-ph { margin-top: 0; flex-direction: column; text-align: center; padding: .8rem; }
 
+/* Rendered media (image/video/embed saved via admin) */
+.ftl-media-rendered { margin-top: 1rem; border-radius: 12px; overflow: hidden; }
+.ftl-media-rendered img,
+.ftl-media-rendered video { width: 100%; border-radius: 12px; display: block; }
+.ftl-media-rendered iframe { width: 100%; aspect-ratio: 16/9; border: none; border-radius: 12px; display: block; }
+.ftl-media-rendered iframe.tt-embed { aspect-ratio: 9/16; max-width: 300px; margin: 0 auto; }
+
 /* Stat row */
 .ftl-stat-row { margin: .8rem 0; }
 .ftl-stat {

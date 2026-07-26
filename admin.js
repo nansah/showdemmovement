@@ -25,6 +25,13 @@
       inner.setAttribute('allow', 'accelerometer;autoplay;clipboard-write;encrypted-media;picture-in-picture');
       inner.setAttribute('allowfullscreen', '');
       inner.title = 'Video';
+    } else if (media.type === 'tiktok') {
+      inner = document.createElement('iframe');
+      inner.src = media.src;
+      inner.className = 'tt-embed';
+      inner.setAttribute('allow', 'encrypted-media;picture-in-picture');
+      inner.setAttribute('allowfullscreen', '');
+      inner.title = 'TikTok video';
     }
     if (inner) el.appendChild(inner);
   }

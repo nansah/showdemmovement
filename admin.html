@@ -169,6 +169,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
   width:100%;border-radius:8px;display:block;max-height:220px;object-fit:cover;
 }
 .media-preview iframe{width:100%;aspect-ratio:16/9;border:none;border-radius:8px}
+.media-preview iframe.tt-embed{aspect-ratio:9/16;max-width:280px;margin:0 auto;display:block}
 .media-upload-row{display:flex;gap:.5rem;flex-wrap:wrap}
 .media-btn{
   padding:.35rem .9rem;border-radius:8px;border:none;
@@ -178,6 +179,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .media-btn-upload{background:var(--pink);color:white}
 .media-btn-url{background:var(--blue);color:var(--navy)}
 .media-btn-yt{background:var(--navy);color:white}
+.media-btn-tt{background:#000;color:white}
 .media-btn-clear{background:#f3f4f6;color:#888}
 .media-file-input{position:absolute;inset:0;opacity:0;cursor:pointer;font-size:0}
 .media-url-row{
@@ -399,6 +401,11 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
     return m ? 'https://www.youtube.com/embed/' + m[1] + '?rel=0' : null;
   }
 
+  function getTikTokEmbedUrl(url) {
+    var m = url.match(/tiktok\.com\/@[\w.-]+\/video\/(\d+)/);
+    return m ? 'https://www.tiktok.com/embed/v2/' + m[1] : null;
+  }
+
   /* ── Login ── */
   function tryLogin() {
     var pass = document.getElementById('loginPass').value.trim();
@@ -509,6 +516,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
                 '<span class="media-btn media-btn-upload"><input type="file" class="media-file-input" accept="image/*,video/mp4,video/webm,video/quicktime,.mov">📷 Upload Photo/Video</span>',
                 '<button class="media-btn media-btn-url">🔗 Image URL</button>',
                 '<button class="media-btn media-btn-yt">▶ YouTube</button>',
+                '<button class="media-btn media-btn-tt">🎵 TikTok</button>',
                 '<button class="media-btn media-btn-clear" style="' + (media ? '' : 'display:none') + '">✕ Clear</button>',
               '</div>',
               '<div class="media-url-row">',
@@ -546,6 +554,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
     if (media.type === 'image')      return '<img src="' + media.src + '" alt="">';
     if (media.type === 'video-file') return '<video src="' + media.src + '" controls></video>';
     if (media.type === 'youtube')    return '<iframe src="' + media.src + '" allowfullscreen title="Video"></iframe>';
+    if (media.type === 'tiktok')     return '<iframe class="tt-embed" src="' + media.src + '" allowfullscreen title="Video"></iframe>';
     return '';
   }
 
@@ -588,6 +597,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
     var clearBtn   = el.querySelector('.media-btn-clear');
     var urlBtn     = el.querySelector('.media-btn-url');
     var ytBtn      = el.querySelector('.media-btn-yt');
+    var ttBtn      = el.querySelector('.media-btn-tt');
     var urlRow     = el.querySelector('.media-url-row');
     var urlInput   = el.querySelector('.media-url-input');
     var urlApply   = el.querySelector('.media-url-apply');
@@ -642,12 +652,15 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
     function showUrlRow(mode) {
       urlMode = mode;
       urlRow.classList.add('visible');
-      urlInput.placeholder = mode === 'youtube' ? 'https://www.youtube.com/watch?v=…' : 'https://example.com/photo.jpg';
+      urlInput.placeholder = mode === 'youtube' ? 'https://www.youtube.com/watch?v=…' :
+                              mode === 'tiktok'  ? 'https://www.tiktok.com/@user/video/…' :
+                              'https://example.com/photo.jpg';
       urlInput.value = '';
       urlInput.focus();
     }
     urlBtn.addEventListener('click', function () { showUrlRow('url'); });
     ytBtn.addEventListener('click',  function () { showUrlRow('youtube'); });
+    ttBtn.addEventListener('click',  function () { showUrlRow('tiktok'); });
 
     urlApply.addEventListener('click', function () {
       var val = urlInput.value.trim();
@@ -656,6 +669,10 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
         var embed = getYouTubeEmbedUrl(val);
         if (!embed) { showToast('Not a valid YouTube URL', true); return; }
         setMedia({ type: 'youtube', src: embed });
+      } else if (urlMode === 'tiktok') {
+        var ttEmbed = getTikTokEmbedUrl(val);
+        if (!ttEmbed) { showToast('Not a valid TikTok video URL', true); return; }
+        setMedia({ type: 'tiktok', src: ttEmbed });
       } else {
         setMedia({ type: 'image', src: val });
       }
@@ -809,6 +826,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
               '<span class="media-btn media-btn-upload"><input type="file" class="media-file-input" accept="image/*,video/mp4,video/webm,video/quicktime,.mov">📷 Upload Photo/Video</span>',
               '<button class="media-btn media-btn-url">🔗 Image URL</button>',
               '<button class="media-btn media-btn-yt">▶ YouTube</button>',
+              '<button class="media-btn media-btn-tt">🎵 TikTok</button>',
               '<button class="media-btn media-btn-clear" style="display:none">✕ Clear</button>',
             '</div>',
             '<div class="media-url-row">',
