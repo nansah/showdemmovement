@@ -69,6 +69,36 @@
     return card;
   }
 
+  // Cards deleted in the admin panel are dropped from data.cards, but the
+  // 7 milestone cards are hardcoded in about.html's markup and any
+  // admin-added cards are DOM nodes from a previous buildMissingCards call —
+  // neither disappears on its own, so remove whichever .ftl-card/.ftl-dot
+  // pairs no longer have a matching id in the saved cards list.
+  function pruneDeletedCards(data) {
+    if (!Array.isArray(data.cards)) return false;
+
+    var dotNav = document.getElementById('ftlDotNav');
+    if (!dotNav) return false;
+
+    var validIds = {};
+    data.cards.forEach(function (c) { validIds[String(c.id)] = true; });
+
+    var cards    = Array.prototype.slice.call(document.querySelectorAll('.ftl-card'));
+    var todayDot = dotNav.querySelector('.ftl-dot-today');
+    var realDots = Array.prototype.slice.call(dotNav.querySelectorAll('.ftl-dot'))
+      .filter(function (d) { return d !== todayDot; });
+
+    var removed = false;
+    cards.forEach(function (card, i) {
+      if (validIds[card.getAttribute('data-card')]) return;
+      card.remove();
+      if (realDots[i]) realDots[i].remove();
+      removed = true;
+    });
+
+    return removed;
+  }
+
   function buildMissingCards(data) {
     var cardsList = data.cards;
     if (!Array.isArray(cardsList) || !cardsList.length) return false;
@@ -146,12 +176,13 @@
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (data) {
       if (!data) return;
-      var added = buildMissingCards(data);
+      var removed = pruneDeletedCards(data);
+      var added   = buildMissingCards(data);
       applyContent(data);
-      // Rebuild the scroll-jacking state so newly-appended cards/dots are
-      // included — the timeline script's querySelectorAll snapshots were
-      // taken before these nodes existed.
-      if (added && window.ftlSetupTimeline) window.ftlSetupTimeline();
+      // Rebuild the scroll-jacking state so added/removed cards and dots are
+      // reflected — the timeline script's querySelectorAll snapshots were
+      // taken before these DOM changes happened.
+      if ((added || removed) && window.ftlSetupTimeline) window.ftlSetupTimeline();
     })
     .catch(function () {});
 
