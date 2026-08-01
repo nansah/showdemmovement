@@ -170,6 +170,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 }
 .media-preview iframe{width:100%;aspect-ratio:16/9;border:none;border-radius:8px}
 .media-preview iframe.tt-embed{aspect-ratio:9/16;max-width:190px;max-height:340px;margin:0 auto;display:block}
+.media-preview blockquote.tt-embed{margin:0 auto}
 .media-upload-row{display:flex;gap:.5rem;flex-wrap:wrap}
 .media-btn{
   padding:.35rem .9rem;border-radius:8px;border:none;
@@ -544,6 +545,12 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
       container.appendChild(el);
       wireCardEditor(el, card.id);
     });
+
+    var hasTikTok = CARDS.some(function (card) {
+      var m = pendingData[card.id] && pendingData[card.id].media;
+      return m && m.type === 'tiktok';
+    });
+    if (hasTikTok) loadTikTokEmbedScript();
   }
 
   function esc(s) { return (s || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
@@ -554,8 +561,23 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
     if (media.type === 'image')      return '<img src="' + media.src + '" alt="">';
     if (media.type === 'video-file') return '<video src="' + media.src + '" controls></video>';
     if (media.type === 'youtube')    return '<iframe src="' + media.src + '" allowfullscreen title="Video"></iframe>';
-    if (media.type === 'tiktok')     return '<iframe class="tt-embed" src="' + media.src + '" allowfullscreen title="Video"></iframe>';
+    if (media.type === 'tiktok') {
+      // A bare <iframe src="tiktok.com/embed/v2/ID"> isn't TikTok's documented
+      // embed method and is unreliable (esp. on mobile) — use their official
+      // blockquote + embed.js widget instead. We still store the embed/v2 URL
+      // (existing saved cards already use it); just pull the id back out.
+      var m = media.src.match(/(\d{6,})/);
+      var videoId = m ? m[1] : '';
+      return '<blockquote class="tiktok-embed tt-embed" cite="https://www.tiktok.com/video/' + videoId + '" data-video-id="' + videoId + '" style="max-width:190px;min-width:190px"><section></section></blockquote>';
+    }
     return '';
+  }
+
+  function loadTikTokEmbedScript() {
+    var s = document.createElement('script');
+    s.src = 'https://www.tiktok.com/embed.js';
+    s.async = true;
+    document.body.appendChild(s);
   }
 
   /* ── Wire a card editor's interactivity ── */
@@ -609,6 +631,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
       previewEl.innerHTML = renderMediaHTML(media);
       zone.classList.toggle('has-media', !!media);
       clearBtn.style.display = media ? '' : 'none';
+      if (media && media.type === 'tiktok') loadTikTokEmbedScript();
     }
 
     /* File upload — get a signed Supabase Storage URL from our API, then

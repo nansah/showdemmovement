@@ -6,6 +6,13 @@
 (function () {
   'use strict';
 
+  // A bare <iframe src="tiktok.com/embed/v2/ID"> is not TikTok's documented
+  // embed method and is unreliable on mobile browsers — TikTok only commits
+  // to the <blockquote class="tiktok-embed"> + embed.js widget working
+  // consistently. We still store the old embed/v2 URL (existing saved
+  // cards already use it), just pull the numeric id back out of it here.
+  var needsTikTokScript = false;
+
   function renderMedia(el, media) {
     if (!media || !media.src) return;
     el.innerHTML = '';
@@ -26,14 +33,27 @@
       inner.setAttribute('allowfullscreen', '');
       inner.title = 'Video';
     } else if (media.type === 'tiktok') {
-      inner = document.createElement('iframe');
-      inner.src = media.src;
-      inner.className = 'tt-embed';
-      inner.setAttribute('allow', 'encrypted-media;picture-in-picture');
-      inner.setAttribute('allowfullscreen', '');
-      inner.title = 'TikTok video';
+      var idMatch = media.src.match(/(\d{6,})/);
+      var videoId = idMatch ? idMatch[1] : '';
+      var bq = document.createElement('blockquote');
+      bq.className = 'tiktok-embed tt-embed';
+      bq.setAttribute('cite', 'https://www.tiktok.com/video/' + videoId);
+      bq.setAttribute('data-video-id', videoId);
+      bq.style.maxWidth = '190px';
+      bq.style.minWidth = '190px';
+      bq.appendChild(document.createElement('section'));
+      el.appendChild(bq);
+      needsTikTokScript = true;
+      return;
     }
     if (inner) el.appendChild(inner);
+  }
+
+  function loadTikTokEmbedScript() {
+    var s = document.createElement('script');
+    s.src = 'https://www.tiktok.com/embed.js';
+    s.async = true;
+    document.body.appendChild(s);
   }
 
   // Cards created in the admin panel (ids beyond the 7 built-in milestones)
@@ -183,6 +203,7 @@
       // reflected — the timeline script's querySelectorAll snapshots were
       // taken before these DOM changes happened.
       if ((added || removed) && window.ftlSetupTimeline) window.ftlSetupTimeline();
+      if (needsTikTokScript) loadTikTokEmbedScript();
     })
     .catch(function () {});
 
