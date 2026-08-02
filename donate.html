@@ -989,7 +989,7 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
         <a href="donate.html#donate-once">
           <div class="dropdown-text"><strong>One-Time Gift</strong><span>Make an immediate impact</span></div>
         </a>
-        <a href="donate.html#donate-monthly">
+        <a href="donate.html">
           <div class="dropdown-text"><strong>Monthly Giving</strong><span>Sustain the mission year-round</span></div>
         </a>
         <div class="dropdown-divider"></div>
@@ -1079,62 +1079,6 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
       </div>
 
       <!-- MONTHLY -->
-      <div id="donate-monthly" style="padding-top:2rem;border-top:2px solid #edf0f7">
-        <p class="eyebrow reveal">Monthly Giving</p>
-        <h2 class="headline reveal d1">Sustain the Mission<br>Year-Round.</h2>
-        <p class="body-text reveal d1" style="max-width:580px;margin-bottom:2.5rem">Monthly donors make it possible for us to plan ahead, expand programs, and serve more communities. Cancel anytime.</p>
-        <div class="donate-tiers">
-          <div class="donate-tier reveal">
-            <div class="tier-amt" style="font-size:2.5rem">$10<span style="font-size:1rem;color:var(--gray)">/mo</span></div>
-            <div class="tier-lbl">Consistent Supporter</div>
-            <ul class="tier-perks">
-              <li>$120/year toward free sessions</li>
-              <li>Ongoing jump rope &amp; supply support</li>
-              <li>Monthly impact updates</li>
-            </ul>
-            <button class="btn-pink" style="width:100%;border:none;cursor:pointer;text-align:center;padding:.8rem" onclick="openDonateForm('monthly',10)">Give $10/mo &rarr;</button>
-          </div>
-          <div class="donate-tier featured reveal d1">
-            <span class="tier-badge">Sustaining Impact</span>
-            <div class="tier-amt" style="font-size:2.5rem">$25<span style="font-size:1rem;color:var(--gray)">/mo</span></div>
-            <div class="tier-lbl">Movement Sustainer</div>
-            <ul class="tier-perks">
-              <li>$300/year toward programming</li>
-              <li>Funds youth development initiatives</li>
-              <li>Helps Showdem reach new schools</li>
-              <li>Priority event announcements</li>
-            </ul>
-            <button class="btn-pink" style="width:100%;border:none;cursor:pointer;text-align:center;padding:.8rem" onclick="openDonateForm('monthly',25)">Give $25/mo &rarr;</button>
-          </div>
-          <div class="donate-tier reveal d2">
-            <div class="tier-amt" style="font-size:2.5rem">$50<span style="font-size:1rem;color:var(--gray)">/mo</span></div>
-            <div class="tier-lbl">Community Pillar</div>
-            <ul class="tier-perks">
-              <li>$600/year toward the mission</li>
-              <li>Sponsors monthly school programming</li>
-              <li>Named in our community updates</li>
-              <li>Direct impact reporting</li>
-            </ul>
-            <button class="btn-pink" style="width:100%;border:none;cursor:pointer;text-align:center;padding:.8rem" onclick="openDonateForm('monthly',50)">Give $50/mo &rarr;</button>
-          </div>
-        </div>
-        <!-- Custom monthly -->
-        <div class="custom-box reveal" style="margin-bottom:4rem">
-          <h3 style="position:relative;z-index:1">Custom Monthly Amount</h3>
-          <p style="position:relative;z-index:1;color:rgba(255,255,255,.72);font-size:.95rem;font-weight:600;margin-bottom:1.2rem">Any recurring amount helps us sustain and grow. Cancel anytime.</p>
-          <div class="amount-pills">
-            <button class="amt-pill" onclick="setMonthlyAmt(5)">$5</button>
-            <button class="amt-pill sel" onclick="setMonthlyAmt(15)">$15</button>
-            <button class="amt-pill" onclick="setMonthlyAmt(30)">$30</button>
-            <button class="amt-pill" onclick="setMonthlyAmt(75)">$75</button>
-          </div>
-          <div class="custom-row">
-            <input class="custom-inp" id="monthlyCustom" type="number" placeholder="Other $" min="1">
-            <button class="btn-pink" style="border:none;cursor:pointer" onclick="openDonateForm('monthly', getMonthlyAmt())">Give Monthly &rarr;</button>
-          </div>
-        </div>
-      </div>
-
       <!-- WHAT YOUR GIFT FUNDS -->
       <div style="padding-top:2rem;border-top:2px solid #edf0f7">
         <p class="eyebrow reveal">Where Your Gift Goes</p>
@@ -1329,7 +1273,7 @@ if (modal) {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
 // ── DONATE AMOUNTS ──
-let onceAmt = 75, monthlyAmt = 15;
+let onceAmt = 75;
 function setOnceAmt(n) {
   onceAmt = n;
   document.querySelectorAll('#once-pills .amt-pill').forEach(b => b.classList.toggle('sel', parseInt(b.textContent.replace('$', '')) === n));
@@ -1339,15 +1283,6 @@ function setOnceAmt(n) {
 function getOnceAmt() {
   const v = document.getElementById('onceCustom')?.value;
   return (v && parseInt(v) > 0) ? parseInt(v) : onceAmt;
-}
-function setMonthlyAmt(n) {
-  monthlyAmt = n;
-  const inp = document.getElementById('monthlyCustom');
-  if (inp) inp.value = '';
-}
-function getMonthlyAmt() {
-  const v = document.getElementById('monthlyCustom')?.value;
-  return (v && parseInt(v) > 0) ? parseInt(v) : monthlyAmt;
 }
 </script>
 
