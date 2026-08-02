@@ -398,7 +398,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
   }
 
   function getYouTubeEmbedUrl(url) {
-    var m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+    var m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/)([A-Za-z0-9_-]{11})/);
     return m ? 'https://www.youtube.com/embed/' + m[1] + '?rel=0' : null;
   }
 
