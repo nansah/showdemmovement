@@ -986,7 +986,7 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
     <li class="nav-item">
       <a href="donate.html">Donate</a>
       <div class="dropdown">
-        <a href="donate.html#donate-once">
+        <a href="donate.html">
           <div class="dropdown-text"><strong>One-Time Gift</strong><span>Make an immediate impact</span></div>
         </a>
         <a href="donate.html">
@@ -1013,74 +1013,9 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
   </div>
 
   <div class="section" style="background:var(--offwhite)">
-    <div class="container" style="max-width:600px">
-      <givebutter-widget id="gkV6VO"></givebutter-widget>
-    </div>
-  </div>
-
-  <div class="section" style="background:var(--offwhite)">
     <div class="container">
-
-      <!-- ONE-TIME -->
-      <div id="donate-once">
-        <p class="eyebrow reveal">One-Time Gift</p>
-        <h2 class="headline reveal d1">Choose Your Impact.</h2>
-        <div class="donate-tiers">
-          <div class="donate-tier reveal">
-            <div class="tier-amt">$10</div>
-            <div class="tier-lbl">Community Supporter</div>
-            <ul class="tier-perks">
-              <li>Helps purchase jump ropes for a session</li>
-              <li>Supports transportation for volunteers</li>
-              <li>Keeps sessions free for the community</li>
-            </ul>
-            <button class="btn-pink" style="width:100%;border:none;cursor:pointer;text-align:center;padding:.8rem" onclick="openDonateForm('once',10)">Give $10 &rarr;</button>
-          </div>
-          <div class="donate-tier featured reveal d1">
-            <span class="tier-badge">Most Popular</span>
-            <div class="tier-amt">$25</div>
-            <div class="tier-lbl">Movement Builder</div>
-            <ul class="tier-perks">
-              <li>Funds supplies for a full community session</li>
-              <li>Supports youth program materials</li>
-              <li>Helps expand to new neighborhoods</li>
-              <li>Keeps programming free for families</li>
-            </ul>
-            <button class="btn-pink" style="width:100%;border:none;cursor:pointer;text-align:center;padding:.8rem" onclick="openDonateForm('once',25)">Give $25 &rarr;</button>
-          </div>
-          <div class="donate-tier reveal d2">
-            <div class="tier-amt">$50</div>
-            <div class="tier-lbl">Community Champion</div>
-            <ul class="tier-perks">
-              <li>Sponsors a complete school workshop</li>
-              <li>Funds mentorship programming</li>
-              <li>Supports special event outreach</li>
-              <li>Helps bring Showdem to new schools</li>
-            </ul>
-            <button class="btn-pink" style="width:100%;border:none;cursor:pointer;text-align:center;padding:.8rem" onclick="openDonateForm('once',50)">Give $50 &rarr;</button>
-          </div>
-        </div>
-        <!-- Custom once -->
-        <div class="custom-box reveal" style="margin-bottom:4rem">
-          <h3 style="position:relative;z-index:1">Custom Amount</h3>
-          <p style="position:relative;z-index:1;color:rgba(255,255,255,.72);font-size:.95rem;font-weight:600;margin-bottom:1.2rem">Choose any amount that feels right for you.</p>
-          <div class="amount-pills" id="once-pills">
-            <button class="amt-pill" onclick="setOnceAmt(15)">$15</button>
-            <button class="amt-pill" onclick="setOnceAmt(35)">$35</button>
-            <button class="amt-pill sel" onclick="setOnceAmt(75)">$75</button>
-            <button class="amt-pill" onclick="setOnceAmt(100)">$100</button>
-            <button class="amt-pill" onclick="setOnceAmt(250)">$250</button>
-          </div>
-          <div class="custom-row">
-            <input class="custom-inp" id="onceCustom" type="number" placeholder="Other $" min="1">
-            <button class="btn-pink" style="border:none;cursor:pointer" onclick="openDonateForm('once', getOnceAmt())">Donate Once &rarr;</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- MONTHLY -->
       <!-- WHAT YOUR GIFT FUNDS -->
-      <div style="padding-top:2rem;border-top:2px solid #edf0f7">
+      <div>
         <p class="eyebrow reveal">Where Your Gift Goes</p>
         <h2 class="headline reveal d1">100% Goes to the Mission.</h2>
         <div class="impact-uses">
@@ -1092,14 +1027,24 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
           <div class="use-card reveal d1"><span class="use-icon">🎉</span><div><h4>Special Community Projects</h4><p>Expanding our reach through events, outreach, and new community partnerships.</p></div></div>
         </div>
       </div>
+    </div>
+  </div>
 
+  <div class="section" style="background:var(--offwhite)">
+    <div class="container" style="max-width:600px">
+      <givebutter-widget id="gkV6VO"></givebutter-widget>
+    </div>
+  </div>
+
+  <div class="section" style="background:var(--offwhite)">
+    <div class="container">
       <!-- SPONSOR -->
       <div id="donate-sponsor" style="background:linear-gradient(145deg,#0f2347 0%,#1e3a6e 100%);border-radius:28px;padding:3.5rem;text-align:center;margin-top:3rem;position:relative;overflow:hidden" class="reveal">
         <div style="position:absolute;top:-60px;right:-60px;width:280px;height:280px;border-radius:50%;background:var(--blue);opacity:.1"></div>
         <p class="eyebrow white" style="justify-content:center">Organizations &amp; Businesses</p>
         <h3 style="font-family:var(--display);font-size:2.2rem;color:white;margin-bottom:.75rem">Become a Showdem Sponsor.</h3>
         <p style="color:rgba(255,255,255,.72);font-size:.95rem;font-weight:600;line-height:1.78;max-width:520px;margin:0 auto 2rem">Partner with us to bring the power of movement to more communities. We work with businesses, foundations, and government agencies to create meaningful, lasting impact together.</p>
-        <a href="#" class="btn-white" href="contact.html">Contact Us About Sponsorship &rarr;</a>
+        <a href="contact.html" class="btn-white">Contact Us About Sponsorship &rarr;</a>
       </div>
     </div>
   </div>
@@ -1271,19 +1216,6 @@ if (modal) {
   modal.addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-// ── DONATE AMOUNTS ──
-let onceAmt = 75;
-function setOnceAmt(n) {
-  onceAmt = n;
-  document.querySelectorAll('#once-pills .amt-pill').forEach(b => b.classList.toggle('sel', parseInt(b.textContent.replace('$', '')) === n));
-  const inp = document.getElementById('onceCustom');
-  if (inp) inp.value = '';
-}
-function getOnceAmt() {
-  const v = document.getElementById('onceCustom')?.value;
-  return (v && parseInt(v) > 0) ? parseInt(v) : onceAmt;
-}
 </script>
 
 <style>
