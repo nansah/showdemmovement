@@ -143,9 +143,10 @@ async function readWaivers() {
 async function writeWaiver(waiver) {
   if (hasSupabase()) {
     const db = getSupabase();
-    await db.from('waivers').insert({
+    const { error } = await db.from('waivers').insert({
       id: waiver.id, submitted_at: waiver.submittedAt, data: waiver.data
     });
+    if (error) throw new Error(error.message);
     return;
   }
   const waivers = await readWaivers();
