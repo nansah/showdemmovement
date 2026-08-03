@@ -18,6 +18,7 @@ module.exports = async function handler(req, res) {
   if (req.method === 'POST') {
     const body = await parseBody(req);
     if (!body || !body.first_name) return res.status(400).json({ error: 'Invalid submission' });
+    if (!body.photo_url) return res.status(400).json({ error: 'A photo is required' });
     const app = { id: genId(), submittedAt: new Date().toISOString(), status: 'pending', notes: '', data: body };
     await writeApp(app);
     return res.json({ ok: true, id: app.id });
