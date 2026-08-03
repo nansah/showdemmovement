@@ -717,9 +717,22 @@ document.getElementById('waiverForm').addEventListener('submit', async function(
 
   notifyAdmin(
     'New Participation Waiver Completed',
+    'PARTICIPANT INFO\n' +
     'Name: ' + payload.fullName + '\n' +
     'Email: ' + payload.email + '\n' +
-    'Phone: ' + payload.phone + '\n\n' +
+    'Phone: ' + payload.phone + '\n' +
+    'Social: ' + (payload.social || 'N/A') + '\n' +
+    'Emergency Contact: ' + payload.emergency + '\n\n' +
+    (payload.isMinor ? 'MINOR\nParent/Guardian: ' + payload.guardianName + '\n\n' : '') +
+    'AGREEMENTS\n' +
+    'Community Conduct: ' + (payload.conduct.respect && payload.conduct.removal && payload.conduct.instructions ? 'Agreed' : 'Incomplete') + '\n' +
+    'Health & Safety: ' + (payload.safety ? 'Agreed' : 'Incomplete') + '\n' +
+    'Media Consent: ' + (payload.media.permission && payload.media.usage && payload.media.noCompensation ? 'Agreed' : 'Incomplete') + '\n' +
+    'Media Visibility Policy: ' + (payload.visibility ? 'Agreed' : 'Incomplete') + '\n' +
+    'Liability Waiver: ' + (payload.liability ? 'Agreed' : 'Incomplete') + '\n' +
+    'Personal Responsibility: ' + (payload.responsibility.voluntary && payload.responsibility.ownHealth && payload.responsibility.mayBeAskedToLeave ? 'Agreed' : 'Incomplete') + '\n' +
+    (payload.responsibility.other ? 'Additional Notes: ' + payload.responsibility.other + '\n' : '') +
+    '\nSigned: ' + payload.signature + ' on ' + payload.sigDate + '\n\n' +
     'View it in the admin panel: https://showdemmovement.vercel.app/admin'
   );
 

@@ -994,9 +994,26 @@ document.getElementById('memberForm').addEventListener('submit', async function(
       document.getElementById('confirmBanner').scrollIntoView({behavior:'smooth', block:'center'});
       notifyAdmin(
         'New Membership Application',
+        'PARTICIPANT INFO\n' +
         'Name: ' + (payload.first_name || '') + ' ' + (payload.last_name || '') + '\n' +
         'Email: ' + (payload.email || '') + '\n' +
-        'Phone: ' + (payload.phone || '') + '\n\n' +
+        'Phone: ' + (payload.phone || '') + '\n' +
+        'Date of Birth: ' + (payload.date_of_birth || '') + '\n' +
+        'Address: ' + (payload.address || '') + '\n\n' +
+        'EMERGENCY CONTACT\n' +
+        'Name: ' + (payload.emergency_contact_name || '') + '\n' +
+        'Phone: ' + (payload.emergency_contact_phone || '') + '\n' +
+        'Relationship: ' + (payload.emergency_contact_relationship || '') + '\n\n' +
+        'HEALTH INFO\n' +
+        'Allergies: ' + (payload.allergies || 'N/A') + '\n' +
+        'Medical Conditions: ' + (payload.medical_conditions || 'N/A') + '\n' +
+        'Medications: ' + (payload.medications || 'N/A') + '\n\n' +
+        'ABOUT THE APPLICANT\n' +
+        'Why They Want to Join: ' + (payload.why_join || '') + '\n' +
+        'Attended a Session Before: ' + (payload.attended_session || '') + '\n' +
+        'Double Dutch Experience: ' + (payload.double_dutch_experience || '') + '\n' +
+        'Skills / Talents: ' + (payload.skills_talents || 'N/A') + '\n\n' +
+        'Signed: ' + (payload.digital_signature || '') + ' on ' + (payload.signature_date || '') + '\n\n' +
         'Review it in the admin panel: https://showdemmovement.vercel.app/admin'
       );
     } else {
