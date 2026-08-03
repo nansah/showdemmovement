@@ -209,6 +209,7 @@ footer{background:var(--navy);padding:4rem 2rem 2rem;color:white}
 @media(max-width:480px){.footer-grid{grid-template-columns:1fr}}
 </style>
 <script async src="https://widgets.givebutter.com/latest.umd.cjs?acct=MVHxJsWILUN7131C&p=other"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 
@@ -929,6 +930,12 @@ const dateStr = now.toLocaleDateString('en-US', {month:'long', day:'numeric', ye
 document.getElementById('sigDate').textContent = dateStr;
 document.getElementById('sigDateInput').value = dateStr;
 
+// ADMIN NOTIFICATIONS (shared EmailJS template, fired after a successful save)
+emailjs.init({ publicKey: 'HtTOlluggo9eXqNy5' });
+function notifyAdmin(subject, summary) {
+  emailjs.send('service_ztwa28c', 'template_j4x8ehk', { subject: subject, summary: summary }).catch(function () {});
+}
+
 // FORM SUBMISSION
 document.getElementById('memberForm').addEventListener('submit', async function(e) {
   e.preventDefault();
@@ -978,6 +985,13 @@ document.getElementById('memberForm').addEventListener('submit', async function(
       form.style.display = 'none';
       document.getElementById('confirmBanner').style.display = 'block';
       document.getElementById('confirmBanner').scrollIntoView({behavior:'smooth', block:'center'});
+      notifyAdmin(
+        'New Membership Application',
+        'Name: ' + (payload.first_name || '') + ' ' + (payload.last_name || '') + '\n' +
+        'Email: ' + (payload.email || '') + '\n' +
+        'Phone: ' + (payload.phone || '') + '\n\n' +
+        'Review it in the admin panel: https://showdemmovement.vercel.app/admin'
+      );
     } else {
       btn.textContent = 'Submit My Application →';
       btn.disabled = false;

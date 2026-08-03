@@ -225,6 +225,7 @@ textarea.finp{resize:vertical;min-height:90px}
 </style>
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
 <script async src="https://widgets.givebutter.com/latest.umd.cjs?acct=MVHxJsWILUN7131C&p=other"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 
@@ -580,6 +581,12 @@ function markInput(id, error) {
 }
 
 // Form submit
+// ADMIN NOTIFICATIONS (shared EmailJS template, fired after a successful save)
+emailjs.init({ publicKey: 'HtTOlluggo9eXqNy5' });
+function notifyAdmin(subject, summary) {
+  emailjs.send('service_ztwa28c', 'template_j4x8ehk', { subject: subject, summary: summary }).catch(function () {});
+}
+
 document.getElementById('waiverForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   let valid = true;
@@ -707,6 +714,14 @@ document.getElementById('waiverForm').addEventListener('submit', async function(
     submitError.scrollIntoView({behavior:'smooth', block:'center'});
     return;
   }
+
+  notifyAdmin(
+    'New Participation Waiver Completed',
+    'Name: ' + payload.fullName + '\n' +
+    'Email: ' + payload.email + '\n' +
+    'Phone: ' + payload.phone + '\n\n' +
+    'View it in the admin panel: https://showdemmovement.vercel.app/admin'
+  );
 
   // Success
   document.getElementById('waiverForm').style.display = 'none';
