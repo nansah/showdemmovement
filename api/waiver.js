@@ -1,11 +1,11 @@
-const { requireAuth, parseBody, readWaivers, writeWaiver } = require('./_utils');
+const { requireAuth, parseBody, readWaivers, writeWaiver, deleteWaiver } = require('./_utils');
 
 function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin',  '*');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   /* GET — list all (admin only) */
@@ -24,6 +24,19 @@ module.exports = async function handler(req, res) {
     try {
       await writeWaiver(waiver);
       return res.json({ ok: true, id: waiver.id });
+    } catch (e) {
+      return res.status(500).json({ error: e.message });
+    }
+  }
+
+  /* DELETE — remove waiver (admin only) */
+  if (req.method === 'DELETE') {
+    if (!requireAuth(req)) return res.status(401).json({ error: 'Unauthorized' });
+    const { id } = await parseBody(req);
+    if (!id) return res.status(400).json({ error: 'Missing id' });
+    try {
+      await deleteWaiver(id);
+      return res.json({ ok: true });
     } catch (e) {
       return res.status(500).json({ error: e.message });
     }

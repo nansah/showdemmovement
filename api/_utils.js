@@ -155,6 +155,17 @@ async function writeWaiver(waiver) {
   fs.writeFileSync(WAIVERS_FILE, JSON.stringify(waivers, null, 2));
 }
 
+async function deleteWaiver(id) {
+  if (hasSupabase()) {
+    const db = getSupabase();
+    const { error } = await db.from('waivers').delete().eq('id', id);
+    if (error) throw new Error(error.message);
+    return;
+  }
+  const waivers = fs.existsSync(WAIVERS_FILE) ? JSON.parse(fs.readFileSync(WAIVERS_FILE, 'utf8')) : [];
+  fs.writeFileSync(WAIVERS_FILE, JSON.stringify(waivers.filter(w => w.id !== id), null, 2));
+}
+
 /* ── File upload ──────────────────────────── */
 // Vercel serverless functions cap request bodies at a few MB, so large media
 // (especially phone videos) can't be uploaded through our own API. Instead we
@@ -175,6 +186,6 @@ module.exports = {
   requireAuth, parseBody,
   readContent, writeContent,
   readApps, writeApp, updateApp, deleteApp,
-  readWaivers, writeWaiver,
+  readWaivers, writeWaiver, deleteWaiver,
   createSignedUpload
 };
