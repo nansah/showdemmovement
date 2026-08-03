@@ -515,11 +515,12 @@ textarea.finp{resize:vertical;min-height:90px}
 
     <!-- SUBMIT -->
     <div class="submit-wrap">
-      <button type="submit" class="submit-btn">
-        <span>Submit Participation Form</span>
+      <button type="submit" class="submit-btn" id="waiverSubmitBtn">
+        <span id="waiverSubmitLabel">Submit Participation Form</span>
         <span>&#10003;</span>
       </button>
       <p class="submit-note">By submitting, you agree to all terms above. This is a legally binding digital agreement.</p>
+      <p class="field-error" id="submitError" style="text-align:center;margin-top:1rem">Something went wrong submitting your form — please try again.</p>
     </div>
 
     <!-- SUCCESS -->
@@ -579,7 +580,7 @@ function markInput(id, error) {
 }
 
 // Form submit
-document.getElementById('waiverForm').addEventListener('submit', function(e) {
+document.getElementById('waiverForm').addEventListener('submit', async function(e) {
   e.preventDefault();
   let valid = true;
 
@@ -649,6 +650,61 @@ document.getElementById('waiverForm').addEventListener('submit', function(e) {
     // Scroll to first error
     const firstErr = document.querySelector('.error, .field-error.show');
     if (firstErr) firstErr.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  // Submit to the server
+  const submitBtn   = document.getElementById('waiverSubmitBtn');
+  const submitLabel = document.getElementById('waiverSubmitLabel');
+  const submitError = document.getElementById('submitError');
+  submitBtn.disabled = true;
+  submitLabel.textContent = 'Submitting…';
+  submitError.classList.remove('show');
+
+  const payload = {
+    fullName: document.getElementById('fullName').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    phone: document.getElementById('phone').value.trim(),
+    social: document.getElementById('social').value.trim(),
+    emergency: document.getElementById('emergency').value.trim(),
+    conduct: {
+      respect: document.getElementById('c-respect').checked,
+      removal: document.getElementById('c-removal').checked,
+      instructions: document.getElementById('c-instructions').checked
+    },
+    safety: document.getElementById('c-safety').checked,
+    media: {
+      permission: document.getElementById('c-media1').checked,
+      usage: document.getElementById('c-media2').checked,
+      noCompensation: document.getElementById('c-media3').checked
+    },
+    visibility: document.getElementById('c-visibility').checked,
+    liability: document.getElementById('c-liability').checked,
+    responsibility: {
+      voluntary: document.getElementById('c-resp1').checked,
+      ownHealth: document.getElementById('c-resp2').checked,
+      mayBeAskedToLeave: document.getElementById('c-resp3').checked,
+      other: document.getElementById('respOther').value.trim()
+    },
+    isMinor: document.getElementById('isMinor').checked,
+    guardianName: document.getElementById('guardianName').value.trim(),
+    sigConsent: document.getElementById('c-sigconsent').checked,
+    signature: document.getElementById('signature').value.trim(),
+    sigDate: document.getElementById('sigDate').value
+  };
+
+  try {
+    const r = await fetch('/api/waiver', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!r.ok) throw new Error('Request failed');
+  } catch (err) {
+    submitBtn.disabled = false;
+    submitLabel.textContent = 'Submit Participation Form';
+    submitError.classList.add('show');
+    submitError.scrollIntoView({behavior:'smooth', block:'center'});
     return;
   }
 

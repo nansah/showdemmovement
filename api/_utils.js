@@ -9,6 +9,7 @@ const path = require('path');
 const DATA_DIR = path.join(__dirname, '..', 'data');
 const CONTENT_FILE = path.join(DATA_DIR, 'content.json');
 const APPS_FILE    = path.join(DATA_DIR, 'applications.json');
+const WAIVERS_FILE = path.join(DATA_DIR, 'waivers.json');
 const EMPTY_CONTENT = { text: {}, media: {}, placeholder: {}, updatedAt: null };
 
 function hasSupabase() {
@@ -124,6 +125,35 @@ async function deleteApp(id) {
   fs.writeFileSync(APPS_FILE, JSON.stringify(apps.filter(a => a.id !== id), null, 2));
 }
 
+/* ── Waivers ──────────────────────────────── */
+async function readWaivers() {
+  if (hasSupabase()) {
+    const db = getSupabase();
+    const { data } = await db
+      .from('waivers').select('*')
+      .order('submitted_at', { ascending: false });
+    return (data || []).map(r => ({ id: r.id, submittedAt: r.submitted_at, data: r.data }));
+  }
+  try {
+    if (fs.existsSync(WAIVERS_FILE)) return JSON.parse(fs.readFileSync(WAIVERS_FILE, 'utf8'));
+  } catch (_) {}
+  return [];
+}
+
+async function writeWaiver(waiver) {
+  if (hasSupabase()) {
+    const db = getSupabase();
+    await db.from('waivers').insert({
+      id: waiver.id, submitted_at: waiver.submittedAt, data: waiver.data
+    });
+    return;
+  }
+  const waivers = await readWaivers();
+  waivers.unshift(waiver);
+  if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
+  fs.writeFileSync(WAIVERS_FILE, JSON.stringify(waivers, null, 2));
+}
+
 /* ── File upload ──────────────────────────── */
 // Vercel serverless functions cap request bodies at a few MB, so large media
 // (especially phone videos) can't be uploaded through our own API. Instead we
@@ -144,5 +174,6 @@ module.exports = {
   requireAuth, parseBody,
   readContent, writeContent,
   readApps, writeApp, updateApp, deleteApp,
+  readWaivers, writeWaiver,
   createSignedUpload
 };
