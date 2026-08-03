@@ -951,6 +951,7 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
 .nav-logo-img { height:120px !important; }
 </style>
 <script async src="https://widgets.givebutter.com/latest.umd.cjs?acct=MVHxJsWILUN7131C&p=other"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 <!-- NAV -->
@@ -1021,24 +1022,24 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
           <p class="eyebrow reveal">Send a Message</p>
           <h2 class="headline reveal d1">Let's Connect.</h2>
           <p class="body-text reveal d1" style="margin-bottom:2rem">Fill out the form and we'll get back to you as soon as possible. We look forward to hearing from you.</p>
-          <div class="contact-form reveal d1">
+          <form class="contact-form reveal d1" id="contactForm">
             <div class="fgrp">
               <label class="flbl">Full Name</label>
-              <input class="finp" type="text" placeholder="Your full name">
+              <input class="finp" type="text" name="from_name" id="cf-name" placeholder="Your full name" required>
             </div>
             <div class="frow">
               <div class="fgrp">
                 <label class="flbl">Email Address</label>
-                <input class="finp" type="email" placeholder="your@email.com">
+                <input class="finp" type="email" name="from_email" id="cf-email" placeholder="your@email.com" required>
               </div>
               <div class="fgrp">
                 <label class="flbl">Phone (optional)</label>
-                <input class="finp" type="tel" placeholder="(555) 000-0000">
+                <input class="finp" type="tel" name="phone" id="cf-phone" placeholder="(555) 000-0000">
               </div>
             </div>
             <div class="fgrp">
               <label class="flbl">I'm interested in...</label>
-              <select class="finp">
+              <select class="finp" name="topic" id="cf-topic">
                 <option value="">Select a topic</option>
                 <option>Community Sessions</option>
                 <option>School Partnership</option>
@@ -1052,14 +1053,15 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
             </div>
             <div class="fgrp">
               <label class="flbl">Organization / School (if applicable)</label>
-              <input class="finp" type="text" placeholder="Organization name">
+              <input class="finp" type="text" name="organization" id="cf-org" placeholder="Organization name">
             </div>
             <div class="fgrp">
               <label class="flbl">Message</label>
-              <textarea class="finp" rows="5" placeholder="Tell us more about what you're looking for..." style="resize:vertical"></textarea>
+              <textarea class="finp" name="message" id="cf-message" rows="5" placeholder="Tell us more about what you're looking for..." style="resize:vertical" required></textarea>
             </div>
-            <button class="modal-btn" style="margin-top:.5rem">Send Message &rarr;</button>
-          </div>
+            <button class="modal-btn" type="submit" id="cf-submit" style="margin-top:.5rem">Send Message &rarr;</button>
+            <p id="cf-status" style="margin-top:.75rem;font-size:.85rem;font-weight:700;display:none"></p>
+          </form>
         </div>
         <div class="contact-info-col reveal d2">
           <div class="contact-info-card">
@@ -1357,6 +1359,48 @@ nav {
   o.addEventListener('click',closeNav);
   c.addEventListener('click',closeNav);
   document.querySelectorAll('#navPanel a').forEach(function(a){a.addEventListener('click',closeNav)});
+})();
+</script>
+
+<script>
+(function () {
+  emailjs.init({ publicKey: 'HtTOlluggo9eXqNy5' });
+
+  var form   = document.getElementById('contactForm');
+  var status = document.getElementById('cf-status');
+  var submit = document.getElementById('cf-submit');
+  if (!form) return;
+
+  function showStatus(msg, isErr) {
+    status.textContent = msg;
+    status.style.display = 'block';
+    status.style.color = isErr ? '#e0303c' : '#1a8f4c';
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    submit.disabled = true;
+    submit.textContent = 'Sending…';
+    status.style.display = 'none';
+
+    emailjs.send('service_ztwa28c', 'template_rcepjfm', {
+      from_name: document.getElementById('cf-name').value,
+      from_email: document.getElementById('cf-email').value,
+      phone: document.getElementById('cf-phone').value,
+      topic: document.getElementById('cf-topic').value,
+      organization: document.getElementById('cf-org').value,
+      message: document.getElementById('cf-message').value
+    }).then(function () {
+      submit.disabled = false;
+      submit.textContent = 'Send Message →';
+      showStatus("Message sent! We'll get back to you soon.", false);
+      form.reset();
+    }, function () {
+      submit.disabled = false;
+      submit.textContent = 'Send Message →';
+      showStatus('Something went wrong — please try again or email us directly.', true);
+    });
+  });
 })();
 </script>
 </body>
