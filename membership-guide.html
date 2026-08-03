@@ -210,6 +210,7 @@ footer{background:var(--navy);padding:4rem 2rem 2rem;color:white}
 </style>
 <script async src="https://widgets.givebutter.com/latest.umd.cjs?acct=MVHxJsWILUN7131C&p=other"></script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
 
@@ -945,19 +946,25 @@ document.getElementById('memberForm').addEventListener('submit', async function(
   btn.disabled = true;
 
   try {
-    // 1. Try to upload photo to Cloudinary via /api/upload
+    // 1. Upload photo directly to Supabase Storage via a signed URL — routing
+    // it through our own serverless function would hit Vercel's request body
+    // size limit, same reasoning as the admin media uploader.
     var photoUrl = '';
     var photoFile = document.getElementById('photoInput').files[0];
     if (photoFile) {
       try {
-        var fd = new FormData();
-        fd.append('file', photoFile);
-        var token = localStorage.getItem('adm_token') || '';
-        var upRes = await fetch('/api/upload', {
-          method: 'POST', body: fd,
-          headers: token ? { Authorization: 'Bearer ' + token } : {}
+        var metaRes = await fetch('/api/upload-photo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename: photoFile.name })
         });
-        if (upRes.ok) { var upData = await upRes.json(); photoUrl = upData.url || ''; }
+        var meta = await metaRes.json();
+        if (metaRes.ok && meta.signedUrl) {
+          var supa = window.supabase.createClient(meta.supabaseUrl, meta.supabaseAnonKey);
+          var upResult = await supa.storage.from('media')
+            .uploadToSignedUrl(meta.path, meta.token, photoFile, { contentType: photoFile.type });
+          if (!upResult.error) photoUrl = meta.url;
+        }
       } catch(_) {}
     }
 
