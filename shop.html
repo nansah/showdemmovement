@@ -973,8 +973,9 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
 .size-label{font-size:.78rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--navy);margin-bottom:1rem}
 .size-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.85rem;margin-bottom:2rem}
 @media(max-width:520px){.size-grid{grid-template-columns:repeat(3,1fr)}}
-.size-block{display:flex;align-items:center;justify-content:center;background:white;border:2px solid #edf0f7;border-radius:14px;padding:1rem .5rem;text-decoration:none;font-weight:800;color:var(--navy);font-size:.95rem;letter-spacing:.02em;transition:transform .2s,border-color .2s,box-shadow .2s,background .2s,color .2s}
+.size-block{display:flex;align-items:center;justify-content:center;background:white;border:2px solid #edf0f7;border-radius:14px;padding:1rem .5rem;text-decoration:none;font-family:var(--body);font-weight:800;color:var(--navy);font-size:.95rem;letter-spacing:.02em;cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s,background .2s,color .2s}
 .size-block:hover{transform:translateY(-3px);border-color:var(--pink);background:var(--pink);color:white;box-shadow:0 12px 30px rgba(239,127,187,.3)}
+.size-block.sel{border-color:var(--pink);background:var(--pink);color:white;box-shadow:0 12px 30px rgba(239,127,187,.3)}
 .size-note{color:var(--gray);font-size:.82rem;font-weight:600;margin-bottom:1.8rem}
 .buy-btn{display:inline-flex;align-items:center;gap:.5rem;background:var(--pink);color:white;padding:1rem 2.2rem;border-radius:999px;font-family:var(--body);font-weight:800;font-size:1rem;text-decoration:none;transition:transform .2s,box-shadow .2s;box-shadow:0 8px 24px rgba(239,127,187,.4)}
 .buy-btn:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(239,127,187,.5)}
@@ -1063,15 +1064,15 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
           <p class="product-desc">Soft, everyday-wear black tee featuring the Showdem Movement Foundation logo. Comfortable fit, made to move in — perfect for community sessions, workouts, or everyday wear.</p>
           <div class="size-label">Select a Size</div>
           <div class="size-grid">
-            <a href="https://checkout.square.site/merchant/ML5630WTHFHBJ/checkout/UJKLXYT6QZWTOMDYZJKR3WYH" class="size-block">XS</a>
-            <a href="https://checkout.square.site/merchant/ML5630WTHFHBJ/checkout/UJKLXYT6QZWTOMDYZJKR3WYH" class="size-block">S</a>
-            <a href="https://checkout.square.site/merchant/ML5630WTHFHBJ/checkout/UJKLXYT6QZWTOMDYZJKR3WYH" class="size-block">M</a>
-            <a href="https://checkout.square.site/merchant/ML5630WTHFHBJ/checkout/UJKLXYT6QZWTOMDYZJKR3WYH" class="size-block">L</a>
-            <a href="https://checkout.square.site/merchant/ML5630WTHFHBJ/checkout/UJKLXYT6QZWTOMDYZJKR3WYH" class="size-block">XL</a>
-            <a href="https://checkout.square.site/merchant/ML5630WTHFHBJ/checkout/UJKLXYT6QZWTOMDYZJKR3WYH" class="size-block">XXL</a>
-            <a href="https://checkout.square.site/merchant/ML5630WTHFHBJ/checkout/UJKLXYT6QZWTOMDYZJKR3WYH" class="size-block">XXXL</a>
+            <button type="button" class="size-block" data-size="XS" data-photo="0" onclick="selectSize(this)">XS</button>
+            <button type="button" class="size-block" data-size="S" data-photo="0" onclick="selectSize(this)">S</button>
+            <button type="button" class="size-block" data-size="M" data-photo="1" onclick="selectSize(this)">M</button>
+            <button type="button" class="size-block" data-size="L" data-photo="1" onclick="selectSize(this)">L</button>
+            <button type="button" class="size-block sel" data-size="XL" data-photo="1" onclick="selectSize(this)">XL</button>
+            <button type="button" class="size-block" data-size="XXL" data-photo="2" onclick="selectSize(this)">XXL</button>
+            <button type="button" class="size-block" data-size="XXXL" data-photo="2" onclick="selectSize(this)">XXXL</button>
           </div>
-          <p class="size-note">Tap a size to continue to secure checkout — you'll confirm size and quantity there.</p>
+          <p class="size-note">Photo updates to show the closest fit for your size. Tap Buy Now to confirm your exact size and quantity on Square.</p>
           <a href="https://checkout.square.site/merchant/ML5630WTHFHBJ/checkout/UJKLXYT6QZWTOMDYZJKR3WYH" class="buy-btn">Buy Now &rarr;</a>
           <p class="secure-note">&#128274; Secure checkout powered by Square</p>
         </div>
@@ -1182,6 +1183,18 @@ function selectThumb(el) {
   document.querySelectorAll('.thumb').forEach(t => t.classList.remove('sel'));
   el.classList.add('sel');
 }
+
+function selectSize(el) {
+  document.querySelectorAll('.size-block').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+  const thumbs = document.querySelectorAll('.thumb');
+  const thumb = thumbs[parseInt(el.dataset.photo, 10)];
+  if (thumb) selectThumb(thumb);
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const defaultSize = document.querySelector('.size-block.sel');
+  if (defaultSize) selectSize(defaultSize);
+});
 
 // ── SCROLL REVEAL ──
 const ro = new IntersectionObserver(entries => {
