@@ -33,6 +33,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:cen
 .dropdown-text strong{display:block;font-size:.85rem;font-weight:800;color:inherit}
 .dropdown-text span{display:block;font-size:.73rem;color:#94a3b8;font-weight:600;margin-top:.08rem}
 .dropdown-divider{height:1px;background:#f1f5f9;margin:.4rem 0}
+.nav-right{display:flex;align-items:center;gap:1rem}
 .nav-btn{background:var(--pink);color:white;padding:.55rem 1.4rem;border-radius:999px;font-family:var(--body);font-weight:800;font-size:.85rem;text-decoration:none;box-shadow:0 4px 16px rgba(239,127,187,.4);transition:transform .2s,box-shadow .2s}
 .nav-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(239,127,187,.5)}
 
@@ -132,6 +133,7 @@ textarea.finp{resize:vertical;min-height:90px}
 /* ── RESPONSIVE ── */
 @media(max-width:640px){
   .nav-links{display:none}
+  .nav-btn{display:none}
   .nav-ham{display:flex}
   .frow{grid-template-columns:1fr}
   .form-section{padding:1.6rem 1.4rem}
@@ -262,9 +264,12 @@ textarea.finp{resize:vertical;min-height:90px}
     </li>
     <li><a href="contact.html">Contact</a></li>
   </ul>
-  <button class="nav-ham" id="navHam" aria-label="Open menu" aria-expanded="false">
-    <span></span><span></span><span></span>
-  </button>
+  <div class="nav-right">
+    <a href="games.html" class="nav-btn">Showdem Games</a>
+    <button class="nav-ham" id="navHam" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -798,6 +803,7 @@ nav {
     <li><a href="contact.html">Contact</a></li>
   </ul>
   <a href="donate.html" class="nav-mobile-donate">Donate Now</a>
+  <a href="games.html" class="nav-mobile-donate" style="margin-top:.75rem">Showdem Games</a>
 </div>
 <script>
 (function(){

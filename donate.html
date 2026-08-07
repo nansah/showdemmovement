@@ -50,6 +50,7 @@ nav.scrolled{background:var(--navy);box-shadow:0 4px 32px rgba(0,0,0,.28)}
 .nav-links{display:flex;gap:1.8rem;list-style:none}
 .nav-links a{color:rgba(255,255,255,.8);text-decoration:none;font-size:.8rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;transition:color .2s;padding:.25rem 0;border-bottom:2px solid transparent;transition:color .2s,border-color .2s}
 .nav-links a:hover{color:var(--pink);border-bottom-color:var(--pink)}
+.nav-right{display:flex;align-items:center;gap:1rem}
 .nav-btn{background:var(--pink);color:white;padding:.55rem 1.4rem;border-radius:999px;font-family:var(--body);font-weight:800;font-size:.85rem;text-decoration:none;transition:transform .2s,box-shadow .2s;box-shadow:0 4px 16px rgba(239,127,187,.4)}
 .nav-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(239,127,187,.5)}
 
@@ -612,6 +613,7 @@ footer{background:var(--navy);color:rgba(255,255,255,.55);padding:5rem 2rem 2rem
 .nav-mobile-close{position:absolute;top:1.1rem;right:1.1rem;background:rgba(255,255,255,.1);border:none;color:white;font-size:1.2rem;cursor:pointer;line-height:1;padding:.4rem .6rem;border-radius:8px}
 @media(max-width:900px){
   .nav-links{display:none}
+  .nav-btn{display:none}
   .nav-ham{display:flex}
   .about-grid,.founder-grid,.join-grid{grid-template-columns:1fr;gap:3rem}
   .exp-cards,.what-grid,.programs-grid,.test-grid,.events-grid,.faq-grid{grid-template-columns:1fr}
@@ -1003,9 +1005,12 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
     </li>
     <li><a href="contact.html">Contact</a></li>
   </ul>
-  <button class="nav-ham" id="navHam" aria-label="Open menu" aria-expanded="false">
-    <span></span><span></span><span></span>
-  </button>
+  <div class="nav-right">
+    <a href="games.html" class="nav-btn">Showdem Games</a>
+    <button class="nav-ham" id="navHam" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
 </nav>
 
 <main>
@@ -1272,6 +1277,7 @@ nav {
     <li><a href="contact.html">Contact</a></li>
   </ul>
   <a href="donate.html" class="nav-mobile-donate">Donate Now</a>
+  <a href="games.html" class="nav-mobile-donate" style="margin-top:.75rem">Showdem Games</a>
 </div>
 <script>
 (function(){
