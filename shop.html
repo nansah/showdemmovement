@@ -968,8 +968,14 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
 .thumb:hover{transform:translateY(-2px);opacity:1}
 .thumb.sel{border-color:var(--pink);opacity:1}
 .product-name{font-family:var(--display);font-size:clamp(1.8rem,3.2vw,2.5rem);color:var(--navy);margin-bottom:.6rem}
-.product-price{font-family:var(--display);font-size:1.8rem;color:var(--pink);margin-bottom:1.2rem}
-.product-desc{color:var(--gray);font-size:1rem;font-weight:600;line-height:1.75;margin-bottom:2rem}
+.product-price{font-family:var(--display);font-size:1.8rem;color:var(--pink);margin-bottom:1.2rem;display:flex;align-items:baseline;gap:.6rem}
+.price-sub{font-family:var(--body);font-size:.85rem;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.06em}
+.product-desc{color:var(--gray);font-size:1rem;font-weight:600;line-height:1.75;margin-bottom:1.1rem}
+.product-subhead{font-family:var(--display);font-size:1.3rem;color:var(--navy);margin:1.8rem 0 .8rem}
+.custom-note{background:var(--pink-pale);border:2px solid rgba(239,127,187,.3);border-radius:14px;padding:1rem 1.2rem;color:var(--navy);font-size:.88rem;font-weight:800;line-height:1.6;margin:1.4rem 0}
+.package-list{list-style:none;margin-bottom:1rem}
+.package-list li{position:relative;padding-left:1.6rem;color:var(--gray);font-size:.95rem;font-weight:600;line-height:1.7;margin-bottom:.6rem}
+.package-list li::before{content:'✓';position:absolute;left:0;color:var(--pink);font-weight:800}
 .size-label{font-size:.78rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--navy);margin-bottom:1rem}
 .size-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.85rem;margin-bottom:2rem}
 @media(max-width:520px){.size-grid{grid-template-columns:repeat(3,1fr)}}
@@ -1058,10 +1064,30 @@ body { font-family: var(--body); background: var(--white); color: var(--navy); o
         </div>
         </div>
         <div class="reveal d1">
-          <p class="eyebrow">Apparel</p>
-          <h2 class="product-name">Official Showdem Movement T-Shirt</h2>
-          <div class="product-price">$20.00</div>
-          <p class="product-desc">Soft, everyday-wear black tee featuring the Showdem Movement Foundation logo. Comfortable fit, made to move in — perfect for community sessions, workouts, or everyday wear.</p>
+          <p class="eyebrow">Membership</p>
+          <h2 class="product-name">Official Showdem Movement Membership</h2>
+          <div class="product-price">$20.00 <span class="price-sub">one-time fee</span></div>
+          <p class="product-desc">Membership is free. To become an Official Showdem Movement Member, all members are required to purchase the official Showdem Movement T-shirt.</p>
+          <p class="product-desc">Your T-shirt isn't just apparel—it's a symbol of community, purpose, and your commitment to spreading joy through movement, service, and Double Dutch.</p>
+          <h3 class="product-subhead">Why Join Showdem Movement?</h3>
+          <p class="product-desc">Become part of a positive, uplifting, and welcoming community that celebrates every person, every jump, and every step of the journey.</p>
+          <p class="product-desc">Whether you're new to Double Dutch or have years of experience, Showdem Movement is a place to grow, give back, build confidence, and make meaningful connections.</p>
+          <div class="custom-note">Please note: to customize your shirt, select Custom Name and type in the name you'd like featured on your shirt.</div>
+          <h3 class="product-subhead">Official Membership Package</h3>
+          <p class="product-desc"><strong>One-Time Fee: $20</strong></p>
+          <p class="product-desc">Your Official Membership Package includes:</p>
+          <ul class="package-list">
+            <li>One Official Showdem Movement T-Shirt</li>
+            <li>Official membership in the Showdem Movement community</li>
+            <li>Access to members-only events and exclusive opportunities</li>
+            <li>Eligibility to represent Showdem Movement at select community programs, performances, and volunteer initiatives</li>
+            <li>Monthly members-only training and skill-building sessions</li>
+            <li>Early access to community sessions, events, workshops, and special opportunities</li>
+            <li>Opportunities to build confidence, leadership, teamwork, and lifelong friendships</li>
+            <li>Continued development of your Double Dutch skills while making a positive impact in the community</li>
+            <li>Access to the private Showdem Movement members community</li>
+            <li>Connect with people who share your passion for movement, wellness, service, and community</li>
+          </ul>
           <div class="size-label">Select a Size</div>
           <div class="size-grid">
             <button type="button" class="size-block" data-size="XS" data-photo="0" onclick="selectSize(this)">XS</button>
