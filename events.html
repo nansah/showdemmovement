@@ -1357,7 +1357,6 @@ nav {
 .fomo-toast.show{transform:translateY(0);opacity:1;pointer-events:auto}
 .fomo-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--blue));display:flex;align-items:center;justify-content:center;color:white;font-family:var(--display);font-size:1rem;flex-shrink:0}
 .fomo-text{font-size:.85rem;font-weight:700;color:var(--navy);line-height:1.4}
-.fomo-time{font-size:.72rem;font-weight:600;color:var(--gray);margin-top:.2rem}
 .fomo-close{background:none;border:none;color:var(--gray);cursor:pointer;font-size:.9rem;line-height:1;padding:.15rem;flex-shrink:0}
 @media(max-width:480px){.fomo-toast{left:.75rem;right:.75rem;max-width:none}}
 </style>
@@ -1365,7 +1364,6 @@ nav {
   <div class="fomo-avatar" id="fomoAvatar">S</div>
   <div style="flex:1">
     <div class="fomo-text" id="fomoText">Someone signed up</div>
-    <div class="fomo-time" id="fomoTime"></div>
   </div>
   <button class="fomo-close" id="fomoClose" aria-label="Dismiss">&#10005;</button>
 </div>
@@ -1375,28 +1373,16 @@ nav {
   var toastEl = document.getElementById('fomoToast');
   var avatarEl = document.getElementById('fomoAvatar');
   var textEl = document.getElementById('fomoText');
-  var timeEl = document.getElementById('fomoTime');
   var closeBtn = document.getElementById('fomoClose');
   var queue = [];
-  var idx = 0;
+  var idx = parseInt(sessionStorage.getItem('fomoIdx') || '0', 10) || 0;
   var shown = 0;
-  var MAX_SHOWN = 4;
+  var MAX_SHOWN = 6;
   var STATES = {AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming',DC:'D.C.'};
-
-  function timeAgo(iso) {
-    var diff = Date.now() - new Date(iso).getTime();
-    var mins = Math.floor(diff / 60000);
-    if (mins < 60) return (mins <= 1 ? '1 minute' : mins + ' minutes') + ' ago';
-    var hrs = Math.floor(mins / 60);
-    if (hrs < 24) return (hrs === 1 ? '1 hour' : hrs + ' hours') + ' ago';
-    var days = Math.floor(hrs / 24);
-    return (days === 1 ? '1 day' : days + ' days') + ' ago';
-  }
 
   function showToast(item) {
     avatarEl.textContent = item.avatar;
     textEl.textContent = item.text;
-    timeEl.textContent = item.time || '';
     toastEl.classList.add('show');
     shown++;
     setTimeout(function(){ toastEl.classList.remove('show'); }, 6000);
@@ -1406,8 +1392,9 @@ nav {
     if (shown >= MAX_SHOWN || !queue.length) return;
     var item = queue[idx % queue.length];
     idx++;
+    sessionStorage.setItem('fomoIdx', String(idx));
     showToast(item);
-    setTimeout(nextToast, 18000 + Math.random() * 6000);
+    setTimeout(nextToast, 9000 + Math.random() * 4000);
   }
 
   closeBtn.addEventListener('click', function(){
@@ -1422,18 +1409,17 @@ nav {
       var loc = m.state ? ' from ' + (STATES[m.state] || m.state) : '';
       queue.push({
         avatar: m.firstName.charAt(0).toUpperCase(),
-        text: m.firstName + loc + ' signed up to become a member',
-        time: timeAgo(m.submittedAt)
+        text: m.firstName + loc + ' signed up to become a member'
       });
     });
     if (d.monthCount > 0) {
-      queue.push({ avatar: '✨', text: d.monthCount + (d.monthCount === 1 ? ' person has' : ' people have') + ' joined Showdem Movement this month', time: '' });
+      queue.push({ avatar: '✨', text: d.monthCount + (d.monthCount === 1 ? ' person has' : ' people have') + ' joined Showdem Movement this month' });
     }
     if (d.totalMembers > 0) {
-      queue.push({ avatar: '✨', text: d.totalMembers + ' people have joined the Showdem Movement community', time: '' });
+      queue.push({ avatar: '✨', text: d.totalMembers + ' people have joined the Showdem Movement community' });
     }
     if (!queue.length) return;
-    setTimeout(nextToast, 4000);
+    setTimeout(nextToast, 3000);
   }).catch(function(){});
 })();
 </script>
