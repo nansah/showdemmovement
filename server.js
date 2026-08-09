@@ -7,7 +7,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname)));
 
 /* Wire all API handlers (same files that Vercel deploys as serverless functions) */
-const handlers = ['login', 'content', 'upload', 'upload-photo', 'backup', 'restore', 'applications', 'waiver'];
+const handlers = ['login', 'content', 'upload', 'upload-photo', 'backup', 'restore', 'applications', 'waiver', 'public-stats'];
 handlers.forEach(name => {
   const fn = require('./api/' + name);
   app.all('/api/' + name, fn);

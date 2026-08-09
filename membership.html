@@ -1376,5 +1376,90 @@ nav {
   document.querySelectorAll('#navPanel a').forEach(function(a){a.addEventListener('click',closeNav)});
 })();
 </script>
+<!-- FOMO NOTIFICATIONS -->
+<style>
+.fomo-toast{position:fixed;left:1.25rem;bottom:1.25rem;z-index:500;max-width:320px;background:white;border-radius:16px;box-shadow:0 16px 40px rgba(13,27,62,.22);border-left:4px solid var(--pink);padding:.9rem 1rem;display:flex;align-items:flex-start;gap:.7rem;transform:translateY(120%);opacity:0;transition:transform .4s cubic-bezier(.4,0,.2,1),opacity .4s;pointer-events:none}
+.fomo-toast.show{transform:translateY(0);opacity:1;pointer-events:auto}
+.fomo-avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--blue));display:flex;align-items:center;justify-content:center;color:white;font-family:var(--display);font-size:1rem;flex-shrink:0}
+.fomo-text{font-size:.85rem;font-weight:700;color:var(--navy);line-height:1.4}
+.fomo-time{font-size:.72rem;font-weight:600;color:var(--gray);margin-top:.2rem}
+.fomo-close{background:none;border:none;color:var(--gray);cursor:pointer;font-size:.9rem;line-height:1;padding:.15rem;flex-shrink:0}
+@media(max-width:480px){.fomo-toast{left:.75rem;right:.75rem;max-width:none}}
+</style>
+<div class="fomo-toast" id="fomoToast">
+  <div class="fomo-avatar" id="fomoAvatar">S</div>
+  <div style="flex:1">
+    <div class="fomo-text" id="fomoText">Someone signed up</div>
+    <div class="fomo-time" id="fomoTime"></div>
+  </div>
+  <button class="fomo-close" id="fomoClose" aria-label="Dismiss">&#10005;</button>
+</div>
+<script>
+(function(){
+  if (sessionStorage.getItem('fomoDismissed')) return;
+  var toastEl = document.getElementById('fomoToast');
+  var avatarEl = document.getElementById('fomoAvatar');
+  var textEl = document.getElementById('fomoText');
+  var timeEl = document.getElementById('fomoTime');
+  var closeBtn = document.getElementById('fomoClose');
+  var queue = [];
+  var idx = 0;
+  var shown = 0;
+  var MAX_SHOWN = 4;
+  var STATES = {AL:'Alabama',AK:'Alaska',AZ:'Arizona',AR:'Arkansas',CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',FL:'Florida',GA:'Georgia',HI:'Hawaii',ID:'Idaho',IL:'Illinois',IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',MD:'Maryland',MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',MO:'Missouri',MT:'Montana',NE:'Nebraska',NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',PA:'Pennsylvania',RI:'Rhode Island',SC:'South Carolina',SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',VA:'Virginia',WA:'Washington',WV:'West Virginia',WI:'Wisconsin',WY:'Wyoming',DC:'D.C.'};
+
+  function timeAgo(iso) {
+    var diff = Date.now() - new Date(iso).getTime();
+    var mins = Math.floor(diff / 60000);
+    if (mins < 60) return (mins <= 1 ? '1 minute' : mins + ' minutes') + ' ago';
+    var hrs = Math.floor(mins / 60);
+    if (hrs < 24) return (hrs === 1 ? '1 hour' : hrs + ' hours') + ' ago';
+    var days = Math.floor(hrs / 24);
+    return (days === 1 ? '1 day' : days + ' days') + ' ago';
+  }
+
+  function showToast(item) {
+    avatarEl.textContent = item.avatar;
+    textEl.textContent = item.text;
+    timeEl.textContent = item.time || '';
+    toastEl.classList.add('show');
+    shown++;
+    setTimeout(function(){ toastEl.classList.remove('show'); }, 6000);
+  }
+
+  function nextToast() {
+    if (shown >= MAX_SHOWN || !queue.length) return;
+    var item = queue[idx % queue.length];
+    idx++;
+    showToast(item);
+    setTimeout(nextToast, 18000 + Math.random() * 6000);
+  }
+
+  closeBtn.addEventListener('click', function(){
+    toastEl.classList.remove('show');
+    sessionStorage.setItem('fomoDismissed', '1');
+    shown = MAX_SHOWN;
+  });
+
+  fetch('/api/public-stats').then(function(r){ return r.ok ? r.json() : null; }).then(function(d){
+    if (!d) return;
+    (d.recentMembers || []).forEach(function(m){
+      queue.push({
+        avatar: m.firstName.charAt(0).toUpperCase(),
+        text: m.firstName + ' from ' + (STATES[m.state] || m.state) + ' signed up to become a member',
+        time: timeAgo(m.submittedAt)
+      });
+    });
+    if (d.monthCount > 0) {
+      queue.push({ avatar: '✨', text: d.monthCount + (d.monthCount === 1 ? ' person has' : ' people have') + ' joined Showdem Movement this month', time: '' });
+    }
+    if (d.totalMembers > 0) {
+      queue.push({ avatar: '✨', text: d.totalMembers + ' people have joined the Showdem Movement community', time: '' });
+    }
+    if (!queue.length) return;
+    setTimeout(nextToast, 4000);
+  }).catch(function(){});
+})();
+</script>
 </body>
 </html>
