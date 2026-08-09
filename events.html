@@ -1419,9 +1419,10 @@ nav {
   fetch('/api/public-stats').then(function(r){ return r.ok ? r.json() : null; }).then(function(d){
     if (!d) return;
     (d.recentMembers || []).forEach(function(m){
+      var loc = m.state ? ' from ' + (STATES[m.state] || m.state) : '';
       queue.push({
         avatar: m.firstName.charAt(0).toUpperCase(),
-        text: m.firstName + ' from ' + (STATES[m.state] || m.state) + ' signed up to become a member',
+        text: m.firstName + loc + ' signed up to become a member',
         time: timeAgo(m.submittedAt)
       });
     });
